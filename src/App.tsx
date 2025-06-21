@@ -2,7 +2,11 @@ import "./assets/css/App.css";
 import Routes from "./router/route";
 
 function App() {
-	return <Routes />;
+	return (
+		<>
+			<Routes />
+		</>
+	);
 }
 
 export default App;

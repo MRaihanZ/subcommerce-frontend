@@ -1,23 +1,23 @@
 import { Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router";
 
+// Layouts
+import MainLayout from "../layouts/mainLayout";
+
 // Components
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import Loading from "../components/loading";
 
 // Pages
-// import NotFound from "../pages/notFound";
+import NotFound from "../pages/notFound";
 import HomePage from "../pages/home";
 
 const handleFallback = (Component: React.ComponentType) => {
 	return (
 		<Suspense fallback={<Loading />}>
 			<Navbar />
-
-			<section className="container">
-				<Component />
-			</section>
+			<MainLayout pages={Component} />
 			<Footer />
 		</Suspense>
 	);
@@ -33,10 +33,10 @@ const routes = createBrowserRouter([
 		element: handleFallback(HomePage),
 		children: [],
 	},
-	// {
-	// 	path: "*",
-	// 	element: handleFallback(NotFound),
-	// },
+	{
+		path: "*",
+		element: handleFallback(NotFound),
+	},
 	{
 		path: "/test",
 		Component: Loading,

@@ -1,11 +1,11 @@
 import Carousel from "../components/carousel";
-import Catalog from "../components/catalog";
+import SmallCatalog from "../components/smallCatalog";
 
 export default function Home() {
 	return (
 		<>
 			<Carousel />
-			<Catalog />
+			<SmallCatalog />
 		</>
 	);
 }
