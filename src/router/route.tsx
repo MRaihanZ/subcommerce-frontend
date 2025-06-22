@@ -12,6 +12,7 @@ import Loading from "../components/loading";
 // Pages
 import NotFound from "../pages/notFound";
 import HomePage from "../pages/home";
+import SignUp from "../components/signUp";
 
 const handleFallback = (Component: React.ComponentType) => {
 	return (
@@ -28,11 +29,11 @@ const routes = createBrowserRouter([
 		path: "/",
 		element: handleFallback(HomePage),
 	},
-	{
-		path: "/about",
-		element: handleFallback(HomePage),
-		children: [],
-	},
+	// {
+	// 	path: "/daftar",
+	// 	element: handleFallback(SignUp),
+	// 	children: [],
+	// },
 	{
 		path: "*",
 		element: handleFallback(NotFound),
