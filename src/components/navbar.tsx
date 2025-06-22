@@ -1,11 +1,13 @@
 // import ThemeButton from "./themeButton";
+import SignIn from "./signIn";
+import SignUp from "./signUp";
 
 export default function Navbar() {
 	return (
 		<>
 			<div className="navbar bg-base-100 shadow-sm px-10">
 				<div className="flex-1">
-					<a className="btn btn-ghost text-xl">daisyUI</a>
+					<a className="btn btn-ghost text-xl">SubCommerce</a>
 				</div>
 				<div className="flex gap-2">
 					{/* Search Input */}
@@ -89,13 +91,12 @@ export default function Navbar() {
 							</li>
 						</ul>
 					</div>
-
 					{/* Login / Register button */}
-					{/* <div className="flex">
-						<button className="btn btn-xs sm:btn-sm md:btn-md">Login</button>
+					<div className="flex">
+						<SignIn />
 						<div className="mx-2 self-center">OR</div>
-						<button className="btn btn-xs sm:btn-sm md:btn-md">Register</button>
-					</div> */}
+						<SignUp />
+					</div>
 				</div>
 			</div>
 		</>
