@@ -5,7 +5,18 @@ export default function Home() {
 	return (
 		<>
 			<Carousel />
-			<SmallCatalog />
+			{/* <button className="btn">one-time</button>
+			<button className="btn">subscription</button>
+			<button className="btn">Hot</button> */}
+			<section className="grid grid-cols-5 gap-4 justify-items-center">
+				<SmallCatalog />
+				<SmallCatalog />
+				<SmallCatalog />
+				<SmallCatalog />
+				<SmallCatalog />
+				<SmallCatalog />
+				<SmallCatalog />
+			</section>
 		</>
 	);
 }
