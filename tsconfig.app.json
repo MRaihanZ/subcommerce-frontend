@@ -23,7 +23,7 @@
 		"noFallthroughCasesInSwitch": true,
 		"noUncheckedSideEffectImports": true,
 
-		// add import alias for shadcn yarn
+		// add import alias for shadcn typescript auto correct
 		"baseUrl": "./src",
 		"paths": {
 			"@/*": ["./*"]
