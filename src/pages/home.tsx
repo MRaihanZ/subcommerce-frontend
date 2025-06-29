@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
 	Carousel,
 	CarouselContent,
@@ -19,9 +18,6 @@ import {
 export default function Home() {
 	return (
 		<>
-			<h1>Home Page</h1>
-			<Button variant="destructive">destructive</Button>
-			// 33% of the carousel width.
 			<Carousel>
 				<CarouselContent>
 					<CarouselItem className="flex justify-center">
