@@ -2,11 +2,11 @@ import { Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router";
 
 // Layouts
-// import MainLayout from "../layouts/mainLayout";
+import MainLayout from "../layouts/mainLayout";
 
 // Components
-// import Navbar from "../components/navbar";
-// import Footer from "../components/footer";
+import Navbar from "../components/my_components/navbar";
+import Footer from "../components/my_components/footer";
 // import Loading from "../components/loading";
 
 // Pages
@@ -14,13 +14,25 @@ import NotFound from "../pages/notFound";
 import HomePage from "../pages/home";
 // import SignUp from "../components/signUp";
 
-const handleFallback = (Component: React.ComponentType) => {
+interface HandleFallbackProps {
+	Title: string;
+	Component: React.ComponentType;
+	ShowNavbar: boolean;
+	ShowFooter: boolean;
+}
+
+const handleFallback = ({
+	Title,
+	Component,
+	ShowNavbar,
+	ShowFooter,
+}: HandleFallbackProps) => {
 	return (
 		<Suspense fallback={"Loading......"}>
-			{/* <Navbar />
-			<MainLayout pages={Component} />
-			<Footer /> */}
-			<Component />
+			<title>{Title}</title>
+			{ShowNavbar && <Navbar />}
+			<MainLayout Page={Component} />
+			{ShowFooter && <Footer />}
 		</Suspense>
 	);
 };
@@ -28,7 +40,12 @@ const handleFallback = (Component: React.ComponentType) => {
 const routes = createBrowserRouter([
 	{
 		path: "/",
-		element: handleFallback(HomePage),
+		element: handleFallback({
+			Title: "Home Page",
+			Component: HomePage,
+			ShowNavbar: true,
+			ShowFooter: true,
+		}),
 	},
 	// {
 	// 	path: "/daftar",
@@ -37,7 +54,12 @@ const routes = createBrowserRouter([
 	// },
 	{
 		path: "*",
-		element: handleFallback(NotFound),
+		element: handleFallback({
+			Title: "Page Not Found",
+			Component: NotFound,
+			ShowNavbar: true,
+			ShowFooter: true,
+		}),
 	},
 	// {
 	// 	path: "/test",
