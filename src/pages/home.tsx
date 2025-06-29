@@ -15,6 +15,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
+
 export default function Home() {
 	return (
 		<>
@@ -23,10 +24,18 @@ export default function Home() {
 			// 33% of the carousel width.
 			<Carousel>
 				<CarouselContent>
-					<CarouselItem className="basis-1/3">...</CarouselItem>
-					<CarouselItem className="basis-1/3">...</CarouselItem>
-					<CarouselItem className="basis-1/3">...</CarouselItem>
+					<CarouselItem className="flex justify-center">
+						<img src="/assets/img/carousel/carousel1.jpg" alt="Testing" />
+					</CarouselItem>
+					<CarouselItem className="flex justify-center">
+						<img src="/assets/img/carousel/carousel2.jpg" alt="Testing" />
+					</CarouselItem>
+					<CarouselItem className="flex justify-center">
+						<img src="/assets/img/carousel/carousel3.jpg" alt="Testing" />
+					</CarouselItem>
 				</CarouselContent>
+				<CarouselPrevious />
+				<CarouselNext />
 			</Carousel>
 			<Card>
 				<CardHeader>
