@@ -1,7 +1,7 @@
 export default function Footer() {
 	return (
 		<>
-			<footer>some Footer</footer>
+			<footer className="text-center">Develop By MRZ</footer>
 		</>
 	);
 }

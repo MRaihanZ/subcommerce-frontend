@@ -42,8 +42,8 @@ export default function Navbar() {
 						</Button>
 					</section>
 					<Dialog>
-						<DialogTrigger>
-							<Button>Login</Button>
+						<DialogTrigger asChild>
+							<Button variant="outline">Login</Button>
 						</DialogTrigger>
 						<DialogContent>
 							<DialogHeader>
