@@ -2,17 +2,18 @@ import { Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router";
 
 // Layouts
-import MainLayout from "../layouts/mainLayout";
+import MainLayout from "@/layouts/mainLayout";
 
 // Components
-import Navbar from "../components/my_components/navbar";
-import Footer from "../components/my_components/footer";
-// import Loading from "../components/loading";
+import Navbar from "@/components/my_components/navbar";
+import Footer from "@/components/my_components/footer";
+// import Loading from "@/components/loading";
 
 // Pages
-import NotFound from "../pages/notFound";
-import HomePage from "../pages/home";
-// import SignUp from "../components/signUp";
+import NotFound from "@/pages/notFound";
+import HomePage from "@/pages/home";
+import ChatPage from "@/pages/chat";
+// import SignUp from "@/components/signUp";
 
 interface HandleFallbackProps {
 	Title: string;
@@ -43,6 +44,15 @@ const routes = createBrowserRouter([
 		element: handleFallback({
 			Title: "Home Page",
 			Component: HomePage,
+			ShowNavbar: true,
+			ShowFooter: true,
+		}),
+	},
+	{
+		path: "/chat",
+		element: handleFallback({
+			Title: "Chat Page",
+			Component: ChatPage,
 			ShowNavbar: true,
 			ShowFooter: true,
 		}),
