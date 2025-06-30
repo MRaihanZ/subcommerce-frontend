@@ -11,7 +11,7 @@ import {
 export default function Navbar() {
 	return (
 		<>
-			<nav className="container mx-auto md:px-4 flex justify-between">
+			<nav className="container mx-auto flex justify-between py-3">
 				<p>Sub Commerce</p>
 
 				<section className="flex">
