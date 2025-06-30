@@ -1,8 +1,8 @@
 interface MainLayoutProps {
-	Page: React.ComponentType;
+	page: React.ComponentType;
 }
 
-export default function MainLayout({ Page }: MainLayoutProps) {
+export default function MainLayout({ page: Page }: MainLayoutProps) {
 	return (
 		<>
 			<main className="container mx-auto md:px-4">

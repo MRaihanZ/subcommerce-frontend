@@ -32,7 +32,7 @@ const handleFallback = ({
 		<Suspense fallback={"Loading......"}>
 			<title>{title}</title>
 			{showNavbar && <Navbar />}
-			<MainLayout Page={component} />
+			<MainLayout page={component} />
 			{showFooter && <Footer />}
 		</Suspense>
 	);
