@@ -338,6 +338,108 @@ export default function Chat() {
 							message="testing receiver"
 							isSender={false}
 						/>
+						<Message
+							name="John Blue"
+							sent="21:00"
+							message="testing receiver"
+							isSender={false}
+						/>
+						<Message
+							name="Bonnie Green"
+							sent="20:00"
+							message="testing sender"
+							isSender={true}
+						/>
+						<Message
+							name="Bonnie Green"
+							sent="20:00"
+							message="testing sender"
+							isSender={true}
+						/>
+						<Message
+							name="Bonnie Green"
+							sent="20:00"
+							message="testing sender"
+							isSender={true}
+						/>
+						<Message
+							name="John Blue"
+							sent="21:00"
+							message="testing receiver"
+							isSender={false}
+						/>
+						<Message
+							name="Bonnie Green"
+							sent="20:00"
+							message="testing sender"
+							isSender={true}
+						/>
+						<Message
+							name="John Blue"
+							sent="21:00"
+							message="testing receiver"
+							isSender={false}
+						/>
+						<Message
+							name="Bonnie Green"
+							sent="20:00"
+							message="testing sender"
+							isSender={true}
+						/>
+						<Message
+							name="John Blue"
+							sent="21:00"
+							message="testing receiver"
+							isSender={false}
+						/>
+						<Message
+							name="Bonnie Green"
+							sent="20:00"
+							message="testing sender"
+							isSender={true}
+						/>
+						<Message
+							name="John Blue"
+							sent="21:00"
+							message="testing receiver"
+							isSender={false}
+						/>
+						<Message
+							name="Bonnie Green"
+							sent="20:00"
+							message="testing sender"
+							isSender={true}
+						/>
+						<Message
+							name="John Blue"
+							sent="21:00"
+							message="testing receiver"
+							isSender={false}
+						/>
+						<Message
+							name="Bonnie Green"
+							sent="20:00"
+							message="testing sender"
+							isSender={true}
+						/>
+						<Message
+							name="John Blue"
+							sent="21:00"
+							message="testing receiver"
+							isSender={false}
+						/>
+						<Message
+							name="Bonnie Green"
+							sent="20:00"
+							message="testing sender"
+							isSender={true}
+						/>
+						<Message
+							name="John Blue"
+							sent="21:00"
+							message="testing receiver"
+							isSender={false}
+						/>
 					</ScrollArea>
 					<section className="h-16 py-2 flex items-center mx-3">
 						<Input type="text" placeholder="Message" className="flex-auto" />
