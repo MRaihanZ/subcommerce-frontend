@@ -341,13 +341,13 @@ export default function Chat() {
 						<Message
 							name="John Blue"
 							sent="21:00"
-							message="testing receiver"
+							message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas imperdiet ligula quam, quis vehicula nibh luctus at. Suspendisse tincidunt semper quam, ultricies porttitor orci euismod non. Vestibulum ultricies, dui quis placerat tempor, lacus nisl rhoncus dui, interdum tincidunt augue eros vitae magna. Ut feugiat accumsan elit, quis aliquam leo convallis nec. Maecenas hendrerit vel risus ac porttitor. Sed placerat tempus lectus, in posuere velit. Nullam ultricies nunc sed leo euismod blandit."
 							isSender={false}
 						/>
 						<Message
 							name="Bonnie Green"
 							sent="20:00"
-							message="testing sender"
+							message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas imperdiet ligula quam, quis vehicula nibh luctus at. Suspendisse tincidunt semper quam, ultricies porttitor orci euismod non. Vestibulum ultricies, dui quis placerat tempor, lacus nisl rhoncus dui, interdum tincidunt augue eros vitae magna. Ut feugiat accumsan elit, quis aliquam leo convallis nec. Maecenas hendrerit vel risus ac porttitor. Sed placerat tempus lectus, in posuere velit. Nullam ultricies nunc sed leo euismod blandit."
 							isSender={true}
 						/>
 						<Message
