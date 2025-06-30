@@ -16,24 +16,24 @@ import ChatPage from "@/pages/chat";
 // import SignUp from "@/components/signUp";
 
 interface HandleFallbackProps {
-	Title: string;
-	Component: React.ComponentType;
-	ShowNavbar: boolean;
-	ShowFooter: boolean;
+	title: string;
+	component: React.ComponentType;
+	showNavbar: boolean;
+	showFooter: boolean;
 }
 
 const handleFallback = ({
-	Title,
-	Component,
-	ShowNavbar,
-	ShowFooter,
+	title,
+	component,
+	showNavbar,
+	showFooter,
 }: HandleFallbackProps) => {
 	return (
 		<Suspense fallback={"Loading......"}>
-			<title>{Title}</title>
-			{ShowNavbar && <Navbar />}
-			<MainLayout Page={Component} />
-			{ShowFooter && <Footer />}
+			<title>{title}</title>
+			{showNavbar && <Navbar />}
+			<MainLayout Page={component} />
+			{showFooter && <Footer />}
 		</Suspense>
 	);
 };
@@ -42,19 +42,19 @@ const routes = createBrowserRouter([
 	{
 		path: "/",
 		element: handleFallback({
-			Title: "Home Page",
-			Component: HomePage,
-			ShowNavbar: true,
-			ShowFooter: true,
+			title: "Home Page",
+			component: HomePage,
+			showNavbar: true,
+			showFooter: true,
 		}),
 	},
 	{
 		path: "/chat",
 		element: handleFallback({
-			Title: "Chat Page",
-			Component: ChatPage,
-			ShowNavbar: true,
-			ShowFooter: true,
+			title: "Chat Page",
+			component: ChatPage,
+			showNavbar: true,
+			showFooter: true,
 		}),
 	},
 	// {
@@ -65,10 +65,10 @@ const routes = createBrowserRouter([
 	{
 		path: "*",
 		element: handleFallback({
-			Title: "Page Not Found",
-			Component: NotFound,
-			ShowNavbar: true,
-			ShowFooter: true,
+			title: "Page Not Found",
+			component: NotFound,
+			showNavbar: true,
+			showFooter: true,
 		}),
 	},
 	// {
