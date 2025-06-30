@@ -442,7 +442,11 @@ export default function Chat() {
 						/>
 					</ScrollArea>
 					<section className="h-16 py-2 flex items-center mx-3">
-						<Input type="text" placeholder="Message" className="flex-auto" />
+						<Input
+							type="text"
+							placeholder="Message"
+							className="flex-auto me-3"
+						/>
 						<Button className="flex-none" variant="outline">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
