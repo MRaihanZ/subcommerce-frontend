@@ -14,6 +14,7 @@ import NotFound from "@/pages/notFound";
 import HomePage from "@/pages/home";
 import ChatPage from "@/pages/chat";
 import CartPage from "@/pages/cart";
+import ProfilePage from "@/pages/profile";
 // import SignUp from "@/components/signUp";
 
 interface HandleFallbackProps {
@@ -63,6 +64,15 @@ const routes = createBrowserRouter([
 		element: handleFallback({
 			title: "Cart Page",
 			component: CartPage,
+			showNavbar: true,
+			showFooter: true,
+		}),
+	},
+	{
+		path: "/profile",
+		element: handleFallback({
+			title: "Profile Page",
+			component: ProfilePage,
 			showNavbar: true,
 			showFooter: true,
 		}),
