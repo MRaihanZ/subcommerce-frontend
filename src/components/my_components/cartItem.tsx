@@ -13,7 +13,7 @@ export default function CartItem() {
 				<section className="flex-none">
 					<Checkbox className="border-black" />
 				</section>
-				<section className="flex-none">
+				<section className="flex-none my-auto">
 					<img src="/assets/img/item.jpg" alt="" className="w-40 h-40 ms-3" />
 				</section>
 				<section className="flex-auto ms-5">
