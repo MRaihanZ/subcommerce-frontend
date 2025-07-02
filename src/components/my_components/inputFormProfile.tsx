@@ -8,6 +8,7 @@ interface InputFormProfileProps {
 	type: string;
 	value: string;
 	setValue: (value: string) => void;
+	isDisabled: boolean;
 }
 
 export default function InputFormProfile({
@@ -17,12 +18,16 @@ export default function InputFormProfile({
 	type,
 	value,
 	setValue,
+	isDisabled,
 }: InputFormProfileProps) {
 	return (
 		<>
 			<section className="mt-5">
-				<Label htmlFor={id}>{labelName}</Label>
+				<Label htmlFor={id} className="mb-1">
+					{labelName}
+				</Label>
 				<Input
+					disabled={isDisabled}
 					id={id}
 					name={name}
 					type={type}
