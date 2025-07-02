@@ -11,10 +11,11 @@ import Footer from "@/components/my_components/footer";
 
 // Pages
 import NotFound from "@/pages/notFound";
-import HomePage from "@/pages/home";
-import ChatPage from "@/pages/chat";
-import CartPage from "@/pages/cart";
-import ProfilePage from "@/pages/profile";
+import Home from "@/pages/home";
+import Chat from "@/pages/chat";
+import Cart from "@/pages/cart";
+import Profile from "@/pages/profile";
+import Checkout from "@/pages/checkout";
 // import SignUp from "@/components/signUp";
 
 interface HandleFallbackProps {
@@ -45,7 +46,7 @@ const routes = createBrowserRouter([
 		path: "/",
 		element: handleFallback({
 			title: "Home Page",
-			component: HomePage,
+			component: Home,
 			showNavbar: true,
 			showFooter: true,
 		}),
@@ -54,7 +55,7 @@ const routes = createBrowserRouter([
 		path: "/chat",
 		element: handleFallback({
 			title: "Chat Page",
-			component: ChatPage,
+			component: Chat,
 			showNavbar: true,
 			showFooter: true,
 		}),
@@ -63,7 +64,7 @@ const routes = createBrowserRouter([
 		path: "/cart",
 		element: handleFallback({
 			title: "Cart Page",
-			component: CartPage,
+			component: Cart,
 			showNavbar: true,
 			showFooter: true,
 		}),
@@ -72,7 +73,16 @@ const routes = createBrowserRouter([
 		path: "/profile",
 		element: handleFallback({
 			title: "Profile Page",
-			component: ProfilePage,
+			component: Profile,
+			showNavbar: true,
+			showFooter: true,
+		}),
+	},
+	{
+		path: "/checkout",
+		element: handleFallback({
+			title: "Checkout Page",
+			component: Checkout,
 			showNavbar: true,
 			showFooter: true,
 		}),
