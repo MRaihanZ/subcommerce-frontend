@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 // import { Separator } from "@/components/ui/separator";
 
 export default function CartItem() {
@@ -33,11 +34,19 @@ export default function CartItem() {
 						Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean
 						finibus turpis a venenatis eleifend.
 					</p>
+					<p>
+						variant:
+						<Badge variant="outline" className="mx-1">
+							2 Core 4GB
+						</Badge>
+						<Badge variant="outline">Indonesia</Badge>
+					</p>
 					<section className="flex w-full max-w-25 items-center my-3 relative">
 						<Button
 							variant="outline"
 							size="icon"
 							className="size-8 absolute start-1 border-0 cursor-pointer rounded-2xl"
+							onClick={() => setQuantity(quantity - 1)}
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -46,7 +55,7 @@ export default function CartItem() {
 								width="24px"
 								fill="currentColor"
 							>
-								<path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" />
+								<path d="M200-440v-80h560v80H200Z" />
 							</svg>
 						</Button>
 						<Input
@@ -59,6 +68,7 @@ export default function CartItem() {
 							variant="outline"
 							size="icon"
 							className="size-8 absolute end-1 border-0 cursor-pointer rounded-2xl"
+							onClick={() => setQuantity(quantity + 1)}
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -67,12 +77,12 @@ export default function CartItem() {
 								width="24px"
 								fill="currentColor"
 							>
-								<path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
+								<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
 							</svg>
 						</Button>
 					</section>
 					<section className="flex justify-between">
-						<p>Rp64.000</p>
+						<p>Harga: Rp64.000</p>
 						<Button
 							variant="outline"
 							size="icon"
