@@ -1,9 +1,12 @@
+import { useState } from "react";
+
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 // import { Separator } from "@/components/ui/separator";
 
 export default function CartItem() {
+	const [quantity, setQuantity] = useState(1);
 	return (
 		<>
 			<section className="ms-3 mt-5 flex py-5 px-5 border rounded-md">
@@ -46,7 +49,12 @@ export default function CartItem() {
 								<path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" />
 							</svg>
 						</Button>
-						<Input type="text" value={1} className="text-center rounded-2xl" />
+						<Input
+							type="text"
+							value={quantity}
+							onChange={(e) => setQuantity(Number(e.target.value))}
+							className="text-center rounded-2xl"
+						/>
 						<Button
 							variant="outline"
 							size="icon"
