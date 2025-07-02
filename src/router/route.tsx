@@ -16,6 +16,7 @@ import Chat from "@/pages/chat";
 import Cart from "@/pages/cart";
 import Profile from "@/pages/profile";
 import Checkout from "@/pages/checkout";
+import DetailItem from "@/pages/detailItem";
 // import SignUp from "@/components/signUp";
 
 interface HandleFallbackProps {
@@ -52,15 +53,6 @@ const routes = createBrowserRouter([
 		}),
 	},
 	{
-		path: "/chat",
-		element: handleFallback({
-			title: "Chat Page",
-			component: Chat,
-			showNavbar: true,
-			showFooter: true,
-		}),
-	},
-	{
 		path: "/cart",
 		element: handleFallback({
 			title: "Cart Page",
@@ -70,10 +62,10 @@ const routes = createBrowserRouter([
 		}),
 	},
 	{
-		path: "/profile",
+		path: "/chat",
 		element: handleFallback({
-			title: "Profile Page",
-			component: Profile,
+			title: "Chat Page",
+			component: Chat,
 			showNavbar: true,
 			showFooter: true,
 		}),
@@ -83,6 +75,24 @@ const routes = createBrowserRouter([
 		element: handleFallback({
 			title: "Checkout Page",
 			component: Checkout,
+			showNavbar: true,
+			showFooter: true,
+		}),
+	},
+	{
+		path: "/detail",
+		element: handleFallback({
+			title: "Detail Item Page",
+			component: DetailItem,
+			showNavbar: true,
+			showFooter: true,
+		}),
+	},
+	{
+		path: "/profile",
+		element: handleFallback({
+			title: "Profile Page",
+			component: Profile,
 			showNavbar: true,
 			showFooter: true,
 		}),
