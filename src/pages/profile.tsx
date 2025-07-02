@@ -80,6 +80,17 @@ export default function Profile() {
 									</PopoverContent>
 								</Popover>
 							</section>
+							<section className={isDisableButton ? "hidden mt-5" : "mt-5"}>
+								<Button
+									className={
+										isDisableButton
+											? "hidden cursor-pointer w-full"
+											: "cursor-pointer w-full"
+									}
+								>
+									Submit
+								</Button>
+							</section>
 							<section className={isEditPassword ? "mt-5" : "hidden mt-5"}>
 								<Label htmlFor="password" className="mb-1">
 									password
@@ -107,7 +118,7 @@ export default function Profile() {
 							<section className="flex justify-around mt-5">
 								<Button
 									className="cursor-pointer"
-									onClick={() => setIsDisableButton(false)}
+									onClick={() => setIsDisableButton((prev) => !prev)}
 								>
 									Edit
 								</Button>
