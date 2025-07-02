@@ -52,7 +52,9 @@ export default function Cart() {
 							<p className="font-bold text-xl">Total</p>
 							<p className="font-bold text-xl">Rp240.000</p>
 						</section>
-						<Button className="bg-green-600 w-full cursor-pointer">Beli</Button>
+						<Button className="bg-green-600 hover:bg-green-800 w-full cursor-pointer">
+							Beli
+						</Button>
 					</section>
 				</section>
 			</section>
