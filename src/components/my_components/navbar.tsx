@@ -6,15 +6,25 @@ import {
 	DialogContent,
 	DialogDescription,
 	DialogHeader,
-	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
+
+import SignInUp from "./signInUp";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Link } from "react-router";
+
 export default function Navbar() {
 	return (
 		<>
 			<nav className="container mx-auto flex justify-between py-3">
-				<p>Sub Commerce</p>
-
+				<Link to={"http://" + location.host}>Sub Commerce</Link>
 				<section className="flex">
 					<section className="flex w-full max-w-sm items-center">
 						<Label htmlFor="search">
@@ -37,25 +47,55 @@ export default function Navbar() {
 						<Button
 							type="submit"
 							variant="outline"
-							className="rounded-l-none border-l-1 border-t-1 border-r-1 border-b-1"
+							className="rounded-l-none border-l-1 border-t-1 border-r-1 border-b-1 cursor-pointer"
 						>
 							Search
 						</Button>
 					</section>
-					<Dialog>
-						<DialogTrigger asChild>
-							<Button variant="outline">Login</Button>
-						</DialogTrigger>
-						<DialogContent>
-							<DialogHeader>
-								<DialogTitle>Are you absolutely sure?</DialogTitle>
-								<DialogDescription>
-									This action cannot be undone. This will permanently delete
-									your account and remove your data from our servers.
-								</DialogDescription>
-							</DialogHeader>
-						</DialogContent>
-					</Dialog>
+					<section className="ms-5">
+						<Dialog>
+							<DialogTrigger asChild>
+								<Button variant="outline" className="cursor-pointer">
+									Login
+								</Button>
+							</DialogTrigger>
+							<DialogContent>
+								<DialogHeader>
+									<DialogDescription>
+										<SignInUp />
+									</DialogDescription>
+								</DialogHeader>
+							</DialogContent>
+						</Dialog>
+					</section>
+					<section className="ms-5">
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button variant="outline" className="cursor-pointer">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										height="24px"
+										viewBox="0 -960 960 960"
+										width="24px"
+										fill="#e3e3e3"
+									>
+										<path d="M120-680v-80h720v80H120Zm0 480v-80h720v80H120Zm0-240v-80h720v80H120Z" />
+									</svg>
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent>
+								<DropdownMenuLabel>Menu</DropdownMenuLabel>
+								<DropdownMenuSeparator />
+								<DropdownMenuItem>
+									<Link to={"http://" + location.host + "/cart"}>Cart</Link>
+								</DropdownMenuItem>
+								<DropdownMenuItem>
+									<Link to={"http://" + location.host + "/chat"}>Chat</Link>
+								</DropdownMenuItem>
+								<DropdownMenuItem>Become Seller</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					</section>
 				</section>
 			</nav>
 		</>
