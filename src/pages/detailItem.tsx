@@ -291,10 +291,16 @@ export default function DetailItem() {
 								<p className="font-bold text-xl">Total</p>
 								<p className="font-bold text-xl">Rp240.000</p>
 							</section>
-							<Button className="bg-green-600 hover:bg-green-800 mb-5 w-full cursor-pointer">
+							<Button
+								className="bg-green-600 hover:bg-green-800 mb-5 w-full cursor-pointer"
+								onClick={() => navigate("/checkout")}
+							>
 								Beli
 							</Button>
-							<Button className="bg-blue-600 hover:bg-blue-800 w-full cursor-pointer">
+							<Button
+								className="bg-blue-600 hover:bg-blue-800 w-full cursor-pointer"
+								onClick={() => navigate("/cart")}
+							>
 								Tambah Keranjang
 							</Button>
 						</section>
