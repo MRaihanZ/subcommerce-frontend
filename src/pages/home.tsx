@@ -34,7 +34,7 @@ export default function Home() {
 				<CarouselPrevious />
 				<CarouselNext />
 			</Carousel>
-			<section className="mt-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 justify-items-center-safe gap-y-10">
+			<section className="mt-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 justify-items-center lg:justify-items-stretch gap-y-10">
 				<Link to={"http://" + location.host + "/detail"}>
 					<Card className="w-full max-w-45 md:max-w-55 2xl:max-w-3xs">
 						<CardHeader>
