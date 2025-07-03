@@ -1,4 +1,7 @@
+// import { useNavigate } from "react-router";
+
 export default function SignUp() {
+	// const navigate = useNavigate();
 	return (
 		<>
 			<section className="mx-auto max-w-md">
@@ -105,8 +108,12 @@ export default function SignUp() {
 							/>
 						</section>
 						<section className="flex">
-							<button className="cursor-pointer bg-black rounded-lg hover:bg-primary-dark w-full p-4 text-sm text-white uppercase font-bold tracking-wider">
-								Sign up
+							<button
+								// type="button"
+								className="cursor-pointer bg-black rounded-lg hover:bg-primary-dark w-full p-4 text-sm text-white uppercase font-bold tracking-wider"
+								// onClick={() => navigate("/")}
+							>
+								Daftar
 							</button>
 						</section>
 					</form>
