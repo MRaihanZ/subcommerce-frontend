@@ -17,6 +17,7 @@ import Cart from "@/pages/cart";
 import Profile from "@/pages/profile";
 import Checkout from "@/pages/checkout";
 import DetailItem from "@/pages/detailItem";
+import Search from "@/pages/search";
 import SellerOrder from "@/pages/sellerOrder";
 // import SignUp from "@/components/signUp";
 
@@ -85,6 +86,15 @@ const routes = createBrowserRouter([
 		element: handleFallback({
 			title: "Detail Item Page",
 			component: DetailItem,
+			showNavbar: true,
+			showFooter: true,
+		}),
+	},
+	{
+		path: "/search",
+		element: handleFallback({
+			title: "Search Page",
+			component: Search,
 			showNavbar: true,
 			showFooter: true,
 		}),
