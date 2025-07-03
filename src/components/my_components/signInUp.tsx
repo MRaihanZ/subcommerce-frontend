@@ -20,8 +20,12 @@ export default function SignInUp() {
 		<>
 			<Tabs defaultValue="login">
 				<TabsList>
-					<TabsTrigger value="login">Masuk</TabsTrigger>
-					<TabsTrigger value="register">Daftar</TabsTrigger>
+					<TabsTrigger value="login" className="cursor-pointer">
+						Masuk
+					</TabsTrigger>
+					<TabsTrigger value="register" className="cursor-pointer">
+						Daftar
+					</TabsTrigger>
 				</TabsList>
 				<TabsContent value="login">
 					<Card className="bg-gradient-to-b from-[#edf2f4] from-10% via-white via-30% to-white to-60%">
