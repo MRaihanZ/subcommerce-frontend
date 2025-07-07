@@ -77,7 +77,7 @@ export default function Navbar() {
 										height="24px"
 										viewBox="0 -960 960 960"
 										width="24px"
-										fill="#e3e3e3"
+										fill="currentColor"
 									>
 										<path d="M120-680v-80h720v80H120Zm0 480v-80h720v80H120Zm0-240v-80h720v80H120Z" />
 									</svg>
