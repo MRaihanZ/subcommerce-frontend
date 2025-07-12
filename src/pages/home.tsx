@@ -5,16 +5,10 @@ import {
 	CarouselNext,
 	CarouselPrevious,
 } from "@/components/ui/carousel";
-import {
-	Card,
-	// CardAction,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
-import { Link } from "react-router";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import Items from "@/components/my_components/items";
+import FilterSideBar from "@/components/my_components/filterSideBar";
 
 export default function Home() {
 	return (
@@ -34,371 +28,35 @@ export default function Home() {
 				<CarouselPrevious />
 				<CarouselNext />
 			</Carousel>
-			<section className="mt-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 justify-items-center lg:justify-items-stretch gap-y-10">
-				<Link to={"http://" + location.host + "/detail"}>
-					<Card className="w-full max-w-45 md:max-w-55 2xl:max-w-3xs">
-						<CardHeader>
-							<CardTitle>
-								<img src="/assets/img/item.jpg" alt="" />
-							</CardTitle>
-							<CardDescription className="flex">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									height="24px"
-									viewBox="0 -960 960 960"
-									width="24px"
-									fill="currentColor"
-								>
-									<path d="M160-720v-80h640v80H160Zm0 560v-240h-40v-80l40-200h640l40 200v80h-40v240h-80v-240H560v240H160Zm80-80h240v-160H240v160Zm-38-240h556-556Zm0 0h556l-24-120H226l-24 120Z" />
-								</svg>
-								<span className="self-center">Indo Server</span>
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<p>VPS Linux Indonesia</p>
-							<p className="text-xl font-bold">Rp64.000</p>
-						</CardContent>
-						<CardFooter>
-							<p>⭐ 4.5 | 100 terjual</p>
-						</CardFooter>
-					</Card>
-				</Link>
-				<Link to={"http://" + location.host + "/detail"}>
-					<Card className="w-full max-w-45 md:max-w-55 2xl:max-w-3xs">
-						<CardHeader>
-							<CardTitle>
-								<img src="/assets/img/item.jpg" alt="" />
-							</CardTitle>
-							<CardDescription className="flex">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									height="24px"
-									viewBox="0 -960 960 960"
-									width="24px"
-									fill="currentColor"
-								>
-									<path d="M160-720v-80h640v80H160Zm0 560v-240h-40v-80l40-200h640l40 200v80h-40v240h-80v-240H560v240H160Zm80-80h240v-160H240v160Zm-38-240h556-556Zm0 0h556l-24-120H226l-24 120Z" />
-								</svg>
-								<span className="self-center">Indo Server</span>
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<p>VPS Linux Indonesia</p>
-							<p className="text-xl font-bold">Rp64.000</p>
-						</CardContent>
-						<CardFooter>
-							<p>⭐ 4.5 | 100 terjual</p>
-						</CardFooter>
-					</Card>
-				</Link>
-				<Link to={"http://" + location.host + "/detail"}>
-					<Card className="w-full max-w-45 md:max-w-55 2xl:max-w-3xs">
-						<CardHeader>
-							<CardTitle>
-								<img src="/assets/img/item.jpg" alt="" />
-							</CardTitle>
-							<CardDescription className="flex">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									height="24px"
-									viewBox="0 -960 960 960"
-									width="24px"
-									fill="currentColor"
-								>
-									<path d="M160-720v-80h640v80H160Zm0 560v-240h-40v-80l40-200h640l40 200v80h-40v240h-80v-240H560v240H160Zm80-80h240v-160H240v160Zm-38-240h556-556Zm0 0h556l-24-120H226l-24 120Z" />
-								</svg>
-								<span className="self-center">Indo Server</span>
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<p>VPS Linux Indonesia</p>
-							<p className="text-xl font-bold">Rp64.000</p>
-						</CardContent>
-						<CardFooter>
-							<p>⭐ 4.5 | 100 terjual</p>
-						</CardFooter>
-					</Card>
-				</Link>
-				<Link to={"http://" + location.host + "/detail"}>
-					<Card className="w-full max-w-45 md:max-w-55 2xl:max-w-3xs">
-						<CardHeader>
-							<CardTitle>
-								<img src="/assets/img/item.jpg" alt="" />
-							</CardTitle>
-							<CardDescription className="flex">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									height="24px"
-									viewBox="0 -960 960 960"
-									width="24px"
-									fill="currentColor"
-								>
-									<path d="M160-720v-80h640v80H160Zm0 560v-240h-40v-80l40-200h640l40 200v80h-40v240h-80v-240H560v240H160Zm80-80h240v-160H240v160Zm-38-240h556-556Zm0 0h556l-24-120H226l-24 120Z" />
-								</svg>
-								<span className="self-center">Indo Server</span>
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<p>VPS Linux Indonesia</p>
-							<p className="text-xl font-bold">Rp64.000</p>
-						</CardContent>
-						<CardFooter>
-							<p>⭐ 4.5 | 100 terjual</p>
-						</CardFooter>
-					</Card>
-				</Link>
-				<Link to={"http://" + location.host + "/detail"}>
-					<Card className="w-full max-w-45 md:max-w-55 2xl:max-w-3xs">
-						<CardHeader>
-							<CardTitle>
-								<img src="/assets/img/item.jpg" alt="" />
-							</CardTitle>
-							<CardDescription className="flex">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									height="24px"
-									viewBox="0 -960 960 960"
-									width="24px"
-									fill="currentColor"
-								>
-									<path d="M160-720v-80h640v80H160Zm0 560v-240h-40v-80l40-200h640l40 200v80h-40v240h-80v-240H560v240H160Zm80-80h240v-160H240v160Zm-38-240h556-556Zm0 0h556l-24-120H226l-24 120Z" />
-								</svg>
-								<span className="self-center">Indo Server</span>
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<p>VPS Linux Indonesia</p>
-							<p className="text-xl font-bold">Rp64.000</p>
-						</CardContent>
-						<CardFooter>
-							<p>⭐ 4.5 | 100 terjual</p>
-						</CardFooter>
-					</Card>
-				</Link>
-				<Link to={"http://" + location.host + "/detail"}>
-					<Card className="w-full max-w-45 md:max-w-55 2xl:max-w-3xs">
-						<CardHeader>
-							<CardTitle>
-								<img src="/assets/img/item.jpg" alt="" />
-							</CardTitle>
-							<CardDescription className="flex">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									height="24px"
-									viewBox="0 -960 960 960"
-									width="24px"
-									fill="currentColor"
-								>
-									<path d="M160-720v-80h640v80H160Zm0 560v-240h-40v-80l40-200h640l40 200v80h-40v240h-80v-240H560v240H160Zm80-80h240v-160H240v160Zm-38-240h556-556Zm0 0h556l-24-120H226l-24 120Z" />
-								</svg>
-								<span className="self-center">Indo Server</span>
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<p>VPS Linux Indonesia</p>
-							<p className="text-xl font-bold">Rp64.000</p>
-						</CardContent>
-						<CardFooter>
-							<p>⭐ 4.5 | 100 terjual</p>
-						</CardFooter>
-					</Card>
-				</Link>
-				<Link to={"http://" + location.host + "/detail"}>
-					<Card className="w-full max-w-45 md:max-w-55 2xl:max-w-3xs">
-						<CardHeader>
-							<CardTitle>
-								<img src="/assets/img/item.jpg" alt="" />
-							</CardTitle>
-							<CardDescription className="flex">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									height="24px"
-									viewBox="0 -960 960 960"
-									width="24px"
-									fill="currentColor"
-								>
-									<path d="M160-720v-80h640v80H160Zm0 560v-240h-40v-80l40-200h640l40 200v80h-40v240h-80v-240H560v240H160Zm80-80h240v-160H240v160Zm-38-240h556-556Zm0 0h556l-24-120H226l-24 120Z" />
-								</svg>
-								<span className="self-center">Indo Server</span>
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<p>VPS Linux Indonesia</p>
-							<p className="text-xl font-bold">Rp64.000</p>
-						</CardContent>
-						<CardFooter>
-							<p>⭐ 4.5 | 100 terjual</p>
-						</CardFooter>
-					</Card>
-				</Link>
-				<Link to={"http://" + location.host + "/detail"}>
-					<Card className="w-full max-w-45 md:max-w-55 2xl:max-w-3xs">
-						<CardHeader>
-							<CardTitle>
-								<img src="/assets/img/item.jpg" alt="" />
-							</CardTitle>
-							<CardDescription className="flex">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									height="24px"
-									viewBox="0 -960 960 960"
-									width="24px"
-									fill="currentColor"
-								>
-									<path d="M160-720v-80h640v80H160Zm0 560v-240h-40v-80l40-200h640l40 200v80h-40v240h-80v-240H560v240H160Zm80-80h240v-160H240v160Zm-38-240h556-556Zm0 0h556l-24-120H226l-24 120Z" />
-								</svg>
-								<span className="self-center">Indo Server</span>
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<p>VPS Linux Indonesia</p>
-							<p className="text-xl font-bold">Rp64.000</p>
-						</CardContent>
-						<CardFooter>
-							<p>⭐ 4.5 | 100 terjual</p>
-						</CardFooter>
-					</Card>
-				</Link>
-				<Link to={"http://" + location.host + "/detail"}>
-					<Card className="w-full max-w-45 md:max-w-55 2xl:max-w-3xs">
-						<CardHeader>
-							<CardTitle>
-								<img src="/assets/img/item.jpg" alt="" />
-							</CardTitle>
-							<CardDescription className="flex">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									height="24px"
-									viewBox="0 -960 960 960"
-									width="24px"
-									fill="currentColor"
-								>
-									<path d="M160-720v-80h640v80H160Zm0 560v-240h-40v-80l40-200h640l40 200v80h-40v240h-80v-240H560v240H160Zm80-80h240v-160H240v160Zm-38-240h556-556Zm0 0h556l-24-120H226l-24 120Z" />
-								</svg>
-								<span className="self-center">Indo Server</span>
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<p>VPS Linux Indonesia</p>
-							<p className="text-xl font-bold">Rp64.000</p>
-						</CardContent>
-						<CardFooter>
-							<p>⭐ 4.5 | 100 terjual</p>
-						</CardFooter>
-					</Card>
-				</Link>
-				<Link to={"http://" + location.host + "/detail"}>
-					<Card className="w-full max-w-45 md:max-w-55 2xl:max-w-3xs">
-						<CardHeader>
-							<CardTitle>
-								<img src="/assets/img/item.jpg" alt="" />
-							</CardTitle>
-							<CardDescription className="flex">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									height="24px"
-									viewBox="0 -960 960 960"
-									width="24px"
-									fill="currentColor"
-								>
-									<path d="M160-720v-80h640v80H160Zm0 560v-240h-40v-80l40-200h640l40 200v80h-40v240h-80v-240H560v240H160Zm80-80h240v-160H240v160Zm-38-240h556-556Zm0 0h556l-24-120H226l-24 120Z" />
-								</svg>
-								<span className="self-center">Indo Server</span>
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<p>VPS Linux Indonesia</p>
-							<p className="text-xl font-bold">Rp64.000</p>
-						</CardContent>
-						<CardFooter>
-							<p>⭐ 4.5 | 100 terjual</p>
-						</CardFooter>
-					</Card>
-				</Link>
-				<Link to={"http://" + location.host + "/detail"}>
-					<Card className="w-full max-w-45 md:max-w-55 2xl:max-w-3xs">
-						<CardHeader>
-							<CardTitle>
-								<img src="/assets/img/item.jpg" alt="" />
-							</CardTitle>
-							<CardDescription className="flex">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									height="24px"
-									viewBox="0 -960 960 960"
-									width="24px"
-									fill="currentColor"
-								>
-									<path d="M160-720v-80h640v80H160Zm0 560v-240h-40v-80l40-200h640l40 200v80h-40v240h-80v-240H560v240H160Zm80-80h240v-160H240v160Zm-38-240h556-556Zm0 0h556l-24-120H226l-24 120Z" />
-								</svg>
-								<span className="self-center">Indo Server</span>
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<p>VPS Linux Indonesia</p>
-							<p className="text-xl font-bold">Rp64.000</p>
-						</CardContent>
-						<CardFooter>
-							<p>⭐ 4.5 | 100 terjual</p>
-						</CardFooter>
-					</Card>
-				</Link>
-				<Link to={"http://" + location.host + "/detail"}>
-					<Card className="w-full max-w-45 md:max-w-55 2xl:max-w-3xs">
-						<CardHeader>
-							<CardTitle>
-								<img src="/assets/img/item.jpg" alt="" />
-							</CardTitle>
-							<CardDescription className="flex">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									height="24px"
-									viewBox="0 -960 960 960"
-									width="24px"
-									fill="currentColor"
-								>
-									<path d="M160-720v-80h640v80H160Zm0 560v-240h-40v-80l40-200h640l40 200v80h-40v240h-80v-240H560v240H160Zm80-80h240v-160H240v160Zm-38-240h556-556Zm0 0h556l-24-120H226l-24 120Z" />
-								</svg>
-								<span className="self-center">Indo Server</span>
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<p>VPS Linux Indonesia</p>
-							<p className="text-xl font-bold">Rp64.000</p>
-						</CardContent>
-						<CardFooter>
-							<p>⭐ 4.5 | 100 terjual</p>
-						</CardFooter>
-					</Card>
-				</Link>
-				<Link to={"http://" + location.host + "/detail"}>
-					<Card className="w-full max-w-45 md:max-w-55 2xl:max-w-3xs">
-						<CardHeader>
-							<CardTitle>
-								<img src="/assets/img/item.jpg" alt="" />
-							</CardTitle>
-							<CardDescription className="flex">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									height="24px"
-									viewBox="0 -960 960 960"
-									width="24px"
-									fill="currentColor"
-								>
-									<path d="M160-720v-80h640v80H160Zm0 560v-240h-40v-80l40-200h640l40 200v80h-40v240h-80v-240H560v240H160Zm80-80h240v-160H240v160Zm-38-240h556-556Zm0 0h556l-24-120H226l-24 120Z" />
-								</svg>
-								<span className="self-center">Indo Server</span>
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<p>VPS Linux Indonesia</p>
-							<p className="text-xl font-bold">Rp64.000</p>
-						</CardContent>
-						<CardFooter>
-							<p>⭐ 4.5 | 100 terjual</p>
-						</CardFooter>
-					</Card>
-				</Link>
+			<section className="grid grid-cols-12 mt-5">
+				<section className="col-span-2 h-fit w-full border rounded-sm shadow-sm mt-11">
+					<FilterSideBar />
+				</section>
+				<section className="col-start-3 col-span-10">
+					<Tabs defaultValue="hot">
+						<TabsList className="ms-10 bg-white">
+							<p>Menu: </p>
+							<TabsTrigger
+								value="hot"
+								className="data-[state=active]:shadow-none data-[state=active]:border-b-3 border-0 rounded-none cursor-pointer data-[state=active]:border-black mx-3"
+							>
+								Hot
+							</TabsTrigger>
+							<TabsTrigger
+								value="diskon"
+								className="data-[state=active]:shadow-none data-[state=active]:border-b-3 border-0 rounded-none cursor-pointer data-[state=active]:border-black mx-3"
+							>
+								Diskon
+							</TabsTrigger>
+						</TabsList>
+						<TabsContent value="hot">
+							<Items title="HOT" />
+						</TabsContent>
+						<TabsContent value="diskon">
+							<Items title="DISKON" />
+						</TabsContent>
+					</Tabs>
+				</section>
 			</section>
 		</>
 	);
