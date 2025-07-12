@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
 	Dialog,
 	DialogContent,
@@ -19,25 +18,15 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Link } from "react-router";
-
+import { useState } from "react";
 export default function Navbar() {
+	const [openDialog, setOpenDialog] = useState(false);
 	return (
 		<>
 			<nav className="container mx-auto flex justify-between py-3">
 				<Link to={"http://" + location.host}>Sub Commerce</Link>
 				<section className="flex">
-					<section className="flex w-full max-w-sm items-center">
-						<Label htmlFor="search">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								height="24px"
-								viewBox="0 -960 960 960"
-								width="24px"
-								fill="currentColor"
-							>
-								<path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
-							</svg>
-						</Label>
+					<section className="w-full hidden md:flex md:max-w-sm items-center justify-center">
 						<Input
 							id="search"
 							type="text"
@@ -52,8 +41,8 @@ export default function Navbar() {
 							Search
 						</Button>
 					</section>
-					<section className="ms-5">
-						<Dialog>
+					<section className="md:ms-5 hidden md:block">
+						<Dialog open={openDialog} onOpenChange={setOpenDialog}>
 							<DialogTrigger asChild>
 								<Button variant="outline" className="cursor-pointer">
 									Login
@@ -86,6 +75,23 @@ export default function Navbar() {
 							<DropdownMenuContent>
 								<DropdownMenuLabel>Menu</DropdownMenuLabel>
 								<DropdownMenuSeparator />
+								<DropdownMenuItem asChild onSelect={(e) => e.preventDefault()}>
+									<section className="w-full flex md:hidden max-w-sm items-center justify-center">
+										<Input
+											id="search"
+											type="text"
+											placeholder="Search"
+											className="rounded-r-none border-l-1 border-t-1 border-r-0 border-b-1"
+										/>
+										<Button
+											type="submit"
+											variant="outline"
+											className="rounded-l-none border-l-1 border-t-1 border-r-1 border-b-1 cursor-pointer"
+										>
+											Search
+										</Button>
+									</section>
+								</DropdownMenuItem>
 								<DropdownMenuItem>
 									<Link to={"http://" + location.host + "/cart"}>Cart</Link>
 								</DropdownMenuItem>
@@ -93,6 +99,14 @@ export default function Navbar() {
 									<Link to={"http://" + location.host + "/chat"}>Chat</Link>
 								</DropdownMenuItem>
 								<DropdownMenuItem>Become Seller</DropdownMenuItem>
+								<DropdownMenuItem
+									onSelect={(e) => {
+										e.preventDefault(); // prevent default close/focus behavior
+										setTimeout(() => setOpenDialog(true), 10); // delay to avoid race condition
+									}}
+								>
+									Login
+								</DropdownMenuItem>
 							</DropdownMenuContent>
 						</DropdownMenu>
 					</section>
