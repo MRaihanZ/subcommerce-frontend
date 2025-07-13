@@ -19,6 +19,7 @@ import Checkout from "@/pages/checkout";
 import DetailItem from "@/pages/detailItem";
 import Search from "@/pages/search";
 import SellerOrder from "@/pages/sellerOrder";
+import SellerRegistration from "@/pages/sellerRegistration";
 // import SignUp from "@/components/signUp";
 
 interface HandleFallbackProps {
@@ -113,6 +114,15 @@ const routes = createBrowserRouter([
 		element: handleFallback({
 			title: "Seller Order Page",
 			component: SellerOrder,
+			showNavbar: true,
+			showFooter: true,
+		}),
+	},
+	{
+		path: "/seller/register",
+		element: handleFallback({
+			title: "Seller Registration Page",
+			component: SellerRegistration,
 			showNavbar: true,
 			showFooter: true,
 		}),
