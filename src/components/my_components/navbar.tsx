@@ -32,7 +32,7 @@ export default function Navbar() {
 						<Input
 							id="search"
 							type="text"
-							placeholder="Search"
+							placeholder="..."
 							className="rounded-r-none border-l-1 border-t-1 border-r-0 border-b-1"
 						/>
 						<Button
@@ -41,7 +41,7 @@ export default function Navbar() {
 							onClick={() => navigate("/search")}
 							className="rounded-l-none border-l-1 border-t-1 border-r-1 border-b-1 cursor-pointer"
 						>
-							Search
+							Cari
 						</Button>
 					</section>
 					<section className="md:ms-5 hidden">
@@ -86,7 +86,7 @@ export default function Navbar() {
 										<Input
 											id="search"
 											type="text"
-											placeholder="Search"
+											placeholder="..."
 											className="rounded-r-none border-l-1 border-t-1 border-r-0 border-b-1"
 										/>
 										<Button
@@ -94,20 +94,30 @@ export default function Navbar() {
 											variant="outline"
 											className="rounded-l-none border-l-1 border-t-1 border-r-1 border-b-1 cursor-pointer"
 										>
-											Search
+											Cari
 										</Button>
 									</section>
 								</DropdownMenuItem>
 								<DropdownMenuItem>
-									<Link to={"http://" + location.host + "/cart"}>Cart</Link>
+									<Link to={"http://" + location.host + "/cart"}>
+										Keranjang
+									</Link>
 								</DropdownMenuItem>
 								<DropdownMenuItem>
-									<Link to={"http://" + location.host + "/chat"}>Chat</Link>
+									<Link to={"http://" + location.host + "/chat"}>Pesan</Link>
 								</DropdownMenuItem>
 								{isSignUpIn === 1 ? (
 									<>
-										<DropdownMenuItem>Become Seller</DropdownMenuItem>
-										<DropdownMenuItem>Profile</DropdownMenuItem>
+										<DropdownMenuItem>
+											<Link to={"http://" + location.host + "/seller/register"}>
+												Daftar Penjual
+											</Link>
+										</DropdownMenuItem>
+										<DropdownMenuItem>
+											<Link to={"http://" + location.host + "/profile"}>
+												Profile
+											</Link>
+										</DropdownMenuItem>
 									</>
 								) : (
 									<DropdownMenuItem
@@ -116,7 +126,7 @@ export default function Navbar() {
 											setTimeout(() => setOpenDialog(true), 10); // delay to avoid race condition
 										}}
 									>
-										Login
+										Masuk/Daftar
 									</DropdownMenuItem>
 								)}
 							</DropdownMenuContent>
