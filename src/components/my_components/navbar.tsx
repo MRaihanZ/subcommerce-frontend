@@ -43,7 +43,7 @@ export default function Navbar() {
 							Search
 						</Button>
 					</section>
-					<section className="md:ms-5 hidden md:block">
+					<section className="md:ms-5 hidden">
 						<Dialog open={openDialog} onOpenChange={setOpenDialog}>
 							<DialogTrigger asChild>
 								<Button variant="outline" className="cursor-pointer">
