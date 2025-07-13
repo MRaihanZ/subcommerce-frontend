@@ -17,10 +17,11 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useState } from "react";
 export default function Navbar() {
 	const [openDialog, setOpenDialog] = useState(false);
+	const navigate = useNavigate();
 	return (
 		<>
 			<nav className="container mx-auto flex justify-between py-3">
@@ -36,6 +37,7 @@ export default function Navbar() {
 						<Button
 							type="submit"
 							variant="outline"
+							onClick={() => navigate("/search")}
 							className="rounded-l-none border-l-1 border-t-1 border-r-1 border-b-1 cursor-pointer"
 						>
 							Search
