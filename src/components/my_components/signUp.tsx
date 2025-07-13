@@ -1,7 +1,9 @@
-// import { useNavigate } from "react-router";
+interface SignUpProps {
+	isSignUp: React.Dispatch<React.SetStateAction<number>>;
+	setOpenCloseDialog: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-export default function SignUp() {
-	// const navigate = useNavigate();
+export default function SignUp({ isSignUp, setOpenCloseDialog }: SignUpProps) {
 	return (
 		<>
 			<section className="mx-auto max-w-md">
@@ -109,9 +111,12 @@ export default function SignUp() {
 						</section>
 						<section className="flex">
 							<button
-								// type="button"
+								type="button"
 								className="cursor-pointer bg-black rounded-lg hover:bg-primary-dark w-full p-4 text-sm text-white uppercase font-bold tracking-wider"
-								// onClick={() => navigate("/")}
+								onClick={() => {
+									isSignUp(1);
+									setOpenCloseDialog(false);
+								}}
 							>
 								Daftar
 							</button>

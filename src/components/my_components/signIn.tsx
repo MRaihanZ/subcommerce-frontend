@@ -1,7 +1,8 @@
-// import { useNavigate } from "react-router";
-
-export default function SignIn() {
-	// const navigate = useNavigate();
+interface SignInProps {
+	isSignIn: React.Dispatch<React.SetStateAction<number>>;
+	setOpenCloseDialog: React.Dispatch<React.SetStateAction<boolean>>;
+}
+export default function SignIn({ isSignIn, setOpenCloseDialog }: SignInProps) {
 	return (
 		<>
 			<section className="mx-auto max-w-md">
@@ -100,9 +101,12 @@ export default function SignIn() {
 						</section>
 						<section className="flex">
 							<button
-								// type="button"
+								type="button"
 								className="cursor-pointer bg-black rounded-lg hover:bg-primary-dark w-full p-4 text-sm text-white uppercase font-bold tracking-wider"
-								// onClick={() => navigate("/")}
+								onClick={() => {
+									isSignIn(1);
+									setOpenCloseDialog(false);
+								}}
 							>
 								Masuk
 							</button>

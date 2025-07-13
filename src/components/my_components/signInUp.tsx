@@ -15,7 +15,15 @@ import { Button } from "@/components/ui/button";
 import SignIn from "./signIn";
 import SignUp from "./signUp";
 
-export default function SignInUp() {
+interface SignInUpProps {
+	isSignUpIn: React.Dispatch<React.SetStateAction<number>>;
+	setOpenCloseDialog: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function SignInUp({
+	isSignUpIn,
+	setOpenCloseDialog,
+}: SignInUpProps) {
 	return (
 		<>
 			<Tabs defaultValue="login">
@@ -36,7 +44,10 @@ export default function SignInUp() {
 							</CardDescription>
 						</CardHeader>
 						<CardContent>
-							<SignIn />
+							<SignIn
+								isSignIn={isSignUpIn}
+								setOpenCloseDialog={setOpenCloseDialog}
+							/>
 						</CardContent>
 						<CardFooter className="hidden">
 							<Button>Save changes</Button>
@@ -52,7 +63,10 @@ export default function SignInUp() {
 							</CardDescription>
 						</CardHeader>
 						<CardContent>
-							<SignUp />
+							<SignUp
+								isSignUp={isSignUpIn}
+								setOpenCloseDialog={setOpenCloseDialog}
+							/>
 						</CardContent>
 						<CardFooter className="hidden">
 							<Button>Save password</Button>

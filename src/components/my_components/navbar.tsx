@@ -21,6 +21,7 @@ import { Link, useNavigate } from "react-router";
 import { useState } from "react";
 export default function Navbar() {
 	const [openDialog, setOpenDialog] = useState(false);
+	const [isSignUpIn, setIsSignUpIn] = useState(0);
 	const navigate = useNavigate();
 	return (
 		<>
@@ -53,7 +54,10 @@ export default function Navbar() {
 							<DialogContent>
 								<DialogHeader>
 									<DialogDescription>
-										<SignInUp />
+										<SignInUp
+											isSignUpIn={setIsSignUpIn}
+											setOpenCloseDialog={setOpenDialog}
+										/>
 									</DialogDescription>
 								</DialogHeader>
 							</DialogContent>
@@ -100,15 +104,21 @@ export default function Navbar() {
 								<DropdownMenuItem>
 									<Link to={"http://" + location.host + "/chat"}>Chat</Link>
 								</DropdownMenuItem>
-								<DropdownMenuItem>Become Seller</DropdownMenuItem>
-								<DropdownMenuItem
-									onSelect={(e) => {
-										e.preventDefault(); // prevent default close/focus behavior
-										setTimeout(() => setOpenDialog(true), 10); // delay to avoid race condition
-									}}
-								>
-									Login
-								</DropdownMenuItem>
+								{isSignUpIn === 1 ? (
+									<>
+										<DropdownMenuItem>Become Seller</DropdownMenuItem>
+										<DropdownMenuItem>Profile</DropdownMenuItem>
+									</>
+								) : (
+									<DropdownMenuItem
+										onSelect={(e) => {
+											e.preventDefault(); // prevent default close/focus behavior
+											setTimeout(() => setOpenDialog(true), 10); // delay to avoid race condition
+										}}
+									>
+										Login
+									</DropdownMenuItem>
+								)}
 							</DropdownMenuContent>
 						</DropdownMenu>
 					</section>
