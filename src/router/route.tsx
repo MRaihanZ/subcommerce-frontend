@@ -18,6 +18,8 @@ import Profile from "@/pages/profile";
 import Checkout from "@/pages/checkout";
 import DetailItem from "@/pages/detailItem";
 import Search from "@/pages/search";
+import Seller from "@/pages/seller";
+import SellerItem from "@/pages/sellerItem";
 import SellerOrder from "@/pages/sellerOrder";
 import SellerRegistration from "@/pages/sellerRegistration";
 // import SignUp from "@/components/signUp";
@@ -105,6 +107,24 @@ const routes = createBrowserRouter([
 		element: handleFallback({
 			title: "Profile Page",
 			component: Profile,
+			showNavbar: true,
+			showFooter: true,
+		}),
+	},
+	{
+		path: "/seller",
+		element: handleFallback({
+			title: "Seller Page",
+			component: Seller,
+			showNavbar: true,
+			showFooter: true,
+		}),
+	},
+	{
+		path: "/seller/item",
+		element: handleFallback({
+			title: "Seller Item Page",
+			component: SellerItem,
 			showNavbar: true,
 			showFooter: true,
 		}),
