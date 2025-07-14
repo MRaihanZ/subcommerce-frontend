@@ -99,22 +99,36 @@ export default function Navbar() {
 									</section>
 								</DropdownMenuItem>
 								<DropdownMenuItem>
-									<Link to={"http://" + location.host + "/cart"}>
+									<Link
+										to={"http://" + location.host + "/cart"}
+										className="w-full"
+									>
 										Keranjang
 									</Link>
 								</DropdownMenuItem>
 								<DropdownMenuItem>
-									<Link to={"http://" + location.host + "/chat"}>Pesan</Link>
+									<Link
+										to={"http://" + location.host + "/chat"}
+										className="w-full"
+									>
+										Pesan
+									</Link>
 								</DropdownMenuItem>
 								{isSignUpIn === 1 ? (
 									<>
 										<DropdownMenuItem>
-											<Link to={"http://" + location.host + "/seller/register"}>
+											<Link
+												to={"http://" + location.host + "/seller/register"}
+												className="w-full"
+											>
 												Daftar Penjual
 											</Link>
 										</DropdownMenuItem>
 										<DropdownMenuItem>
-											<Link to={"http://" + location.host + "/profile"}>
+											<Link
+												to={"http://" + location.host + "/profile"}
+												className="w-full"
+											>
 												Profile
 											</Link>
 										</DropdownMenuItem>
@@ -125,6 +139,7 @@ export default function Navbar() {
 											e.preventDefault(); // prevent default close/focus behavior
 											setTimeout(() => setOpenDialog(true), 10); // delay to avoid race condition
 										}}
+										className="cursor-pointer"
 									>
 										Masuk/Daftar
 									</DropdownMenuItem>
