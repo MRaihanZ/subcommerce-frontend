@@ -6,6 +6,7 @@ import MainLayout from "@/layouts/mainLayout";
 
 // Components
 import Navbar from "@/components/my_components/navbar";
+import NavbarSeller from "@/components/my_components/navbarSeller";
 import Footer from "@/components/my_components/footer";
 // import Loading from "@/components/loading";
 
@@ -31,7 +32,7 @@ interface HandleFallbackProps {
 	showFooter: boolean;
 }
 
-const handleFallback = ({
+const handleFallbackUser = ({
 	title,
 	component,
 	showNavbar,
@@ -47,10 +48,26 @@ const handleFallback = ({
 	);
 };
 
+const handleFallbackSeller = ({
+	title,
+	component,
+	showNavbar,
+	showFooter,
+}: HandleFallbackProps) => {
+	return (
+		<Suspense fallback={"Loading......"}>
+			<title>{title}</title>
+			{showNavbar && <NavbarSeller />}
+			<MainLayout page={component} />
+			{showFooter && <Footer />}
+		</Suspense>
+	);
+};
+
 const routes = createBrowserRouter([
 	{
 		path: "/",
-		element: handleFallback({
+		element: handleFallbackUser({
 			title: "Home Page",
 			component: Home,
 			showNavbar: true,
@@ -59,7 +76,7 @@ const routes = createBrowserRouter([
 	},
 	{
 		path: "/cart",
-		element: handleFallback({
+		element: handleFallbackUser({
 			title: "Cart Page",
 			component: Cart,
 			showNavbar: true,
@@ -68,7 +85,7 @@ const routes = createBrowserRouter([
 	},
 	{
 		path: "/chat",
-		element: handleFallback({
+		element: handleFallbackUser({
 			title: "Chat Page",
 			component: Chat,
 			showNavbar: true,
@@ -77,7 +94,7 @@ const routes = createBrowserRouter([
 	},
 	{
 		path: "/checkout",
-		element: handleFallback({
+		element: handleFallbackUser({
 			title: "Checkout Page",
 			component: Checkout,
 			showNavbar: true,
@@ -86,7 +103,7 @@ const routes = createBrowserRouter([
 	},
 	{
 		path: "/detail",
-		element: handleFallback({
+		element: handleFallbackUser({
 			title: "Detail Item Page",
 			component: DetailItem,
 			showNavbar: true,
@@ -95,7 +112,7 @@ const routes = createBrowserRouter([
 	},
 	{
 		path: "/search",
-		element: handleFallback({
+		element: handleFallbackUser({
 			title: "Search Page",
 			component: Search,
 			showNavbar: true,
@@ -104,7 +121,7 @@ const routes = createBrowserRouter([
 	},
 	{
 		path: "/profile",
-		element: handleFallback({
+		element: handleFallbackUser({
 			title: "Profile Page",
 			component: Profile,
 			showNavbar: true,
@@ -113,7 +130,7 @@ const routes = createBrowserRouter([
 	},
 	{
 		path: "/seller",
-		element: handleFallback({
+		element: handleFallbackSeller({
 			title: "Seller Page",
 			component: Seller,
 			showNavbar: true,
@@ -122,7 +139,7 @@ const routes = createBrowserRouter([
 	},
 	{
 		path: "/seller/item",
-		element: handleFallback({
+		element: handleFallbackSeller({
 			title: "Seller Item Page",
 			component: SellerItem,
 			showNavbar: true,
@@ -131,7 +148,7 @@ const routes = createBrowserRouter([
 	},
 	{
 		path: "/seller/order",
-		element: handleFallback({
+		element: handleFallbackSeller({
 			title: "Seller Order Page",
 			component: SellerOrder,
 			showNavbar: true,
@@ -140,7 +157,7 @@ const routes = createBrowserRouter([
 	},
 	{
 		path: "/seller/register",
-		element: handleFallback({
+		element: handleFallbackUser({
 			title: "Seller Registration Page",
 			component: SellerRegistration,
 			showNavbar: true,
@@ -149,12 +166,12 @@ const routes = createBrowserRouter([
 	},
 	// {
 	// 	path: "/daftar",
-	// 	element: handleFallback(SignUp),
+	// 	element: handleFallbackUser(SignUp),
 	// 	children: [],
 	// },
 	{
 		path: "*",
-		element: handleFallback({
+		element: handleFallbackUser({
 			title: "Page Not Found",
 			component: NotFound,
 			showNavbar: true,
