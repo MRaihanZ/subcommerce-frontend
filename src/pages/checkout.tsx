@@ -50,7 +50,6 @@ const statuses: Status[] = [
 export default function Checkout() {
 	const [open, setOpen] = useState(false);
 	const isDesktop = useMediaQuery("(min-width: 768px)");
-	console.log(isDesktop);
 	const [selectedStatus, setSelectedStatus] = useState<Status | null>(null);
 	return (
 		<>
