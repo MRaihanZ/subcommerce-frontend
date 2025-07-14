@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 
 export default function FilterSideBar() {
 	const [minHarga, setMinHarga] = useState(0);
@@ -50,6 +51,11 @@ export default function FilterSideBar() {
 							className="ps-9"
 						/>
 					</section>
+				</section>
+				<section className="my-3">
+					<Button variant="outline" className="w-full cursor-pointer">
+						Terapkan
+					</Button>
 				</section>
 			</section>
 		</>
