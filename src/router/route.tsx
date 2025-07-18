@@ -20,6 +20,7 @@ import Checkout from "@/pages/checkout";
 import DetailItem from "@/pages/detailItem";
 import Search from "@/pages/search";
 import Seller from "@/pages/seller";
+import SellerChat from "@/pages/sellerChat";
 import SellerItem from "@/pages/sellerItem";
 import SellerOrder from "@/pages/sellerOrder";
 import SellerRegistration from "@/pages/sellerRegistration";
@@ -133,6 +134,15 @@ const routes = createBrowserRouter([
 		element: handleFallbackSeller({
 			title: "Seller Page",
 			component: Seller,
+			showNavbar: true,
+			showFooter: true,
+		}),
+	},
+	{
+		path: "/seller/chat",
+		element: handleFallbackSeller({
+			title: "Seller Chat Page",
+			component: SellerChat,
 			showNavbar: true,
 			showFooter: true,
 		}),

@@ -50,6 +50,16 @@ export default function NavbarSeller() {
 					>
 						barang
 					</Link>
+					<Link
+						to={"http://" + location.host + "/seller/chat"}
+						className={
+							activePage === "/seller/chat"
+								? "w-full border-b-2 border-black mx-3"
+								: "w-full mx-3"
+						}
+					>
+						chat
+					</Link>
 					<Link to={"http://" + location.host} className="w-full mx-3">
 						Kembali
 					</Link>
