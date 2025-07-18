@@ -1,10 +1,5 @@
 {
-	"variantTitle": ["Specification", "Location"],
-	"variantSpecification": [
-		"1 Core 512Mb",
-		"1 Core 1GB",
-		"2 core 1GB",
-		"2 core 2GB"
-	],
-	"variantLocation": ["Indonesia", "Singapore"]
+	"is_default": false,
+	"variant": ["1 Core 512MB", "1 Core 1GB", "2 core 1GB", "2 core 2GB"],
+	"stock": 63
 }

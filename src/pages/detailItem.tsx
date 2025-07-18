@@ -17,22 +17,19 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
 export default function DetailItem() {
-	const selectedLength = Array(rawData.variantTitle.length).fill("");
-	const [variantState, setVariantState] = useState({
-		variant: rawData.variantTitle,
-		selected: selectedLength,
-	});
-	const variantOptions: Record<string, string[]> = {};
+	// const selectedLength = Array(rawData.variantTitle.length).fill("");
+	const [variantState, setVariantState] = useState("");
+	// const variantOptions: Record<string, string[]> = {};
 
-	rawData.variantTitle.forEach((title: string) => {
-		const key = `variant${title}`;
-		const options = rawData[key];
+	// rawData.variantTitle.forEach((title: string) => {
+	// 	const key = `variant${title}`;
+	// 	const options = rawData[key];
 
-		if (Array.isArray(options)) {
-			variantOptions[title] = options;
-		}
-	});
-	console.log(variantState);
+	// 	if (Array.isArray(options)) {
+	// 		variantOptions[title] = options;
+	// 	}
+	// });
+	console.log(rawData.variant);
 
 	const [quantity, setQuantity] = useState(1);
 
@@ -126,7 +123,7 @@ export default function DetailItem() {
 						</section>
 					</section>
 				</section>
-				<section className="col-span-3 col-start-6 w-full">
+				<section className="col-span-6 col-start-6 w-full">
 					<section className="px-3 py-3">
 						<section className="pb-3">
 							<p className="text-justify font-semibold text-xl">
@@ -134,77 +131,165 @@ export default function DetailItem() {
 								finibus turpis a venenatis eleifend.
 							</p>
 							{/* <p className="mt-3 font-bold text-xl">Rp64.000</p> */}
+							<section className="flex justify-between mt-3">
+								<section className="flex items-center">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										height="24px"
+										viewBox="0 -960 960 960"
+										width="24px"
+										fill="currentColor"
+									>
+										<path d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z" />
+									</svg>
+									<p className="ms-2">53 terjual</p>
+								</section>
+								<p>⭐ 4.5</p>
+							</section>
 						</section>
 						<Separator />
-						<section className="mt-3">
-							<section>
-								{variantState.variant.map((variantName, variantIndex) => (
-									<section key={variantName} className="mb-4">
-										<p className="text-sm font-medium capitalize mb-2">
-											{variantName}
-										</p>
-										<section className="flex gap-2 flex-wrap">
-											{variantOptions[variantName].map((value) => (
-												<Button
-													key={value}
-													variant={
-														variantState.selected[variantIndex] === value
-															? "default"
-															: "outline"
-													}
-													onClick={() => {
-														const updatedSelected = [...variantState.selected];
-														updatedSelected[variantIndex] = value;
-														setVariantState((prev) => ({
-															...prev,
-															selected: updatedSelected,
-														}));
-													}}
-													className="cursor-pointer"
-												>
-													{value}
-												</Button>
-											))}
-										</section>
+						{rawData.is_default === false ? (
+							<>
+								<section className="my-3">
+									<p className="text-sm font-medium capitalize mb-2">
+										Variant:{" "}
+									</p>
+									<section className="flex gap-2 flex-wrap">
+										{rawData.variant.map((variantName, variantIndex) => (
+											<Button
+												key={variantIndex}
+												variant={
+													variantState === variantName ? "default" : "outline"
+												}
+												onClick={() => setVariantState(variantName)}
+												className="cursor-pointer"
+											>
+												{variantName}
+											</Button>
+										))}
 									</section>
-								))}
+								</section>
+								<Separator />
+							</>
+						) : (
+							""
+						)}
+						<section className="py-7 bottom-0">
+							<section className="flex items-center mb-5">
+								<section className="flex w-full max-w-25 items-center relative">
+									<Button
+										variant="outline"
+										size="icon"
+										className="size-8 absolute start-1 border-0 cursor-pointer rounded-2xl"
+										onClick={() => setQuantity(quantity - 1)}
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											height="24px"
+											viewBox="0 -960 960 960"
+											width="24px"
+											fill="currentColor"
+										>
+											<path d="M200-440v-80h560v80H200Z" />
+										</svg>
+									</Button>
+									<Input
+										type="text"
+										value={quantity}
+										onChange={(e) => setQuantity(Number(e.target.value))}
+										className="text-center rounded-2xl"
+									/>
+									<Button
+										variant="outline"
+										size="icon"
+										className="size-8 absolute end-1 border-0 cursor-pointer rounded-2xl"
+										onClick={() => setQuantity(quantity + 1)}
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											height="24px"
+											viewBox="0 -960 960 960"
+											width="24px"
+											fill="currentColor"
+										>
+											<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
+										</svg>
+									</Button>
+								</section>
+								<p className="ms-5">Tersedia: {rawData.stock}</p>
 							</section>
-						</section>
-						<Separator />
-						<section className="flex justify-between my-3">
-							<section className="flex items-center">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									height="24px"
-									viewBox="0 -960 960 960"
-									width="24px"
-									fill="currentColor"
+							{!variantState ? (
+								""
+							) : (
+								<section className="mb-3">
+									<p>
+										Variant:{" "}
+										<Badge variant="outline" className="mx-1">
+											{variantState}
+										</Badge>
+									</p>
+								</section>
+							)}
+							<section className="flex justify-between mb-5">
+								<p className="font-bold text-xl">Total</p>
+								<p className="font-bold text-xl">Rp240.000</p>
+							</section>
+							<section className="flex gap-5">
+								<Button
+									className="bg-green-600 hover:bg-green-800 mb-5 w-full cursor-pointer flex-1"
+									onClick={() => navigate("/checkout")}
 								>
-									<path d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z" />
-								</svg>
-								<p className="ms-2">53 terjual</p>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										height="24px"
+										viewBox="0 -960 960 960"
+										width="24px"
+										fill="currentColor"
+									>
+										<path d="M560-440q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35ZM280-320q-33 0-56.5-23.5T200-400v-320q0-33 23.5-56.5T280-800h560q33 0 56.5 23.5T920-720v320q0 33-23.5 56.5T840-320H280Zm80-80h400q0-33 23.5-56.5T840-480v-160q-33 0-56.5-23.5T760-720H360q0 33-23.5 56.5T280-640v160q33 0 56.5 23.5T360-400Zm440 240H120q-33 0-56.5-23.5T40-240v-440h80v440h680v80ZM280-400v-320 320Z" />
+									</svg>
+									Beli
+								</Button>
+								<Button
+									className="bg-blue-600 hover:bg-blue-800 w-full cursor-pointer flex-1"
+									onClick={() => navigate("/cart")}
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										height="24px"
+										viewBox="0 -960 960 960"
+										width="24px"
+										fill="currentColor"
+									>
+										<path d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z" />
+									</svg>
+									Tambah Keranjang
+								</Button>
 							</section>
-							<p>⭐ 4.5</p>
 						</section>
 						<Separator />
 						<section className="mt-3">
-							<p>
-								Tipe:
-								<Badge variant="outline" className="mx-1">
-									One Time
-								</Badge>
-								<Badge variant="outline" className="mx-1">
-									Subscription
-								</Badge>
-							</p>
-							<p>
+							<p className="mb-3">
 								Min. Pemesanan:
 								<Badge variant="outline" className="mx-1">
 									1
 								</Badge>
 							</p>
-							<br />
-							<p>
+							<p className="text-justify">
+								Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+								Curabitur lobortis tempor lacus, et hendrerit orci viverra ut.
+								Nullam convallis neque dignissim leo venenatis, a semper elit
+								sollicitudin. Donec aliquet, magna ac efficitur commodo, risus
+								orci hendrerit massa, ac ultricies massa lacus in arcu. Nunc id
+								gravida est. Donec ac blandit nibh. Cras leo ex, imperdiet a
+								nisl in, tincidunt tincidunt ante. Morbi semper viverra
+								tincidunt. Quisque erat lectus, accumsan nec imperdiet
+								sollicitudin, cursus at arcu. Nullam aliquet consectetur orci et
+								condimentum. Vestibulum sit amet purus porttitor, volutpat dui
+								feugiat, accumsan lorem. Vivamus congue ac nulla porta faucibus.
+								Maecenas efficitur mauris eu sodales dictum.
+							</p>
+							<p className="text-justify">
 								Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 								Curabitur lobortis tempor lacus, et hendrerit orci viverra ut.
 								Nullam convallis neque dignissim leo venenatis, a semper elit
@@ -221,90 +306,29 @@ export default function DetailItem() {
 						</section>
 					</section>
 				</section>
-				<section className="col-span-3 col-start-10 w-full">
-					<section className="py-7 px-5 bottom-0 bg-white border rounded-md">
-						<section className="mb-5">
-							<p className="font-semibold text-xl pb-5">Ringkasan Belanja</p>
-							<Separator />
+			</section>
+			<section className="grid grid-cols-12 mt-5">
+				<section className="col-span-10 col-start-2">
+					<section className="flex gap-3 border rounded-xl px-7 py-5">
+						<section className="flex-none">
+							<p className="font-semibold text-3xl">
+								⭐ 4.6 <sub>/ 5.0</sub>
+							</p>
+							<section className="flex ms-1.5 mt-3">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									height="24px"
+									viewBox="0 -960 960 960"
+									width="24px"
+									fill="currentColor"
+								>
+									<path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z" />
+								</svg>
+								<p className="ms-3">53 Pembeli</p>
+							</section>
 						</section>
-						<section className="">
-							<section className="flex w-full max-w-25 items-center my-3 relative">
-								<Button
-									variant="outline"
-									size="icon"
-									className="size-8 absolute start-1 border-0 cursor-pointer rounded-2xl"
-									onClick={() => setQuantity(quantity - 1)}
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										height="24px"
-										viewBox="0 -960 960 960"
-										width="24px"
-										fill="currentColor"
-									>
-										<path d="M200-440v-80h560v80H200Z" />
-									</svg>
-								</Button>
-								<Input
-									type="text"
-									value={quantity}
-									onChange={(e) => setQuantity(Number(e.target.value))}
-									className="text-center rounded-2xl"
-								/>
-								<Button
-									variant="outline"
-									size="icon"
-									className="size-8 absolute end-1 border-0 cursor-pointer rounded-2xl"
-									onClick={() => setQuantity(quantity + 1)}
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										height="24px"
-										viewBox="0 -960 960 960"
-										width="24px"
-										fill="currentColor"
-									>
-										<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
-									</svg>
-								</Button>
-							</section>
-							<section className="mb-3">
-								<p>
-									Variant:{" "}
-									{variantState.selected.map((variantName, variantIndex) =>
-										variantName === "" ? (
-											""
-										) : (
-											<Badge
-												key={variantIndex}
-												variant="outline"
-												className="mx-1"
-											>
-												{variantName}
-											</Badge>
-										)
-									)}
-									{/* <Badge variant="outline" className="mx-1">
-										Indonesia
-									</Badge> */}
-								</p>
-							</section>
-							<section className="flex justify-between mb-5">
-								<p className="font-bold text-xl">Total</p>
-								<p className="font-bold text-xl">Rp240.000</p>
-							</section>
-							<Button
-								className="bg-green-600 hover:bg-green-800 mb-5 w-full cursor-pointer"
-								onClick={() => navigate("/checkout")}
-							>
-								Beli
-							</Button>
-							<Button
-								className="bg-blue-600 hover:bg-blue-800 w-full cursor-pointer"
-								onClick={() => navigate("/cart")}
-							>
-								Tambah Keranjang
-							</Button>
+						<section className="flex-1">
+							<p>alskdfj</p>
 						</section>
 					</section>
 				</section>
