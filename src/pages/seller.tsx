@@ -20,15 +20,93 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-	TableFooter,
+	// TableFooter,
 } from "@/components/ui/table";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 
 export default function Seller() {
 	return (
 		<>
-			<section>
-				<section className="hidden md:grid grid-cols-12 gap-x-5 justify-items-center">
-					<Card className="col-start-4 col-span-2 w-full">
+			<section className="mt-10">
+				<section className="flex justify-around ms-30">
+					<section className="flex items-center gap-3">
+						<Avatar>
+							<AvatarImage src="/assets/img/profile1.jpg" />
+							<AvatarFallback>Profile1</AvatarFallback>
+						</Avatar>
+						<section>
+							<p className="text-xl font-semibold">User Name</p>
+							<section className="flex items-center">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									height="16px"
+									viewBox="0 -960 960 960"
+									width="16px"
+									fill="currentColor"
+								>
+									<path d="M480-480q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Zm0 294q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z" />
+								</svg>
+								<p className="ms-1">location</p>
+							</section>
+						</section>
+						<section className="h-7 flex justify-center">
+							<Separator orientation="vertical" />
+						</section>
+						<section className="flex items-center">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								height="24px"
+								viewBox="0 -960 960 960"
+								width="24px"
+								fill="currentColor"
+							>
+								<path d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z" />
+							</svg>
+							<p className="ms-2">500+ Barang Terjual</p>
+						</section>
+					</section>
+					<section className="flex gap-5">
+						<Button
+							variant="outline"
+							className="cursor-pointer"
+							// onClick={}
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								height="24px"
+								viewBox="0 -960 960 960"
+								width="24px"
+								fill="currentColor"
+							>
+								<path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z" />
+							</svg>
+							Edit Seller Profile
+						</Button>
+						<section className="h-7 flex justify-center">
+							<Separator orientation="vertical" />
+						</section>
+						<Button
+							variant="destructive"
+							className="cursor-pointer"
+							// onClick={}
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								height="24px"
+								viewBox="0 -960 960 960"
+								width="24px"
+								fill="currentColor"
+							>
+								<path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+							</svg>
+							Delete Seller Account
+						</Button>
+					</section>
+				</section>
+				<section className="xl:grid xl:grid-cols-11 2xl:grid-cols-12 flex flex-col sm:flex-row gap-y-5 sm:gap-x-5 justify-items-center mt-10">
+					<Card className="col-start-2 2xl:col-start-4 col-span-3 2xl:col-span-2 w-full">
 						<CardHeader>
 							<CardTitle>
 								Total Terjual
@@ -61,7 +139,7 @@ export default function Seller() {
 							</p>
 						</CardFooter>
 					</Card>
-					<Card className="col-span-2 w-full">
+					<Card className="col-span-3 2xl:col-span-2 w-full">
 						<CardHeader>
 							<CardTitle>
 								Total Dibatalkan
@@ -94,7 +172,7 @@ export default function Seller() {
 							</p>
 						</CardFooter>
 					</Card>
-					<Card className="col-span-2 w-full">
+					<Card className="col-span-3 2xl:col-span-2 w-full">
 						<CardHeader>
 							<CardTitle>
 								Total Pendapatan
