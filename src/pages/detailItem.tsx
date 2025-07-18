@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import rawData from "./variantItem.json";
 
+import Comment from "@/components/my_components/comment";
+
 import {
 	Carousel,
 	CarouselContent,
@@ -308,11 +310,11 @@ export default function DetailItem() {
 				</section>
 			</section>
 			<section className="grid grid-cols-12 mt-5">
-				<section className="col-span-10 col-start-2">
-					<section className="flex gap-3 border rounded-xl px-7 py-5">
-						<section className="flex-none">
+				<section className="col-span-2 col-start-2">
+					<section className="flex justify-center gap-3 border rounded-md px-7 py-5">
+						<section>
 							<p className="font-semibold text-3xl">
-								⭐ 4.6 <sub>/ 5.0</sub>
+								⭐ 4.6<sub className="text-base"> / 5.0</sub>
 							</p>
 							<section className="flex ms-1.5 mt-3">
 								<svg
@@ -327,9 +329,18 @@ export default function DetailItem() {
 								<p className="ms-3">53 Pembeli</p>
 							</section>
 						</section>
-						<section className="flex-1">
-							<p>alskdfj</p>
-						</section>
+					</section>
+				</section>
+				<section className="col-span-8 col-start-4 ms-5">
+					<section className="border rounded-md p-5">
+						<p className="mb-5 text-xl font-semibold">Ulasan Pembeli</p>
+						<Comment />
+						<Comment />
+						<Comment />
+						<Comment />
+						<Comment />
+						<Comment />
+						<Comment />
 					</section>
 				</section>
 			</section>
