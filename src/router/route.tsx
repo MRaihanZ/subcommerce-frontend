@@ -149,9 +149,9 @@ const routes = createBrowserRouter([
 		}),
 	},
 	{
-		path: "/seller/item",
+		path: "/seller/product",
 		element: handleFallbackSeller({
-			title: "Seller Item Page",
+			title: "Seller Product Page",
 			component: SellerItem,
 			showNavbar: true,
 			showFooter: true,

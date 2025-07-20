@@ -41,14 +41,14 @@ export default function NavbarSeller() {
 						Pesanan
 					</Link>
 					<Link
-						to={"http://" + location.host + "/seller/item"}
+						to={"http://" + location.host + "/seller/product"}
 						className={
-							activePage === "/seller/item"
+							activePage === "/seller/product"
 								? "w-full border-b-2 border-black mx-3"
 								: "w-full mx-3"
 						}
 					>
-						Barang
+						Produk
 					</Link>
 					<Link
 						to={"http://" + location.host + "/seller/chat"}
