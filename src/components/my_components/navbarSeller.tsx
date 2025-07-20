@@ -28,7 +28,7 @@ export default function NavbarSeller() {
 								: "w-full mx-3"
 						}
 					>
-						home
+						Home
 					</Link>
 					<Link
 						to={"http://" + location.host + "/seller/order"}
@@ -38,7 +38,7 @@ export default function NavbarSeller() {
 								: "w-full mx-3"
 						}
 					>
-						pesanan
+						Pesanan
 					</Link>
 					<Link
 						to={"http://" + location.host + "/seller/item"}
@@ -48,7 +48,7 @@ export default function NavbarSeller() {
 								: "w-full mx-3"
 						}
 					>
-						barang
+						Barang
 					</Link>
 					<Link
 						to={"http://" + location.host + "/seller/chat"}
@@ -58,7 +58,17 @@ export default function NavbarSeller() {
 								: "w-full mx-3"
 						}
 					>
-						chat
+						Chat
+					</Link>
+					<Link
+						to={"http://" + location.host + "/seller/profile"}
+						className={
+							activePage === "/seller/profile"
+								? "w-full border-b-2 border-black mx-3"
+								: "w-full mx-3"
+						}
+					>
+						Profile
 					</Link>
 					<Link to={"http://" + location.host} className="w-full mx-3">
 						Kembali

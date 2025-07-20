@@ -23,6 +23,7 @@ import Seller from "@/pages/seller";
 import SellerChat from "@/pages/sellerChat";
 import SellerItem from "@/pages/sellerItem";
 import SellerOrder from "@/pages/sellerOrder";
+import SellerProfile from "@/pages/sellerProfile";
 import SellerRegistration from "@/pages/sellerRegistration";
 // import SignUp from "@/components/signUp";
 
@@ -161,6 +162,15 @@ const routes = createBrowserRouter([
 		element: handleFallbackSeller({
 			title: "Seller Order Page",
 			component: SellerOrder,
+			showNavbar: true,
+			showFooter: true,
+		}),
+	},
+	{
+		path: "/seller/profile",
+		element: handleFallbackSeller({
+			title: "Seller Profile Page",
+			component: SellerProfile,
 			showNavbar: true,
 			showFooter: true,
 		}),
