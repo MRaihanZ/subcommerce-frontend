@@ -68,12 +68,30 @@ export default function SellerProfile() {
 										: "flex-1 cursor-pointer w-full mt-5"
 								}
 							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									height="24px"
+									viewBox="0 -960 960 960"
+									width="24px"
+									fill="currentColor"
+								>
+									<path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z" />
+								</svg>
 								Submit
 							</Button>
 							<Button
 								className="flex-1 w-full cursor-pointer mt-5"
 								onClick={() => setIsDisableButton((prev) => !prev)}
 							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									height="24px"
+									viewBox="0 -960 960 960"
+									width="24px"
+									fill="currentColor"
+								>
+									<path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z" />
+								</svg>
 								{isDisableButton ? "Edit" : "Batalkan"}
 							</Button>
 						</section>
@@ -85,6 +103,15 @@ export default function SellerProfile() {
 											className="w-full cursor-pointer mt-5"
 											variant="destructive"
 										>
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												height="24px"
+												viewBox="0 -960 960 960"
+												width="24px"
+												fill="currentColor"
+											>
+												<path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+											</svg>
 											Hapus Akun
 										</Button>
 									</DialogTrigger>
