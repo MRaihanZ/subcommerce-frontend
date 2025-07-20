@@ -1,9 +1,23 @@
+import { useState } from "react";
+
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Calendar as CalendarIcon } from "lucide-react";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
+
 interface SignUpProps {
 	isSignUp: React.Dispatch<React.SetStateAction<number>>;
 	setOpenCloseDialog: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function SignUp({ isSignUp, setOpenCloseDialog }: SignUpProps) {
+	const [date, setDate] = useState<Date | undefined>(undefined);
+	const [open, setOpen] = useState(false);
 	return (
 		<>
 			<section className="mx-auto max-w-md">
@@ -98,6 +112,38 @@ export default function SignUp({ isSignUp, setOpenCloseDialog }: SignUpProps) {
 								id="email"
 								placeholder="Enter your E-Mail..."
 							/>
+						</section>
+						<section className="flex flex-col mb-3">
+							<Label htmlFor="date" className="mb-1 font-normal">
+								Tanggal Lahir
+							</Label>
+							<Popover open={open} onOpenChange={setOpen}>
+								<PopoverTrigger asChild>
+									<Button
+										variant="outline"
+										id="date"
+										className="w-full justify-between font-normal"
+									>
+										{date ? date.toLocaleDateString() : "Pilih Tanggal"}
+										<CalendarIcon />
+									</Button>
+								</PopoverTrigger>
+								<PopoverContent
+									className="w-auto overflow-hidden p-0"
+									align="start"
+								>
+									<Calendar
+										mode="single"
+										selected={date}
+										captionLayout="dropdown"
+										onSelect={(date) => {
+											setDate(date);
+											setOpen(false);
+										}}
+										className="mx-auto"
+									/>
+								</PopoverContent>
+							</Popover>
 						</section>
 						<section className="mb-6">
 							<label htmlFor="password">Password</label>
