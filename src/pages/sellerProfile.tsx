@@ -40,7 +40,12 @@ export default function SellerProfile() {
 							<Label htmlFor="picture" className="mb-1">
 								Picture
 							</Label>
-							<Input id="picture" type="file" disabled={isDisableButton} />
+							<Input
+								id="picture"
+								type="file"
+								name="picture"
+								disabled={isDisableButton}
+							/>
 						</section>
 						<InputFormProfile
 							labelName="Nama"

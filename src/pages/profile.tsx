@@ -46,7 +46,7 @@ export default function Profile() {
 							<Label htmlFor="picture" className="mb-1">
 								Picture
 							</Label>
-							<Input id="picture" type="file" />
+							<Input id="picture" type="file" name="picture" />
 						</section>
 						<InputFormProfile
 							labelName="Nama"
