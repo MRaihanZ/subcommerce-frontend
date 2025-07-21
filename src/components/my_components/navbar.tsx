@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
 	Dialog,
+	DialogTitle,
 	DialogContent,
 	DialogDescription,
 	DialogHeader,
@@ -53,13 +54,13 @@ export default function Navbar() {
 							</DialogTrigger>
 							<DialogContent>
 								<DialogHeader>
-									<DialogDescription>
-										<SignInUp
-											isSignUpIn={setIsSignUpIn}
-											setOpenCloseDialog={setOpenDialog}
-										/>
-									</DialogDescription>
+									<DialogTitle></DialogTitle>
+									<DialogDescription></DialogDescription>
 								</DialogHeader>
+								<SignInUp
+									isSignUpIn={setIsSignUpIn}
+									setOpenCloseDialog={setOpenDialog}
+								/>
 							</DialogContent>
 						</Dialog>
 					</section>
