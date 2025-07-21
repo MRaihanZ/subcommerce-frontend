@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import {
 	Table,
 	TableBody,
@@ -8,51 +10,369 @@ import {
 	TableRow,
 	// TableFooter,
 } from "@/components/ui/table";
+import {
+	Carousel,
+	CarouselContent,
+	CarouselItem,
+	// CarouselNext,
+	// CarouselPrevious,
+} from "@/components/ui/carousel";
+import {
+	Dialog,
+	// DialogClose,
+	DialogContent,
+	DialogDescription,
+	// DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+
+import AddProduct from "@/components/my_components/addProduct";
 
 export default function SellerItem() {
+	const [openDialogEdit, setOpenDialogEdit] = useState(false);
+	const [openDialogDelete, setOpenDialogDelete] = useState(false);
+	const [openDialogVariant, setOpenDialogVariant] = useState(false);
+	const [testSwitch, setTestSwitch] = useState(true);
 	return (
 		<>
-			<section className="mt-7">
-				<section className="my-7">
-					<Table className="">
-						<TableCaption>Barang</TableCaption>
-						<TableHeader>
-							<TableRow>
-								<TableHead className="w-[100px]">Id</TableHead>
-								<TableHead>Nama</TableHead>
-								<TableHead>Status</TableHead>
-								<TableHead>Tanggal Pembelian</TableHead>
-								<TableHead>Payment Id</TableHead>
-								<TableHead className="text-right">Harga</TableHead>
-							</TableRow>
-						</TableHeader>
-						<TableBody>
-							<TableRow className="h-20">
-								<TableCell className="font-medium">INV001</TableCell>
-								<TableCell>VPS Linux Indonesia</TableCell>
-								<TableCell>Paid</TableCell>
-								<TableCell>2024-03-07 23:19</TableCell>
-								<TableCell>PAY001</TableCell>
-								<TableCell className="text-right">Rp150.000</TableCell>
-							</TableRow>
-							<TableRow className="h-20">
-								<TableCell className="font-medium">INV001</TableCell>
-								<TableCell>VPS Linux Indonesia</TableCell>
-								<TableCell>Paid</TableCell>
-								<TableCell>2024-03-07 23:19</TableCell>
-								<TableCell>PAY001</TableCell>
-								<TableCell className="text-right">Rp150.000</TableCell>
-							</TableRow>
-						</TableBody>
-						{/* <TableFooter>
+			<section className="my-7">
+				<Table>
+					<TableCaption>Produk</TableCaption>
+					<TableHeader>
+						<TableRow>
+							<TableHead>Image</TableHead>
+							<TableHead>Nama</TableHead>
+							<TableHead>Deskripsi</TableHead>
+							<TableHead>Rata-Rata Rating</TableHead>
+							<TableHead>Total Rating</TableHead>
+							<TableHead className="text-center">Aktif</TableHead>
+							<TableHead className="text-center">Aksi</TableHead>
+						</TableRow>
+					</TableHeader>
+					<TableBody>
+						<TableRow>
+							<TableCell className="w-40">
+								<Carousel>
+									<CarouselContent>
+										<CarouselItem className="flex justify-center">
+											<img src="/assets/img/item.jpg" alt="Testing" />
+										</CarouselItem>
+										<CarouselItem className="flex justify-center">
+											<img src="/assets/img/item.jpg" alt="Testing" />
+										</CarouselItem>
+										<CarouselItem className="flex justify-center">
+											<img src="/assets/img/item.jpg" alt="Testing" />
+										</CarouselItem>
+									</CarouselContent>
+								</Carousel>
+							</TableCell>
+							<TableCell>VPS Linux Indonesia</TableCell>
+							<TableCell>
+								<p className="max-w-30 truncate">
+									Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+									Curabitur lobortis tempor lacus, et hendrerit orci viverra ut.
+									Nullam convallis neque dignissim leo venenatis, a semper elit
+									sollicitudin. Donec aliquet, magna ac efficitur commodo, risus
+									orci hendrerit massa, ac ultricies massa lacus in arcu. Nunc
+									id gravida est. Donec ac blandit nibh. Cras leo ex, imperdiet
+									a nisl in, tincidunt tincidunt ante. Morbi semper viverra
+									tincidunt. Quisque erat lectus, accumsan nec imperdiet
+									sollicitudin, cursus at arcu. Nullam aliquet consectetur orci
+									et condimentum. Vestibulum sit amet purus porttitor, volutpat
+									dui feugiat, accumsan lorem. Vivamus congue ac nulla porta
+									faucibus. Maecenas efficitur mauris eu sodales dictum.
+								</p>
+							</TableCell>
+							<TableCell>4.5</TableCell>
+							<TableCell>40</TableCell>
+							<TableCell className="text-center">
+								<Switch checked={testSwitch} onCheckedChange={setTestSwitch} />
+							</TableCell>
+							<TableCell className="flex flex-col justify-center flex-wrap items-center gap-3 py-5">
+								<Dialog open={openDialogEdit} onOpenChange={setOpenDialogEdit}>
+									<DialogTrigger asChild>
+										<Button variant="outline" className="cursor-pointer w-full">
+											Edit
+										</Button>
+									</DialogTrigger>
+									<DialogContent className="sm:max-w-7xl">
+										<DialogHeader>
+											<DialogTitle></DialogTitle>
+											<DialogDescription></DialogDescription>
+										</DialogHeader>
+										<AddProduct />
+									</DialogContent>
+								</Dialog>
+								<Dialog
+									open={openDialogDelete}
+									onOpenChange={setOpenDialogDelete}
+								>
+									<DialogTrigger asChild>
+										<Button
+											className="cursor-pointer w-full"
+											variant="destructive"
+										>
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												height="24px"
+												viewBox="0 -960 960 960"
+												width="24px"
+												fill="currentColor"
+											>
+												<path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+											</svg>
+											Hapus Produk
+										</Button>
+									</DialogTrigger>
+									<DialogContent>
+										<DialogHeader>
+											<DialogTitle>Konfirmasi Hapus Produk</DialogTitle>
+											<DialogDescription></DialogDescription>
+										</DialogHeader>
+										<section className="flex gap-5">
+											<Button
+												className="w-full flex-1 cursor-pointer mt-5"
+												onClick={() => setOpenDialogDelete(false)}
+											>
+												Tidak
+											</Button>
+											<Button
+												className="w-full flex-1 cursor-pointer mt-5"
+												variant="destructive"
+											>
+												Ya
+											</Button>
+										</section>
+									</DialogContent>
+								</Dialog>
+								<Dialog
+									open={openDialogVariant}
+									onOpenChange={setOpenDialogVariant}
+								>
+									<DialogTrigger asChild>
+										<Button variant="outline" className="cursor-pointer w-full">
+											Variant
+										</Button>
+									</DialogTrigger>
+									<DialogContent>
+										<DialogHeader>
+											<DialogTitle>Variant</DialogTitle>
+											<DialogDescription></DialogDescription>
+										</DialogHeader>
+										<section className="flex gap-5">
+											<Button
+												className="w-full flex-1 cursor-pointer mt-5"
+												onClick={() => setOpenDialogVariant(false)}
+											>
+												Tidak
+											</Button>
+											<Button
+												className="w-full flex-1 cursor-pointer mt-5"
+												variant="destructive"
+											>
+												Ya
+											</Button>
+										</section>
+									</DialogContent>
+								</Dialog>
+								<DropdownMenu>
+									<DropdownMenuTrigger asChild>
+										<Button variant="outline" className="cursor-pointer w-full">
+											Edit Variant
+										</Button>
+									</DropdownMenuTrigger>
+									<DropdownMenuContent>
+										<DropdownMenuLabel>Pilih Variant</DropdownMenuLabel>
+										<DropdownMenuSeparator />
+										{/* <DropdownMenuItem
+												onSelect={(e) => {
+													e.preventDefault(); // prevent default close/focus behavior
+													setTimeout(() => setOpenDialog(true), 10); // delay to avoid race condition
+												}}
+												className="cursor-pointer"
+											>
+												Masuk/Daftar
+											</DropdownMenuItem> */}
+										<DropdownMenuItem>1 Core 512MB</DropdownMenuItem>
+										<DropdownMenuItem>1 Core 1GB</DropdownMenuItem>
+										<DropdownMenuItem>2 core 1GB</DropdownMenuItem>
+										<DropdownMenuItem>2 core 2GB</DropdownMenuItem>
+									</DropdownMenuContent>
+								</DropdownMenu>
+							</TableCell>
+						</TableRow>
+						<TableRow>
+							<TableCell className="w-40">
+								<Carousel>
+									<CarouselContent>
+										<CarouselItem className="flex justify-center">
+											<img src="/assets/img/item.jpg" alt="Testing" />
+										</CarouselItem>
+										<CarouselItem className="flex justify-center">
+											<img src="/assets/img/item.jpg" alt="Testing" />
+										</CarouselItem>
+										<CarouselItem className="flex justify-center">
+											<img src="/assets/img/item.jpg" alt="Testing" />
+										</CarouselItem>
+									</CarouselContent>
+								</Carousel>
+							</TableCell>
+							<TableCell>VPS Linux Indonesia</TableCell>
+							<TableCell>
+								<p className="max-w-30 truncate">
+									Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+									Curabitur lobortis tempor lacus, et hendrerit orci viverra ut.
+									Nullam convallis neque dignissim leo venenatis, a semper elit
+									sollicitudin. Donec aliquet, magna ac efficitur commodo, risus
+									orci hendrerit massa, ac ultricies massa lacus in arcu. Nunc
+									id gravida est. Donec ac blandit nibh. Cras leo ex, imperdiet
+									a nisl in, tincidunt tincidunt ante. Morbi semper viverra
+									tincidunt. Quisque erat lectus, accumsan nec imperdiet
+									sollicitudin, cursus at arcu. Nullam aliquet consectetur orci
+									et condimentum. Vestibulum sit amet purus porttitor, volutpat
+									dui feugiat, accumsan lorem. Vivamus congue ac nulla porta
+									faucibus. Maecenas efficitur mauris eu sodales dictum.
+								</p>
+							</TableCell>
+							<TableCell>4.5</TableCell>
+							<TableCell>40</TableCell>
+							<TableCell className="text-center">
+								<Switch checked={testSwitch} onCheckedChange={setTestSwitch} />
+							</TableCell>
+							<TableCell className="flex flex-col justify-center flex-wrap items-center gap-3 py-5">
+								<Dialog open={openDialogEdit} onOpenChange={setOpenDialogEdit}>
+									<DialogTrigger asChild>
+										<Button variant="outline" className="cursor-pointer w-full">
+											Edit
+										</Button>
+									</DialogTrigger>
+									<DialogContent className="sm:max-w-7xl">
+										<DialogHeader>
+											<DialogTitle></DialogTitle>
+											<DialogDescription></DialogDescription>
+										</DialogHeader>
+										<AddProduct />
+									</DialogContent>
+								</Dialog>
+								<Dialog
+									open={openDialogDelete}
+									onOpenChange={setOpenDialogDelete}
+								>
+									<DialogTrigger asChild>
+										<Button
+											className="cursor-pointer w-full"
+											variant="destructive"
+										>
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												height="24px"
+												viewBox="0 -960 960 960"
+												width="24px"
+												fill="currentColor"
+											>
+												<path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+											</svg>
+											Hapus Produk
+										</Button>
+									</DialogTrigger>
+									<DialogContent>
+										<DialogHeader>
+											<DialogTitle>Konfirmasi Hapus Produk</DialogTitle>
+											<DialogDescription></DialogDescription>
+										</DialogHeader>
+										<section className="flex gap-5">
+											<Button
+												className="w-full flex-1 cursor-pointer mt-5"
+												onClick={() => setOpenDialogDelete(false)}
+											>
+												Tidak
+											</Button>
+											<Button
+												className="w-full flex-1 cursor-pointer mt-5"
+												variant="destructive"
+											>
+												Ya
+											</Button>
+										</section>
+									</DialogContent>
+								</Dialog>
+								<Dialog
+									open={openDialogVariant}
+									onOpenChange={setOpenDialogVariant}
+								>
+									<DialogTrigger asChild>
+										<Button variant="outline" className="cursor-pointer w-full">
+											Variant
+										</Button>
+									</DialogTrigger>
+									<DialogContent>
+										<DialogHeader>
+											<DialogTitle>Variant</DialogTitle>
+											<DialogDescription></DialogDescription>
+										</DialogHeader>
+										<section className="flex gap-5">
+											<Button
+												className="w-full flex-1 cursor-pointer mt-5"
+												onClick={() => setOpenDialogVariant(false)}
+											>
+												Tidak
+											</Button>
+											<Button
+												className="w-full flex-1 cursor-pointer mt-5"
+												variant="destructive"
+											>
+												Ya
+											</Button>
+										</section>
+									</DialogContent>
+								</Dialog>
+								<DropdownMenu>
+									<DropdownMenuTrigger asChild>
+										<Button variant="outline" className="cursor-pointer w-full">
+											Edit Variant
+										</Button>
+									</DropdownMenuTrigger>
+									<DropdownMenuContent>
+										<DropdownMenuLabel>Pilih Variant</DropdownMenuLabel>
+										<DropdownMenuSeparator />
+										{/* <DropdownMenuItem
+												onSelect={(e) => {
+													e.preventDefault(); // prevent default close/focus behavior
+													setTimeout(() => setOpenDialog(true), 10); // delay to avoid race condition
+												}}
+												className="cursor-pointer"
+											>
+												Masuk/Daftar
+											</DropdownMenuItem> */}
+										<DropdownMenuItem>1 Core 512MB</DropdownMenuItem>
+										<DropdownMenuItem>1 Core 1GB</DropdownMenuItem>
+										<DropdownMenuItem>2 core 1GB</DropdownMenuItem>
+										<DropdownMenuItem>2 core 2GB</DropdownMenuItem>
+									</DropdownMenuContent>
+								</DropdownMenu>
+							</TableCell>
+						</TableRow>
+					</TableBody>
+					{/* <TableFooter>
 							<TableRow>
 								<TableCell colSpan={5} className="text-right">
 									Total: Rp750.000
 								</TableCell>
 							</TableRow>
 						</TableFooter> */}
-					</Table>
-				</section>
+				</Table>
 			</section>
 		</>
 	);
