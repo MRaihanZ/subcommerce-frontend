@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -15,64 +14,66 @@ export default function NavbarSeller() {
 
 	return (
 		<>
-			<nav className="container mx-auto flex justify-between py-3">
+			<nav className="container mx-auto flex justify-between py-3 px-3">
 				<Link to={"http://" + location.host + "/seller"}>
 					Sub Commerce Seller
 				</Link>
 				<section className="flex">
-					<Link
-						to={"http://" + location.host + "/seller"}
-						className={
-							activePage === "/seller"
-								? "w-full border-b-2 border-black mx-3"
-								: "w-full mx-3"
-						}
-					>
-						Home
-					</Link>
-					<Link
-						to={"http://" + location.host + "/seller/order"}
-						className={
-							activePage === "/seller/order"
-								? "w-full border-b-2 border-black mx-3"
-								: "w-full mx-3"
-						}
-					>
-						Pesanan
-					</Link>
-					<Link
-						to={"http://" + location.host + "/seller/product"}
-						className={
-							activePage === "/seller/product"
-								? "w-full border-b-2 border-black mx-3"
-								: "w-full mx-3"
-						}
-					>
-						Produk
-					</Link>
-					<Link
-						to={"http://" + location.host + "/seller/chat"}
-						className={
-							activePage === "/seller/chat"
-								? "w-full border-b-2 border-black mx-3"
-								: "w-full mx-3"
-						}
-					>
-						Chat
-					</Link>
-					<Link
-						to={"http://" + location.host + "/seller/profile"}
-						className={
-							activePage === "/seller/profile"
-								? "w-full border-b-2 border-black mx-3"
-								: "w-full mx-3"
-						}
-					>
-						Profile
-					</Link>
-					<Link to={"http://" + location.host} className="w-full mx-3">
-						Kembali
-					</Link>
+					<section className="hidden md:block">
+						<Link
+							to={"http://" + location.host + "/seller"}
+							className={
+								activePage === "/seller"
+									? "w-full border-b-2 border-black mx-3"
+									: "w-full mx-3"
+							}
+						>
+							Home
+						</Link>
+						<Link
+							to={"http://" + location.host + "/seller/order"}
+							className={
+								activePage === "/seller/order"
+									? "w-full border-b-2 border-black mx-3"
+									: "w-full mx-3"
+							}
+						>
+							Pesanan
+						</Link>
+						<Link
+							to={"http://" + location.host + "/seller/product"}
+							className={
+								activePage === "/seller/product"
+									? "w-full border-b-2 border-black mx-3"
+									: "w-full mx-3"
+							}
+						>
+							Produk
+						</Link>
+						<Link
+							to={"http://" + location.host + "/seller/chat"}
+							className={
+								activePage === "/seller/chat"
+									? "w-full border-b-2 border-black mx-3"
+									: "w-full mx-3"
+							}
+						>
+							Chat
+						</Link>
+						<Link
+							to={"http://" + location.host + "/seller/profile"}
+							className={
+								activePage === "/seller/profile"
+									? "w-full border-b-2 border-black mx-3"
+									: "w-full mx-3"
+							}
+						>
+							Profile
+						</Link>
+						<Link to={"http://" + location.host} className="w-full mx-3">
+							Kembali
+						</Link>
+					</section>
 					<section className="block md:hidden">
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
@@ -91,37 +92,69 @@ export default function NavbarSeller() {
 							<DropdownMenuContent>
 								<DropdownMenuLabel>Menu</DropdownMenuLabel>
 								<DropdownMenuSeparator />
-								<DropdownMenuItem asChild onSelect={(e) => e.preventDefault()}>
-									<section className="w-full flex md:hidden max-w-sm items-center justify-center">
-										<Input
-											id="search"
-											type="text"
-											placeholder="..."
-											className="rounded-r-none border-l-1 border-t-1 border-r-0 border-b-1"
-										/>
-										<Button
-											type="submit"
-											variant="outline"
-											className="rounded-l-none border-l-1 border-t-1 border-r-1 border-b-1 cursor-pointer"
-										>
-											Cari
-										</Button>
-									</section>
-								</DropdownMenuItem>
 								<DropdownMenuItem>
 									<Link
-										to={"http://" + location.host + "/cart"}
-										className="w-full"
+										to={"http://" + location.host + "/seller"}
+										className={
+											activePage === "/seller"
+												? "w-full border-b-2 border-black mx-3"
+												: "w-full mx-3"
+										}
 									>
-										Keranjang
+										Home
 									</Link>
 								</DropdownMenuItem>
 								<DropdownMenuItem>
 									<Link
-										to={"http://" + location.host + "/chat"}
-										className="w-full"
+										to={"http://" + location.host + "/seller/order"}
+										className={
+											activePage === "/seller/order"
+												? "w-full border-b-2 border-black mx-3"
+												: "w-full mx-3"
+										}
 									>
-										Pesan
+										Pesanan
+									</Link>
+								</DropdownMenuItem>
+								<DropdownMenuItem>
+									<Link
+										to={"http://" + location.host + "/seller/product"}
+										className={
+											activePage === "/seller/product"
+												? "w-full border-b-2 border-black mx-3"
+												: "w-full mx-3"
+										}
+									>
+										Produk
+									</Link>
+								</DropdownMenuItem>
+								<DropdownMenuItem>
+									<Link
+										to={"http://" + location.host + "/seller/chat"}
+										className={
+											activePage === "/seller/chat"
+												? "w-full border-b-2 border-black mx-3"
+												: "w-full mx-3"
+										}
+									>
+										Chat
+									</Link>
+								</DropdownMenuItem>
+								<DropdownMenuItem>
+									<Link
+										to={"http://" + location.host + "/seller/profile"}
+										className={
+											activePage === "/seller/profile"
+												? "w-full border-b-2 border-black mx-3"
+												: "w-full mx-3"
+										}
+									>
+										Profile
+									</Link>
+								</DropdownMenuItem>
+								<DropdownMenuItem>
+									<Link to={"http://" + location.host} className="w-full mx-3">
+										Kembali
 									</Link>
 								</DropdownMenuItem>
 							</DropdownMenuContent>
