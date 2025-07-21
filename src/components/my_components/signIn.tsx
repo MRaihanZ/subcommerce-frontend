@@ -84,7 +84,7 @@ export default function SignIn({ isSignIn, setOpenCloseDialog }: SignInProps) {
 							<input
 								className="border w-full p-3 rounded-lg"
 								name="email"
-								type="text"
+								type="email"
 								id="email"
 								placeholder="E-Mail"
 							/>
