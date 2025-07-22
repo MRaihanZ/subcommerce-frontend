@@ -32,7 +32,6 @@ export default function CheckoutItem() {
 							<Badge variant="outline" className="mx-1">
 								2 Core 4GB
 							</Badge>
-							<Badge variant="outline">Indonesia</Badge>
 						</p>
 						<p>
 							Jumlah:
