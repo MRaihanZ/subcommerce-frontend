@@ -40,7 +40,6 @@ export default function CartItem() {
 							<Badge variant="outline" className="mx-1">
 								2 Core 4GB
 							</Badge>
-							<Badge variant="outline">Indonesia</Badge>
 						</p>
 						<section className="flex w-full max-w-25 items-center my-3 relative">
 							<Button
