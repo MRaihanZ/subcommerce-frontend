@@ -37,12 +37,6 @@ export default function SellerOrderItem() {
 							</Badge>
 						</p>
 						<p>
-							Location:
-							<Badge variant="outline" className="mx-1">
-								Indonesia
-							</Badge>
-						</p>
-						<p>
 							Jumlah:
 							<Badge variant="outline" className="ms-1">
 								1
