@@ -18,6 +18,7 @@ import Cart from "@/pages/cart";
 import Profile from "@/pages/profile";
 import Checkout from "@/pages/checkout";
 import DetailItem from "@/pages/detailItem";
+import OrderList from "@/pages/orderList";
 import Search from "@/pages/search";
 import Seller from "@/pages/seller";
 import SellerChat from "@/pages/sellerChat";
@@ -108,6 +109,15 @@ const routes = createBrowserRouter([
 		element: handleFallbackUser({
 			title: "Detail Item Page",
 			component: DetailItem,
+			showNavbar: true,
+			showFooter: true,
+		}),
+	},
+	{
+		path: "/order-list",
+		element: handleFallbackUser({
+			title: "Order List Page",
+			component: OrderList,
 			showNavbar: true,
 			showFooter: true,
 		}),
