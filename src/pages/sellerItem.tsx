@@ -51,27 +51,32 @@ export default function SellerItem() {
 	const [openDialog, setOpenDialog] = useState(false);
 	const [openDialogAction, setOpenDialogAction] =
 		useState<string>("addProduct");
+	const [productSelected, setProductSelected] = useState<number>(0);
+	const [variantSelected, setVariantSelected] = useState<number>(0);
 	const [testSwitch, setTestSwitch] = useState(true);
 
-	const childComponentsDialog: Record<string, ReactNode> = {
-		addProduct: (
-			<>
-				<DialogHeader>
-					<DialogTitle></DialogTitle>
-					<DialogDescription></DialogDescription>
-				</DialogHeader>
-				<AddProduct />
-			</>
-		),
-		editProduct: (
-			<>
-				<DialogHeader>
-					<DialogTitle></DialogTitle>
-					<DialogDescription></DialogDescription>
-				</DialogHeader>
-				<EditProduct
-					name="test edit"
-					description="Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+	const childComponentsDialog = (key: string) => {
+		switch (key) {
+			case "addProduct":
+				return (
+					<>
+						<DialogHeader>
+							<DialogTitle></DialogTitle>
+							<DialogDescription></DialogDescription>
+						</DialogHeader>
+						<AddProduct />
+					</>
+				);
+			case "editProduct":
+				return (
+					<>
+						<DialogHeader>
+							<DialogTitle></DialogTitle>
+							<DialogDescription></DialogDescription>
+						</DialogHeader>
+						<EditProduct
+							name="test edit"
+							description="Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 									Curabitur lobortis tempor lacus, et hendrerit orci viverra ut.
 									Nullam convallis neque dignissim leo venenatis, a semper elit
 									sollicitudin. Donec aliquet, magna ac efficitur commodo, risus
@@ -83,41 +88,46 @@ export default function SellerItem() {
 									et condimentum. Vestibulum sit amet purus porttitor, volutpat
 									dui feugiat, accumsan lorem. Vivamus congue ac nulla porta
 									faucibus. Maecenas efficitur mauris eu sodales dictum."
-					stock={53}
-					// price={120000}
-					discount={0}
-					minPurchase={1}
-					hasVariant={true}
-				/>
-			</>
-		),
-		deleteProduct: (
-			<>
-				<DialogHeader>
-					<DialogTitle>Konfirmasi Hapus Produk</DialogTitle>
-					<DialogDescription></DialogDescription>
-				</DialogHeader>
-				<DeleteProduct setStateDialog={setOpenDialog} />
-			</>
-		),
-		addVariant: (
-			<>
-				<DialogHeader>
-					<DialogTitle>Add Variant</DialogTitle>
-					<DialogDescription></DialogDescription>
-				</DialogHeader>
-				<AddVariants setStateDialog={setOpenDialog} />
-			</>
-		),
-		editVariant: (
-			<>
-				<DialogHeader>
-					<DialogTitle>Edit Variant</DialogTitle>
-					<DialogDescription></DialogDescription>
-				</DialogHeader>
-				<EditVariants setStateDialog={setOpenDialog} />
-			</>
-		),
+							stock={53}
+							price={120000}
+							discount={0}
+							minPurchase={1}
+							hasVariant={false}
+							isActive={true}
+						/>
+					</>
+				);
+			case "deleteProduct":
+				return (
+					<>
+						<DialogHeader>
+							<DialogTitle>Konfirmasi Hapus Produk</DialogTitle>
+							<DialogDescription></DialogDescription>
+						</DialogHeader>
+						<DeleteProduct setStateDialog={setOpenDialog} />
+					</>
+				);
+			case "addVariant":
+				return (
+					<>
+						<DialogHeader>
+							<DialogTitle>Add Variant</DialogTitle>
+							<DialogDescription></DialogDescription>
+						</DialogHeader>
+						<AddVariants setStateDialog={setOpenDialog} />
+					</>
+				);
+			case "editVariant":
+				return (
+					<>
+						<DialogHeader>
+							<DialogTitle>Edit Variant</DialogTitle>
+							<DialogDescription></DialogDescription>
+						</DialogHeader>
+						<EditVariants setStateDialog={setOpenDialog} />
+					</>
+				);
+		}
 	};
 	return (
 		<>
@@ -209,6 +219,7 @@ export default function SellerItem() {
 									onClick={() => {
 										setOpenDialog(true);
 										setOpenDialogAction("editProduct");
+										setProductSelected(1);
 									}}
 								>
 									Edit
@@ -219,6 +230,7 @@ export default function SellerItem() {
 									onClick={() => {
 										setOpenDialog(true);
 										setOpenDialogAction("deleteProduct");
+										setProductSelected(1);
 									}}
 								>
 									<svg
@@ -251,227 +263,62 @@ export default function SellerItem() {
 									<DropdownMenuContent>
 										<DropdownMenuLabel>Pilih Variant</DropdownMenuLabel>
 										<DropdownMenuSeparator />
-										{/* <DropdownMenuItem
-												onSelect={(e) => {
-													e.preventDefault(); // prevent default close/focus behavior
-													setTimeout(() => setOpenDialog(true), 10); // delay to avoid race condition
+										<DropdownMenuItem className="p-0">
+											<Button
+												variant="outline"
+												className="cursor-pointer w-full border-0 shadow-none"
+												onClick={() => {
+													setOpenDialog(true);
+													setOpenDialogAction("editVariant");
+													setProductSelected(1);
+													setVariantSelected(1);
 												}}
-												className="cursor-pointer"
 											>
-												Masuk/Daftar
-											</DropdownMenuItem> */}
-										<DropdownMenuItem>1 Core 512MB</DropdownMenuItem>
-										<DropdownMenuItem>1 Core 1GB</DropdownMenuItem>
-										<DropdownMenuItem>2 core 1GB</DropdownMenuItem>
-										<DropdownMenuItem>2 core 2GB</DropdownMenuItem>
-									</DropdownMenuContent>
-								</DropdownMenu>
-							</TableCell>
-						</TableRow>
-						<TableRow>
-							<TableCell className="w-40">
-								<Carousel>
-									<CarouselContent>
-										<CarouselItem className="flex justify-center">
-											<img src="/assets/img/item.jpg" alt="Testing" />
-										</CarouselItem>
-										<CarouselItem className="flex justify-center">
-											<img src="/assets/img/item.jpg" alt="Testing" />
-										</CarouselItem>
-										<CarouselItem className="flex justify-center">
-											<img src="/assets/img/item.jpg" alt="Testing" />
-										</CarouselItem>
-									</CarouselContent>
-								</Carousel>
-							</TableCell>
-							<TableCell>VPS Linux Indonesia</TableCell>
-							<TableCell>
-								<p className="max-w-30 truncate">
-									Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-									Curabitur lobortis tempor lacus, et hendrerit orci viverra ut.
-									Nullam convallis neque dignissim leo venenatis, a semper elit
-									sollicitudin. Donec aliquet, magna ac efficitur commodo, risus
-									orci hendrerit massa, ac ultricies massa lacus in arcu. Nunc
-									id gravida est. Donec ac blandit nibh. Cras leo ex, imperdiet
-									a nisl in, tincidunt tincidunt ante. Morbi semper viverra
-									tincidunt. Quisque erat lectus, accumsan nec imperdiet
-									sollicitudin, cursus at arcu. Nullam aliquet consectetur orci
-									et condimentum. Vestibulum sit amet purus porttitor, volutpat
-									dui feugiat, accumsan lorem. Vivamus congue ac nulla porta
-									faucibus. Maecenas efficitur mauris eu sodales dictum.
-								</p>
-							</TableCell>
-							<TableCell>4.5</TableCell>
-							<TableCell>40</TableCell>
-							<TableCell className="text-center">
-								<Switch checked={testSwitch} onCheckedChange={setTestSwitch} />
-							</TableCell>
-							<TableCell className="flex flex-col justify-center flex-wrap items-center gap-3 py-5">
-								<Button
-									variant="outline"
-									className="cursor-pointer w-full"
-									onClick={() => {
-										setOpenDialog(true);
-										setOpenDialogAction("editProduct");
-									}}
-								>
-									Edit
-								</Button>
-								<Button
-									className="cursor-pointer w-full"
-									variant="destructive"
-									onClick={() => {
-										setOpenDialog(true);
-										setOpenDialogAction("deleteProduct");
-									}}
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										height="24px"
-										viewBox="0 -960 960 960"
-										width="24px"
-										fill="currentColor"
-									>
-										<path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-									</svg>
-									Hapus Produk
-								</Button>
-								<Button
-									variant="outline"
-									className="cursor-pointer w-full"
-									onClick={() => {
-										setOpenDialog(true);
-										setOpenDialogAction("addVariant");
-									}}
-								>
-									Add Variant
-								</Button>
-								<DropdownMenu>
-									<DropdownMenuTrigger asChild>
-										<Button variant="outline" className="cursor-pointer w-full">
-											Edit Variant
-										</Button>
-									</DropdownMenuTrigger>
-									<DropdownMenuContent>
-										<DropdownMenuLabel>Pilih Variant</DropdownMenuLabel>
-										<DropdownMenuSeparator />
-										{/* <DropdownMenuItem
-												onSelect={(e) => {
-													e.preventDefault(); // prevent default close/focus behavior
-													setTimeout(() => setOpenDialog(true), 10); // delay to avoid race condition
+												1 Core 512MB
+											</Button>
+										</DropdownMenuItem>
+										<DropdownMenuItem className="p-0">
+											<Button
+												variant="outline"
+												className="cursor-pointer w-full border-0 shadow-none"
+												onClick={() => {
+													setOpenDialog(true);
+													setOpenDialogAction("editVariant");
+													setProductSelected(1);
+													setVariantSelected(2);
 												}}
-												className="cursor-pointer"
 											>
-												Masuk/Daftar
-											</DropdownMenuItem> */}
-										<DropdownMenuItem>1 Core 512MB</DropdownMenuItem>
-										<DropdownMenuItem>1 Core 1GB</DropdownMenuItem>
-										<DropdownMenuItem>2 core 1GB</DropdownMenuItem>
-										<DropdownMenuItem>2 core 2GB</DropdownMenuItem>
-									</DropdownMenuContent>
-								</DropdownMenu>
-							</TableCell>
-						</TableRow>
-						<TableRow>
-							<TableCell className="w-40">
-								<Carousel>
-									<CarouselContent>
-										<CarouselItem className="flex justify-center">
-											<img src="/assets/img/item.jpg" alt="Testing" />
-										</CarouselItem>
-										<CarouselItem className="flex justify-center">
-											<img src="/assets/img/item.jpg" alt="Testing" />
-										</CarouselItem>
-										<CarouselItem className="flex justify-center">
-											<img src="/assets/img/item.jpg" alt="Testing" />
-										</CarouselItem>
-									</CarouselContent>
-								</Carousel>
-							</TableCell>
-							<TableCell>VPS Linux Indonesia</TableCell>
-							<TableCell>
-								<p className="max-w-30 truncate">
-									Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-									Curabitur lobortis tempor lacus, et hendrerit orci viverra ut.
-									Nullam convallis neque dignissim leo venenatis, a semper elit
-									sollicitudin. Donec aliquet, magna ac efficitur commodo, risus
-									orci hendrerit massa, ac ultricies massa lacus in arcu. Nunc
-									id gravida est. Donec ac blandit nibh. Cras leo ex, imperdiet
-									a nisl in, tincidunt tincidunt ante. Morbi semper viverra
-									tincidunt. Quisque erat lectus, accumsan nec imperdiet
-									sollicitudin, cursus at arcu. Nullam aliquet consectetur orci
-									et condimentum. Vestibulum sit amet purus porttitor, volutpat
-									dui feugiat, accumsan lorem. Vivamus congue ac nulla porta
-									faucibus. Maecenas efficitur mauris eu sodales dictum.
-								</p>
-							</TableCell>
-							<TableCell>4.5</TableCell>
-							<TableCell>40</TableCell>
-							<TableCell className="text-center">
-								<Switch checked={testSwitch} onCheckedChange={setTestSwitch} />
-							</TableCell>
-							<TableCell className="flex flex-col justify-center flex-wrap items-center gap-3 py-5">
-								<Button
-									variant="outline"
-									className="cursor-pointer w-full"
-									onClick={() => {
-										setOpenDialog(true);
-										setOpenDialogAction("editProduct");
-									}}
-								>
-									Edit
-								</Button>
-								<Button
-									className="cursor-pointer w-full"
-									variant="destructive"
-									onClick={() => {
-										setOpenDialog(true);
-										setOpenDialogAction("deleteProduct");
-									}}
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										height="24px"
-										viewBox="0 -960 960 960"
-										width="24px"
-										fill="currentColor"
-									>
-										<path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-									</svg>
-									Hapus Produk
-								</Button>
-								<Button
-									variant="outline"
-									className="cursor-pointer w-full"
-									onClick={() => {
-										setOpenDialog(true);
-										setOpenDialogAction("addVariant");
-									}}
-								>
-									Add Variant
-								</Button>
-								<DropdownMenu>
-									<DropdownMenuTrigger asChild>
-										<Button variant="outline" className="cursor-pointer w-full">
-											Edit Variant
-										</Button>
-									</DropdownMenuTrigger>
-									<DropdownMenuContent>
-										<DropdownMenuLabel>Pilih Variant</DropdownMenuLabel>
-										<DropdownMenuSeparator />
-										{/* <DropdownMenuItem
-												onSelect={(e) => {
-													e.preventDefault(); // prevent default close/focus behavior
-													setTimeout(() => setOpenDialog(true), 10); // delay to avoid race condition
+												1 Core 1GB
+											</Button>
+										</DropdownMenuItem>
+										<DropdownMenuItem className="p-0">
+											<Button
+												variant="outline"
+												className="cursor-pointer w-full border-0 shadow-none"
+												onClick={() => {
+													setOpenDialog(true);
+													setOpenDialogAction("editVariant");
+													setProductSelected(1);
+													setVariantSelected(3);
 												}}
-												className="cursor-pointer"
 											>
-												Masuk/Daftar
-											</DropdownMenuItem> */}
-										<DropdownMenuItem>1 Core 512MB</DropdownMenuItem>
-										<DropdownMenuItem>1 Core 1GB</DropdownMenuItem>
-										<DropdownMenuItem>2 core 1GB</DropdownMenuItem>
-										<DropdownMenuItem>2 core 2GB</DropdownMenuItem>
+												2 core 1GB
+											</Button>
+										</DropdownMenuItem>
+										<DropdownMenuItem className="p-0">
+											<Button
+												variant="outline"
+												className="cursor-pointer w-full border-0 shadow-none"
+												onClick={() => {
+													setOpenDialog(true);
+													setOpenDialogAction("editVariant");
+													setProductSelected(1);
+													setVariantSelected(4);
+												}}
+											>
+												2 core 2GB
+											</Button>
+										</DropdownMenuItem>
 									</DropdownMenuContent>
 								</DropdownMenu>
 							</TableCell>
@@ -495,7 +342,7 @@ export default function SellerItem() {
 							: ""
 					}
 				>
-					{childComponentsDialog[openDialogAction]}
+					{childComponentsDialog(openDialogAction)}
 				</DialogContent>
 			</Dialog>
 		</>

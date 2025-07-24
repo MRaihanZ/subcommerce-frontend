@@ -9,118 +9,15 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 
-interface variantProps {
-	index: number;
-	total: number;
-	onAdd: () => void;
-	onDelete: () => void;
-}
-
-function Variant({ index, total, onAdd, onDelete }: variantProps) {
-	return (
-		<>
-			{total > 1 && index === 0 && (
-				<p className="font-semibold text-xl mb-1">Varian</p>
-			)}
-			<section className="flex items-center gap-3 mb-3">
-				<section className="mb-3">
-					<label htmlFor={"variantName" + index}>Nama</label>
-					<input
-						className="border w-full p-3 rounded-lg"
-						name={"variantName" + index}
-						type="text"
-						id={"variantName" + index}
-						placeholder="Nama..."
-					/>
-				</section>
-				<section className="mb-3">
-					<label htmlFor={"variantStock" + index}>Stok</label>
-					<input
-						className="border w-full p-3 rounded-lg"
-						name={"variantStock" + index}
-						type="number"
-						id={"variantStock" + index}
-						placeholder="Stok..."
-					/>
-				</section>
-				<section className="mb-3">
-					<label htmlFor={"variantPrice" + index}>Harga</label>
-					<input
-						className="border w-full p-3 rounded-lg"
-						name={"variantPrice" + index}
-						type="number"
-						id={"variantPrice" + index}
-						placeholder="Harga..."
-					/>
-				</section>
-				<section className="mb-3">
-					<label htmlFor={"variantDiscount" + index}>Diskon</label>
-					<input
-						className="border w-full p-3 rounded-lg"
-						name={"variantDiscount" + index}
-						type="number"
-						id={"variantDiscount" + index}
-						placeholder="Diskon..."
-					/>
-				</section>
-				<section className="mb-3">
-					<label htmlFor={"variantMinOrder" + index}>Minimum Order</label>
-					<input
-						className="border w-full p-3 rounded-lg"
-						name={"variantMinOrder" + index}
-						type="number"
-						id={"variantMinOrder" + index}
-						placeholder="Minimum Order..."
-					/>
-				</section>
-
-				{index === total - 1 && (
-					<>
-						<Button
-							type="button"
-							className="cursor-pointer p-4"
-							onClick={onAdd}
-						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								height="24px"
-								viewBox="0 -960 960 960"
-								width="24px"
-								fill="#e3e3e3"
-							>
-								<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
-							</svg>
-						</Button>
-						<Button
-							type="button"
-							className="cursor-pointer p-4"
-							onClick={onDelete}
-						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								height="24px"
-								viewBox="0 -960 960 960"
-								width="24px"
-								fill="#e3e3e3"
-							>
-								<path d="M200-440v-80h560v80H200Z" />
-							</svg>
-						</Button>
-					</>
-				)}
-			</section>
-		</>
-	);
-}
-
 interface EditProductProps {
 	name: string;
 	description: string;
-	stock: number;
+	stock?: number;
 	price?: number;
-	discount: number;
-	minPurchase: number;
-	hasVariant: boolean;
+	discount?: number;
+	minPurchase?: number;
+	hasVariant?: boolean;
+	isActive?: boolean;
 }
 
 export default function EditProduct({
@@ -131,6 +28,7 @@ export default function EditProduct({
 	discount,
 	minPurchase,
 	hasVariant,
+	isActive,
 }: EditProductProps) {
 	const [nameValue, setNameValue] = useState(name);
 	const [descriptionValue, setDescriptionValue] = useState(description);
@@ -138,15 +36,6 @@ export default function EditProduct({
 	const [priceValue, setPriceValue] = useState(price);
 	const [discountValue, setDiscountValue] = useState(discount);
 	const [minPurchaseValue, setMinPurchaseValue] = useState(minPurchase);
-	const [variantOption, setVariantOption] = useState(false);
-	const [variantComponents, setVariantComponents] = useState([0]);
-	const addComponent = () => {
-		setVariantComponents((prev) => [...prev, prev.length]);
-	};
-
-	const deleteFirstComponent = () => {
-		setVariantComponents((prev) => prev.slice(1));
-	};
 	return (
 		<>
 			<section className="w-full">
@@ -220,7 +109,7 @@ export default function EditProduct({
 									/>
 								</section>
 								<section className="flex gap-3">
-									{variantOption ? (
+									{hasVariant ? (
 										""
 									) : (
 										<>
@@ -286,33 +175,10 @@ export default function EditProduct({
 											</section>
 										</>
 									)}
-									{variantOption ? (
-										<section className="">
-											<section>
-												<p>Opsi</p>
-												<section className="flex gap-3 mt-5">
-													<Label htmlFor="active">Aktifkan Produk</Label>
-													<Switch id="active" />
-												</section>
-												<section className="flex gap-3 mt-5">
-													<Label htmlFor="variant_option">
-														Tambahkan Variasi Produk
-													</Label>
-													<Switch
-														id="variant_option"
-														checked={variantOption}
-														onCheckedChange={setVariantOption}
-													/>
-												</section>
-											</section>
-										</section>
-									) : (
-										""
-									)}
 								</section>
 							</section>
 						</section>
-						{variantOption ? (
+						{hasVariant ? (
 							""
 						) : (
 							<section className="mb-6">
@@ -320,32 +186,11 @@ export default function EditProduct({
 									<p>Opsi</p>
 									<section className="flex gap-3 mt-5">
 										<Label htmlFor="active">Aktifkan Produk</Label>
-										<Switch id="active" />
-									</section>
-									<section className="flex gap-3 mt-5">
-										<Label htmlFor="variant_option">
-											Tambahkan Variasi Produk
-										</Label>
-										<Switch
-											id="variant_option"
-											checked={variantOption}
-											onCheckedChange={setVariantOption}
-										/>
+										<Switch id="active" checked={isActive} />
 									</section>
 								</section>
 							</section>
 						)}
-						{variantOption
-							? variantComponents.map((_, index) => (
-									<Variant
-										key={index}
-										index={index}
-										total={variantComponents.length}
-										onAdd={addComponent}
-										onDelete={deleteFirstComponent}
-									/>
-							  ))
-							: ""}
 						<Button
 							type="button"
 							className="w-full cursor-pointer p-4 uppercase font-bold tracking-wider"
