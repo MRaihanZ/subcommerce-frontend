@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
+import { useNavigate } from "react-router";
 
 import {
 	Table,
@@ -25,7 +26,7 @@ import {
 	// DialogFooter,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger,
+	// DialogTrigger,
 } from "@/components/ui/dialog";
 import {
 	DropdownMenu,
@@ -37,17 +38,118 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 import AddProduct from "@/components/my_components/addProduct";
+import EditProduct from "@/components/my_components/editProduct";
+import DeleteProduct from "@/components/my_components/deleteProduct";
+import AddVariants from "@/components/my_components/addVariants";
+import EditVariants from "@/components/my_components/editVariants";
 
 export default function SellerItem() {
-	const [openDialogEdit, setOpenDialogEdit] = useState(false);
-	const [openDialogDelete, setOpenDialogDelete] = useState(false);
-	const [openDialogVariant, setOpenDialogVariant] = useState(false);
+	const navigate = useNavigate();
+	const [openDialog, setOpenDialog] = useState(false);
+	const [openDialogAction, setOpenDialogAction] =
+		useState<string>("addProduct");
 	const [testSwitch, setTestSwitch] = useState(true);
+
+	const childComponentsDialog: Record<string, ReactNode> = {
+		addProduct: (
+			<>
+				<DialogHeader>
+					<DialogTitle></DialogTitle>
+					<DialogDescription></DialogDescription>
+				</DialogHeader>
+				<AddProduct />
+			</>
+		),
+		editProduct: (
+			<>
+				<DialogHeader>
+					<DialogTitle></DialogTitle>
+					<DialogDescription></DialogDescription>
+				</DialogHeader>
+				<EditProduct
+					name="test edit"
+					description="Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+									Curabitur lobortis tempor lacus, et hendrerit orci viverra ut.
+									Nullam convallis neque dignissim leo venenatis, a semper elit
+									sollicitudin. Donec aliquet, magna ac efficitur commodo, risus
+									orci hendrerit massa, ac ultricies massa lacus in arcu. Nunc
+									id gravida est. Donec ac blandit nibh. Cras leo ex, imperdiet
+									a nisl in, tincidunt tincidunt ante. Morbi semper viverra
+									tincidunt. Quisque erat lectus, accumsan nec imperdiet
+									sollicitudin, cursus at arcu. Nullam aliquet consectetur orci
+									et condimentum. Vestibulum sit amet purus porttitor, volutpat
+									dui feugiat, accumsan lorem. Vivamus congue ac nulla porta
+									faucibus. Maecenas efficitur mauris eu sodales dictum."
+					stock={53}
+					// price={120000}
+					discount={0}
+					minPurchase={1}
+					hasVariant={true}
+				/>
+			</>
+		),
+		deleteProduct: (
+			<>
+				<DialogHeader>
+					<DialogTitle>Konfirmasi Hapus Produk</DialogTitle>
+					<DialogDescription></DialogDescription>
+				</DialogHeader>
+				<DeleteProduct setStateDialog={setOpenDialog} />
+			</>
+		),
+		addVariant: (
+			<>
+				<DialogHeader>
+					<DialogTitle>Add Variant</DialogTitle>
+					<DialogDescription></DialogDescription>
+				</DialogHeader>
+				<AddVariants setStateDialog={setOpenDialog} />
+			</>
+		),
+		editVariant: (
+			<>
+				<DialogHeader>
+					<DialogTitle>Edit Variant</DialogTitle>
+					<DialogDescription></DialogDescription>
+				</DialogHeader>
+				<EditVariants setStateDialog={setOpenDialog} />
+			</>
+		),
+	};
 	return (
 		<>
 			<section className="my-7">
+				<section className="flex justify-between">
+					<section className="w-full flex-1 flex max-w-3xs sm:max-w-2xs md:max-w-xs lg:max-w-sm items-center justify-center">
+						<Input
+							id="search"
+							type="text"
+							placeholder="..."
+							className="rounded-r-none border-l-1 border-t-1 border-r-0 border-b-1"
+						/>
+						<Button
+							type="submit"
+							variant="outline"
+							onClick={() => navigate("/search")}
+							className="rounded-l-none border-l-1 border-t-1 border-r-1 border-b-1 cursor-pointer"
+						>
+							Cari
+						</Button>
+					</section>
+					<Button
+						variant="outline"
+						className="cursor-pointer flex-1 w-fitt sm:w-full max-w-3xs sm:max-w-2xs md:max-w-xs lg:max-w-sm"
+						onClick={() => {
+							setOpenDialog(true);
+							setOpenDialogAction("addProduct");
+						}}
+					>
+						Add
+					</Button>
+				</section>
 				<Table>
 					<TableCaption>Produk</TableCaption>
 					<TableHeader>
@@ -101,92 +203,45 @@ export default function SellerItem() {
 								<Switch checked={testSwitch} onCheckedChange={setTestSwitch} />
 							</TableCell>
 							<TableCell className="flex flex-col justify-center flex-wrap items-center gap-3 py-5">
-								<Dialog open={openDialogEdit} onOpenChange={setOpenDialogEdit}>
-									<DialogTrigger asChild>
-										<Button variant="outline" className="cursor-pointer w-full">
-											Edit
-										</Button>
-									</DialogTrigger>
-									<DialogContent className="sm:max-w-7xl">
-										<DialogHeader>
-											<DialogTitle></DialogTitle>
-											<DialogDescription></DialogDescription>
-										</DialogHeader>
-										<AddProduct />
-									</DialogContent>
-								</Dialog>
-								<Dialog
-									open={openDialogDelete}
-									onOpenChange={setOpenDialogDelete}
+								<Button
+									variant="outline"
+									className="cursor-pointer w-full"
+									onClick={() => {
+										setOpenDialog(true);
+										setOpenDialogAction("editProduct");
+									}}
 								>
-									<DialogTrigger asChild>
-										<Button
-											className="cursor-pointer w-full"
-											variant="destructive"
-										>
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												height="24px"
-												viewBox="0 -960 960 960"
-												width="24px"
-												fill="currentColor"
-											>
-												<path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-											</svg>
-											Hapus Produk
-										</Button>
-									</DialogTrigger>
-									<DialogContent>
-										<DialogHeader>
-											<DialogTitle>Konfirmasi Hapus Produk</DialogTitle>
-											<DialogDescription></DialogDescription>
-										</DialogHeader>
-										<section className="flex gap-5">
-											<Button
-												className="w-full flex-1 cursor-pointer mt-5"
-												onClick={() => setOpenDialogDelete(false)}
-											>
-												Tidak
-											</Button>
-											<Button
-												className="w-full flex-1 cursor-pointer mt-5"
-												variant="destructive"
-											>
-												Ya
-											</Button>
-										</section>
-									</DialogContent>
-								</Dialog>
-								<Dialog
-									open={openDialogVariant}
-									onOpenChange={setOpenDialogVariant}
+									Edit
+								</Button>
+								<Button
+									className="cursor-pointer w-full"
+									variant="destructive"
+									onClick={() => {
+										setOpenDialog(true);
+										setOpenDialogAction("deleteProduct");
+									}}
 								>
-									<DialogTrigger asChild>
-										<Button variant="outline" className="cursor-pointer w-full">
-											Variant
-										</Button>
-									</DialogTrigger>
-									<DialogContent>
-										<DialogHeader>
-											<DialogTitle>Variant</DialogTitle>
-											<DialogDescription></DialogDescription>
-										</DialogHeader>
-										<section className="flex gap-5">
-											<Button
-												className="w-full flex-1 cursor-pointer mt-5"
-												onClick={() => setOpenDialogVariant(false)}
-											>
-												Tidak
-											</Button>
-											<Button
-												className="w-full flex-1 cursor-pointer mt-5"
-												variant="destructive"
-											>
-												Ya
-											</Button>
-										</section>
-									</DialogContent>
-								</Dialog>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										height="24px"
+										viewBox="0 -960 960 960"
+										width="24px"
+										fill="currentColor"
+									>
+										<path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+									</svg>
+									Hapus Produk
+								</Button>
+								<Button
+									variant="outline"
+									className="cursor-pointer w-full"
+									onClick={() => {
+										setOpenDialog(true);
+										setOpenDialogAction("addVariant");
+									}}
+								>
+									Add Variant
+								</Button>
 								<DropdownMenu>
 									<DropdownMenuTrigger asChild>
 										<Button variant="outline" className="cursor-pointer w-full">
@@ -252,92 +307,149 @@ export default function SellerItem() {
 								<Switch checked={testSwitch} onCheckedChange={setTestSwitch} />
 							</TableCell>
 							<TableCell className="flex flex-col justify-center flex-wrap items-center gap-3 py-5">
-								<Dialog open={openDialogEdit} onOpenChange={setOpenDialogEdit}>
-									<DialogTrigger asChild>
-										<Button variant="outline" className="cursor-pointer w-full">
-											Edit
-										</Button>
-									</DialogTrigger>
-									<DialogContent className="sm:max-w-7xl">
-										<DialogHeader>
-											<DialogTitle></DialogTitle>
-											<DialogDescription></DialogDescription>
-										</DialogHeader>
-										<AddProduct />
-									</DialogContent>
-								</Dialog>
-								<Dialog
-									open={openDialogDelete}
-									onOpenChange={setOpenDialogDelete}
+								<Button
+									variant="outline"
+									className="cursor-pointer w-full"
+									onClick={() => {
+										setOpenDialog(true);
+										setOpenDialogAction("editProduct");
+									}}
 								>
-									<DialogTrigger asChild>
-										<Button
-											className="cursor-pointer w-full"
-											variant="destructive"
-										>
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												height="24px"
-												viewBox="0 -960 960 960"
-												width="24px"
-												fill="currentColor"
-											>
-												<path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-											</svg>
-											Hapus Produk
-										</Button>
-									</DialogTrigger>
-									<DialogContent>
-										<DialogHeader>
-											<DialogTitle>Konfirmasi Hapus Produk</DialogTitle>
-											<DialogDescription></DialogDescription>
-										</DialogHeader>
-										<section className="flex gap-5">
-											<Button
-												className="w-full flex-1 cursor-pointer mt-5"
-												onClick={() => setOpenDialogDelete(false)}
-											>
-												Tidak
-											</Button>
-											<Button
-												className="w-full flex-1 cursor-pointer mt-5"
-												variant="destructive"
-											>
-												Ya
-											</Button>
-										</section>
-									</DialogContent>
-								</Dialog>
-								<Dialog
-									open={openDialogVariant}
-									onOpenChange={setOpenDialogVariant}
+									Edit
+								</Button>
+								<Button
+									className="cursor-pointer w-full"
+									variant="destructive"
+									onClick={() => {
+										setOpenDialog(true);
+										setOpenDialogAction("deleteProduct");
+									}}
 								>
-									<DialogTrigger asChild>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										height="24px"
+										viewBox="0 -960 960 960"
+										width="24px"
+										fill="currentColor"
+									>
+										<path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+									</svg>
+									Hapus Produk
+								</Button>
+								<Button
+									variant="outline"
+									className="cursor-pointer w-full"
+									onClick={() => {
+										setOpenDialog(true);
+										setOpenDialogAction("addVariant");
+									}}
+								>
+									Add Variant
+								</Button>
+								<DropdownMenu>
+									<DropdownMenuTrigger asChild>
 										<Button variant="outline" className="cursor-pointer w-full">
-											Variant
+											Edit Variant
 										</Button>
-									</DialogTrigger>
-									<DialogContent>
-										<DialogHeader>
-											<DialogTitle>Variant</DialogTitle>
-											<DialogDescription></DialogDescription>
-										</DialogHeader>
-										<section className="flex gap-5">
-											<Button
-												className="w-full flex-1 cursor-pointer mt-5"
-												onClick={() => setOpenDialogVariant(false)}
+									</DropdownMenuTrigger>
+									<DropdownMenuContent>
+										<DropdownMenuLabel>Pilih Variant</DropdownMenuLabel>
+										<DropdownMenuSeparator />
+										{/* <DropdownMenuItem
+												onSelect={(e) => {
+													e.preventDefault(); // prevent default close/focus behavior
+													setTimeout(() => setOpenDialog(true), 10); // delay to avoid race condition
+												}}
+												className="cursor-pointer"
 											>
-												Tidak
-											</Button>
-											<Button
-												className="w-full flex-1 cursor-pointer mt-5"
-												variant="destructive"
-											>
-												Ya
-											</Button>
-										</section>
-									</DialogContent>
-								</Dialog>
+												Masuk/Daftar
+											</DropdownMenuItem> */}
+										<DropdownMenuItem>1 Core 512MB</DropdownMenuItem>
+										<DropdownMenuItem>1 Core 1GB</DropdownMenuItem>
+										<DropdownMenuItem>2 core 1GB</DropdownMenuItem>
+										<DropdownMenuItem>2 core 2GB</DropdownMenuItem>
+									</DropdownMenuContent>
+								</DropdownMenu>
+							</TableCell>
+						</TableRow>
+						<TableRow>
+							<TableCell className="w-40">
+								<Carousel>
+									<CarouselContent>
+										<CarouselItem className="flex justify-center">
+											<img src="/assets/img/item.jpg" alt="Testing" />
+										</CarouselItem>
+										<CarouselItem className="flex justify-center">
+											<img src="/assets/img/item.jpg" alt="Testing" />
+										</CarouselItem>
+										<CarouselItem className="flex justify-center">
+											<img src="/assets/img/item.jpg" alt="Testing" />
+										</CarouselItem>
+									</CarouselContent>
+								</Carousel>
+							</TableCell>
+							<TableCell>VPS Linux Indonesia</TableCell>
+							<TableCell>
+								<p className="max-w-30 truncate">
+									Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+									Curabitur lobortis tempor lacus, et hendrerit orci viverra ut.
+									Nullam convallis neque dignissim leo venenatis, a semper elit
+									sollicitudin. Donec aliquet, magna ac efficitur commodo, risus
+									orci hendrerit massa, ac ultricies massa lacus in arcu. Nunc
+									id gravida est. Donec ac blandit nibh. Cras leo ex, imperdiet
+									a nisl in, tincidunt tincidunt ante. Morbi semper viverra
+									tincidunt. Quisque erat lectus, accumsan nec imperdiet
+									sollicitudin, cursus at arcu. Nullam aliquet consectetur orci
+									et condimentum. Vestibulum sit amet purus porttitor, volutpat
+									dui feugiat, accumsan lorem. Vivamus congue ac nulla porta
+									faucibus. Maecenas efficitur mauris eu sodales dictum.
+								</p>
+							</TableCell>
+							<TableCell>4.5</TableCell>
+							<TableCell>40</TableCell>
+							<TableCell className="text-center">
+								<Switch checked={testSwitch} onCheckedChange={setTestSwitch} />
+							</TableCell>
+							<TableCell className="flex flex-col justify-center flex-wrap items-center gap-3 py-5">
+								<Button
+									variant="outline"
+									className="cursor-pointer w-full"
+									onClick={() => {
+										setOpenDialog(true);
+										setOpenDialogAction("editProduct");
+									}}
+								>
+									Edit
+								</Button>
+								<Button
+									className="cursor-pointer w-full"
+									variant="destructive"
+									onClick={() => {
+										setOpenDialog(true);
+										setOpenDialogAction("deleteProduct");
+									}}
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										height="24px"
+										viewBox="0 -960 960 960"
+										width="24px"
+										fill="currentColor"
+									>
+										<path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+									</svg>
+									Hapus Produk
+								</Button>
+								<Button
+									variant="outline"
+									className="cursor-pointer w-full"
+									onClick={() => {
+										setOpenDialog(true);
+										setOpenDialogAction("addVariant");
+									}}
+								>
+									Add Variant
+								</Button>
 								<DropdownMenu>
 									<DropdownMenuTrigger asChild>
 										<Button variant="outline" className="cursor-pointer w-full">
@@ -374,6 +486,18 @@ export default function SellerItem() {
 						</TableFooter> */}
 				</Table>
 			</section>
+			<Dialog open={openDialog} onOpenChange={setOpenDialog}>
+				<DialogContent
+					className={
+						openDialogAction === "addProduct" ||
+						openDialogAction === "editProduct"
+							? "sm:max-w-7xl"
+							: ""
+					}
+				>
+					{childComponentsDialog[openDialogAction]}
+				</DialogContent>
+			</Dialog>
 		</>
 	);
 }
