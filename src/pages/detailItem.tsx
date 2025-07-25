@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import rawData from "./variantItem.json";
 
@@ -36,6 +36,10 @@ export default function DetailItem() {
 	const [quantity, setQuantity] = useState(1);
 
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		setVariantState(rawData.variant[0]);
+	}, []);
 
 	return (
 		<>
