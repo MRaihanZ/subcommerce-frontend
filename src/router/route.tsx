@@ -21,6 +21,7 @@ import DetailItem from "@/pages/detailItem";
 import ForgotPassword from "@/pages/forgotPassword";
 import OrderList from "@/pages/orderList";
 import Search from "@/pages/search";
+import Subscription from "@/pages/subscription";
 import Seller from "@/pages/seller";
 import SellerChat from "@/pages/sellerChat";
 import SellerItem from "@/pages/sellerItem";
@@ -137,6 +138,15 @@ const routes = createBrowserRouter([
 		element: handleFallbackUser({
 			title: "Search Page",
 			component: Search,
+			showNavbar: true,
+			showFooter: true,
+		}),
+	},
+	{
+		path: "/subscription",
+		element: handleFallbackUser({
+			title: "Subscription Page",
+			component: Subscription,
 			showNavbar: true,
 			showFooter: true,
 		}),
