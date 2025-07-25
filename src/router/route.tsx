@@ -18,7 +18,9 @@ import Cart from "@/pages/cart";
 import Profile from "@/pages/profile";
 import Checkout from "@/pages/checkout";
 import DetailItem from "@/pages/detailItem";
+import ForgotPassword from "@/pages/forgotPassword";
 import OrderList from "@/pages/orderList";
+import Otp from "@/pages/otp";
 import Search from "@/pages/search";
 import Seller from "@/pages/seller";
 import SellerChat from "@/pages/sellerChat";
@@ -114,10 +116,28 @@ const routes = createBrowserRouter([
 		}),
 	},
 	{
+		path: "/forgot-password",
+		element: handleFallbackUser({
+			title: "Forgot Password Page",
+			component: ForgotPassword,
+			showNavbar: true,
+			showFooter: true,
+		}),
+	},
+	{
 		path: "/order-list",
 		element: handleFallbackUser({
 			title: "Order List Page",
 			component: OrderList,
+			showNavbar: true,
+			showFooter: true,
+		}),
+	},
+	{
+		path: "/otp",
+		element: handleFallbackUser({
+			title: "OTP Page",
+			component: Otp,
 			showNavbar: true,
 			showFooter: true,
 		}),
