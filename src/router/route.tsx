@@ -134,15 +134,6 @@ const routes = createBrowserRouter([
 		}),
 	},
 	{
-		path: "/otp",
-		element: handleFallbackUser({
-			title: "OTP Page",
-			component: Otp,
-			showNavbar: true,
-			showFooter: true,
-		}),
-	},
-	{
 		path: "/search",
 		element: handleFallbackUser({
 			title: "Search Page",
