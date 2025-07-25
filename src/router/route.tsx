@@ -20,7 +20,6 @@ import Checkout from "@/pages/checkout";
 import DetailItem from "@/pages/detailItem";
 import ForgotPassword from "@/pages/forgotPassword";
 import OrderList from "@/pages/orderList";
-import Otp from "@/pages/otp";
 import Search from "@/pages/search";
 import Seller from "@/pages/seller";
 import SellerChat from "@/pages/sellerChat";
