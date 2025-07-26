@@ -1,6 +1,15 @@
 import { useState } from "react";
 
 import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuRadioGroup,
+	DropdownMenuRadioItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
@@ -30,6 +39,7 @@ export default function EditProduct({
 	hasVariant,
 	isActive,
 }: EditProductProps) {
+	const [subscriptionState, setSubscriptionState] = useState("");
 	const [nameValue, setNameValue] = useState(name);
 	const [descriptionValue, setDescriptionValue] = useState(description);
 	const [stockValue, setStockValue] = useState(stock);
@@ -141,6 +151,58 @@ export default function EditProduct({
 														}
 														placeholder="Harga..."
 													/>
+												</section>
+												<section className="flex items-end gap-3">
+													<section className="flex-1">
+														<Label
+															htmlFor="subscriptionInterval"
+															className="mb-1 font-normal"
+														>
+															Jangka Langganan
+														</Label>
+														<input
+															className="border w-full p-3 rounded-lg"
+															name="subscriptionInterval"
+															type="number"
+															id="subscriptionInterval"
+															placeholder="Jangka Langganan..."
+														/>
+													</section>
+													<DropdownMenu>
+														<DropdownMenuTrigger asChild>
+															<Button
+																variant="outline"
+																className="cursor-pointer h-12.5"
+															>
+																{subscriptionState === ""
+																	? "Pilihan"
+																	: subscriptionState}
+															</Button>
+														</DropdownMenuTrigger>
+														<DropdownMenuContent>
+															<DropdownMenuLabel>
+																Pilih Jangka Langganan
+															</DropdownMenuLabel>
+															<DropdownMenuSeparator />
+															<DropdownMenuRadioGroup
+																value={subscriptionState}
+																onValueChange={setSubscriptionState}
+															>
+																<DropdownMenuRadioItem value="hari">
+																	Hari
+																</DropdownMenuRadioItem>
+																<DropdownMenuRadioItem value="minggu">
+																	Minggu
+																</DropdownMenuRadioItem>
+																<DropdownMenuRadioItem value="bulan">
+																	Bulan
+																</DropdownMenuRadioItem>
+																<DropdownMenuRadioItem value="tahun">
+																	Tahun
+																</DropdownMenuRadioItem>
+															</DropdownMenuRadioGroup>
+														</DropdownMenuContent>
+													</DropdownMenu>
 												</section>
 											</section>
 											<section className="w-full">

@@ -5,6 +5,15 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuRadioGroup,
+	DropdownMenuRadioItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -14,9 +23,25 @@ interface variantProps {
 	total: number;
 	onAdd: () => void;
 	onDelete: () => void;
+	subscription: string[];
+	setSubscription: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-function Variant({ index, total, onAdd, onDelete }: variantProps) {
+function Variant({
+	index,
+	total,
+	onAdd,
+	onDelete,
+	subscription,
+	setSubscription,
+}: variantProps) {
+	const handleChangeSubscription = (index: number, newItem: string) => {
+		setSubscription((prevItems) => {
+			const updated = [...prevItems];
+			updated[index] = newItem;
+			return updated;
+		});
+	};
 	return (
 		<>
 			{total > 1 && index === 0 && (
@@ -73,6 +98,44 @@ function Variant({ index, total, onAdd, onDelete }: variantProps) {
 						placeholder="Minimum Order..."
 					/>
 				</section>
+				<section className="mb-3">
+					<section className="flex-1">
+						<Label htmlFor="subscriptionInterval" className="mb-1 font-normal">
+							Jangka Langganan
+						</Label>
+						<input
+							className="border w-full p-3 rounded-lg"
+							name="subscriptionInterval"
+							type="number"
+							id="subscriptionInterval"
+							placeholder="Jangka Langganan..."
+						/>
+					</section>
+				</section>
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button variant="outline" className="cursor-pointer h-12.5 w-15">
+							{subscription[index] === undefined
+								? "Pilihan"
+								: subscription[index]}
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent>
+						<DropdownMenuLabel>Pilih Jangka Langganan</DropdownMenuLabel>
+						<DropdownMenuSeparator />
+						<DropdownMenuRadioGroup
+							value={subscription[index]}
+							onValueChange={(val) => handleChangeSubscription(index, val)}
+						>
+							<DropdownMenuRadioItem value="hari">Hari</DropdownMenuRadioItem>
+							<DropdownMenuRadioItem value="minggu">
+								Minggu
+							</DropdownMenuRadioItem>
+							<DropdownMenuRadioItem value="bulan">Bulan</DropdownMenuRadioItem>
+							<DropdownMenuRadioItem value="tahun">Tahun</DropdownMenuRadioItem>
+						</DropdownMenuRadioGroup>
+					</DropdownMenuContent>
+				</DropdownMenu>
 
 				{index === total - 1 && (
 					<>
@@ -114,6 +177,10 @@ function Variant({ index, total, onAdd, onDelete }: variantProps) {
 }
 
 export default function AddProduct() {
+	const [subscriptionStateArr, setSubscriptionStateArr] = useState<string[]>(
+		[]
+	);
+	const [subscriptionState, setSubscriptionState] = useState("");
 	const [variantOption, setVariantOption] = useState(false);
 	const [variantComponents, setVariantComponents] = useState([0]);
 	const addComponent = () => {
@@ -122,6 +189,11 @@ export default function AddProduct() {
 
 	const deleteFirstComponent = () => {
 		setVariantComponents((prev) => prev.slice(1));
+		setSubscriptionStateArr((prev) => {
+			const updated = [...prev];
+			updated.pop();
+			return updated;
+		});
 	};
 	return (
 		<>
@@ -217,6 +289,58 @@ export default function AddProduct() {
 														placeholder="Harga..."
 													/>
 												</section>
+												<section className="flex items-end gap-3">
+													<section className="flex-1">
+														<Label
+															htmlFor="subscriptionInterval"
+															className="mb-1 font-normal"
+														>
+															Jangka Langganan
+														</Label>
+														<input
+															className="border w-full p-3 rounded-lg"
+															name="subscriptionInterval"
+															type="number"
+															id="subscriptionInterval"
+															placeholder="Jangka Langganan..."
+														/>
+													</section>
+													<DropdownMenu>
+														<DropdownMenuTrigger asChild>
+															<Button
+																variant="outline"
+																className="cursor-pointer h-12.5"
+															>
+																{subscriptionState === ""
+																	? "Pilihan"
+																	: subscriptionState}
+															</Button>
+														</DropdownMenuTrigger>
+														<DropdownMenuContent>
+															<DropdownMenuLabel>
+																Pilih Jangka Langganan
+															</DropdownMenuLabel>
+															<DropdownMenuSeparator />
+															<DropdownMenuRadioGroup
+																value={subscriptionState}
+																onValueChange={setSubscriptionState}
+															>
+																<DropdownMenuRadioItem value="hari">
+																	Hari
+																</DropdownMenuRadioItem>
+																<DropdownMenuRadioItem value="minggu">
+																	Minggu
+																</DropdownMenuRadioItem>
+																<DropdownMenuRadioItem value="bulan">
+																	Bulan
+																</DropdownMenuRadioItem>
+																<DropdownMenuRadioItem value="tahun">
+																	Tahun
+																</DropdownMenuRadioItem>
+															</DropdownMenuRadioGroup>
+														</DropdownMenuContent>
+													</DropdownMenu>
+												</section>
 											</section>
 											<section className="w-full">
 												<section className="mb-3">
@@ -272,22 +396,20 @@ export default function AddProduct() {
 							""
 						) : (
 							<section className="mb-6">
-								<section>
-									<p>Opsi</p>
-									<section className="flex gap-3 mt-5">
-										<Label htmlFor="active">Aktifkan Produk</Label>
-										<Switch id="active" />
-									</section>
-									<section className="flex gap-3 mt-5">
-										<Label htmlFor="variant_option">
-											Tambahkan Variasi Produk
-										</Label>
-										<Switch
-											id="variant_option"
-											checked={variantOption}
-											onCheckedChange={setVariantOption}
-										/>
-									</section>
+								<p>Opsi</p>
+								<section className="flex gap-3 mt-5">
+									<Label htmlFor="active">Aktifkan Produk</Label>
+									<Switch id="active" />
+								</section>
+								<section className="flex gap-3 mt-5">
+									<Label htmlFor="variant_option">
+										Tambahkan Variasi Produk
+									</Label>
+									<Switch
+										id="variant_option"
+										checked={variantOption}
+										onCheckedChange={setVariantOption}
+									/>
 								</section>
 							</section>
 						)}
@@ -299,6 +421,8 @@ export default function AddProduct() {
 										total={variantComponents.length}
 										onAdd={addComponent}
 										onDelete={deleteFirstComponent}
+										subscription={subscriptionStateArr}
+										setSubscription={setSubscriptionStateArr}
 									/>
 							  ))
 							: ""}
