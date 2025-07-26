@@ -21,6 +21,7 @@ import { toast } from "sonner";
 export default function DetailItem() {
 	// const selectedLength = Array(rawData.variantTitle.length).fill("");
 	const [variantState, setVariantState] = useState("");
+	const [subscriptionState, setSubscriptionState] = useState("");
 	// const variantOptions: Record<string, string[]> = {};
 
 	// rawData.variantTitle.forEach((title: string) => {
@@ -39,6 +40,7 @@ export default function DetailItem() {
 
 	useEffect(() => {
 		setVariantState(rawData.variant[0]);
+		setSubscriptionState(rawData.subscription[0]);
 	}, []);
 
 	return (
@@ -167,7 +169,12 @@ export default function DetailItem() {
 												variant={
 													variantState === variantName ? "default" : "outline"
 												}
-												onClick={() => setVariantState(variantName)}
+												onClick={() => {
+													setVariantState(variantName);
+													setSubscriptionState(
+														rawData.subscription[variantIndex]
+													);
+												}}
 												className="cursor-pointer"
 											>
 												{variantName}
@@ -232,6 +239,12 @@ export default function DetailItem() {
 										Variant:{" "}
 										<Badge variant="outline" className="mx-1">
 											{variantState}
+										</Badge>
+									</p>
+									<p>
+										Subscription:{" "}
+										<Badge variant="outline" className="mx-1">
+											{subscriptionState}
 										</Badge>
 									</p>
 								</section>
