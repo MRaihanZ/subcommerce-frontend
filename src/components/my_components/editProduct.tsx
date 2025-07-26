@@ -82,8 +82,7 @@ export default function EditProduct({
 										value={descriptionValue}
 										onChange={(e) => setDescriptionValue(e.target.value)}
 										placeholder="Deskripsi"
-										rows={4}
-										cols={50}
+										rows={8}
 									></textarea>
 								</section>
 							</section>
