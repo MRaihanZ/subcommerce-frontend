@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 
 import {
@@ -338,7 +338,7 @@ export default function SellerItem() {
 					className={
 						openDialogAction === "addProduct" ||
 						openDialogAction === "editProduct"
-							? "sm:max-w-7xl"
+							? "sm:max-w-7xl max-h-250 overflow-y-auto"
 							: ""
 					}
 				>
