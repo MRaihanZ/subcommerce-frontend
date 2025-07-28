@@ -12,7 +12,6 @@ export default function FilterSideBar() {
 	return (
 		<>
 			<section className="px-3">
-				<Separator />
 				<section className="my-3">
 					<p className="font-bold text-xl">Harga</p>
 					<section className="flex items-center my-3 relative">
