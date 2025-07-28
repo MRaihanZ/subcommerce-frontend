@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
-import rawData from "./variantItem.json";
+import { useNavigate, useSearchParams } from "react-router";
 
 import Comment from "@/components/my_components/comment";
 
@@ -18,46 +17,125 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
+// ProductImage
+interface ProductImage {
+	img: string;
+}
+
+// ProductVariant
+interface ProductVariant {
+	pv_id: number;
+	is_default: boolean;
+	pv_name: string;
+	code: string;
+	i_name: string;
+	interval: number;
+	stock: number;
+	pv_sold: number;
+	price: number;
+	discount: number;
+	min_order: number;
+}
+
+// Item
+interface ProductDetail {
+	id: number;
+	name: string;
+	images: ProductImage[];
+	description: string;
+	sold: number;
+	average_rating: number;
+	rating_count: number;
+	created_at: string;
+	product_variants: ProductVariant[];
+}
+
 export default function DetailItem() {
 	// const selectedLength = Array(rawData.variantTitle.length).fill("");
 	const [variantState, setVariantState] = useState("");
-	const [subscriptionState, setSubscriptionState] = useState("");
-	// const variantOptions: Record<string, string[]> = {};
-
-	// rawData.variantTitle.forEach((title: string) => {
-	// 	const key = `variant${title}`;
-	// 	const options = rawData[key];
-
-	// 	if (Array.isArray(options)) {
-	// 		variantOptions[title] = options;
-	// 	}
-	// });
-	console.log(rawData.variant);
-
-	const [quantity, setQuantity] = useState(1);
+	const [quantity, setQuantity] = useState<number>(0);
+	const [price, setPrice] = useState<number>(0);
+	const [formatedPrice, setFormatedPrice] = useState<number>(0);
+	const [productVariantIdx, setProductVariantIdx] = useState<number>(0);
 
 	const navigate = useNavigate();
 
-	useEffect(() => {
-		setVariantState(rawData.variant[0]);
-		setSubscriptionState(rawData.subscription[0]);
-	}, []);
+	const [product, setProduct] = useState<ProductDetail | null>(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string>();
+	const [searchParams] = useSearchParams();
 
+	const prodParam = searchParams.get("product");
+	useEffect(() => {
+		// Products
+		const fetchProduct = async () => {
+			try {
+				const res = await fetch(
+					"http://localhost:8080/api/v1/products/" + prodParam
+				);
+				const json = await res.json();
+				if (json.code === 200 && json.status === "ok") {
+					setProduct(json.data);
+					setProductVariantIdx(0);
+					setVariantState(json.data.product_variants[0].pv_name);
+					setPrice(json.data.product_variants[0].price);
+					setQuantity(json.data.product_variants[0].min_order);
+					setLoading(false);
+				} else {
+					console.error("API Error:", json.error);
+					setError(json.error);
+					setLoading(false);
+				}
+			} catch (err) {
+				const errFetch = "Network Error: " + err;
+				setError(errFetch);
+				setLoading(false);
+			}
+		};
+		fetchProduct();
+
+		// seller
+
+		// comment
+	}, [prodParam]);
+
+	useEffect(() => {
+		if (loading) return;
+		if (quantity < product.product_variants[productVariantIdx].min_order) {
+			setQuantity(product.product_variants[productVariantIdx].min_order);
+			setPrice(
+				product.product_variants[productVariantIdx].stock *
+					product.product_variants[productVariantIdx].price
+			);
+		} else if (quantity > product.product_variants[productVariantIdx].stock) {
+			setQuantity(product.product_variants[productVariantIdx].stock);
+			setPrice(
+				product.product_variants[productVariantIdx].stock *
+					product.product_variants[productVariantIdx].price
+			);
+		} else {
+			setPrice(quantity * product.product_variants[productVariantIdx].price);
+			const formatted = new Intl.NumberFormat("id-ID").format(price);
+			setFormatedPrice(Number(formatted));
+		}
+	}, [quantity, price]);
+
+	if (loading) return <p>Loading...</p>;
+	if (error) {
+		return <p>{error}</p>;
+	}
+	if (!product) return <p>No item found</p>;
 	return (
 		<>
 			<section className="grid grid-cols-12 justify-items-center-safe mt-7">
 				<section className="col-span-3 col-start-2 w-full">
 					<Carousel className="border rounded-md py-3">
 						<CarouselContent>
-							<CarouselItem className="flex justify-center">
-								<img src="/assets/img/item.jpg" alt="Testing" />
-							</CarouselItem>
-							<CarouselItem className="flex justify-center">
-								<img src="/assets/img/item.jpg" alt="Testing" />
-							</CarouselItem>
-							<CarouselItem className="flex justify-center">
-								<img src="/assets/img/item.jpg" alt="Testing" />
-							</CarouselItem>
+							{product.images.map((image, index) => (
+								<CarouselItem key={index} className="flex justify-center">
+									<img src={image.img} alt="Testing" />
+								</CarouselItem>
+							))}
 						</CarouselContent>
 						<CarouselPrevious />
 						<CarouselNext />
@@ -135,10 +213,12 @@ export default function DetailItem() {
 					<section className="px-3 py-3">
 						<section className="pb-3">
 							<p className="text-justify font-semibold text-xl">
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean
-								finibus turpis a venenatis eleifend.
+								{product.name}{" "}
+								{product.product_variants[productVariantIdx].pv_name ===
+								"default"
+									? ""
+									: " - " + product.product_variants[productVariantIdx].pv_name}
 							</p>
-							{/* <p className="mt-3 font-bold text-xl">Rp64.000</p> */}
 							<section className="flex justify-between mt-3">
 								<section className="flex items-center">
 									<svg
@@ -150,34 +230,36 @@ export default function DetailItem() {
 									>
 										<path d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z" />
 									</svg>
-									<p className="ms-2">53 terjual</p>
+									<p className="ms-2">
+										{product.sold}/
+										{product.product_variants[productVariantIdx].pv_sold}
+										terjual
+									</p>
 								</section>
-								<p>⭐ 4.5</p>
+								<p>⭐ {Math.floor(product.average_rating * 10) / 10}</p>
 							</section>
 						</section>
 						<Separator />
-						{rawData.is_default === false ? (
+						{product.product_variants[0].is_default === false ? (
 							<>
 								<section className="my-3">
 									<p className="text-sm font-medium capitalize mb-2">
 										Variant:{" "}
 									</p>
 									<section className="flex gap-2 flex-wrap">
-										{rawData.variant.map((variantName, variantIndex) => (
+										{product.product_variants.map((pv, idx) => (
 											<Button
-												key={variantIndex}
+												key={idx}
 												variant={
-													variantState === variantName ? "default" : "outline"
+													variantState === pv.pv_name ? "default" : "outline"
 												}
 												onClick={() => {
-													setVariantState(variantName);
-													setSubscriptionState(
-														rawData.subscription[variantIndex]
-													);
+													setVariantState(pv.pv_name);
+													setProductVariantIdx(idx);
 												}}
 												className="cursor-pointer"
 											>
-												{variantName}
+												{pv.pv_name}
 											</Button>
 										))}
 									</section>
@@ -190,73 +272,107 @@ export default function DetailItem() {
 						<section className="py-7 bottom-0">
 							<section className="flex items-center mb-5">
 								<section className="flex w-full max-w-25 items-center relative">
-									<Button
-										variant="outline"
-										size="icon"
-										className="size-8 absolute start-1 border-0 cursor-pointer rounded-2xl"
-										onClick={() => setQuantity(quantity - 1)}
-									>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											height="24px"
-											viewBox="0 -960 960 960"
-											width="24px"
-											fill="currentColor"
+									{quantity ===
+									product.product_variants[productVariantIdx].min_order ? (
+										""
+									) : (
+										<Button
+											variant="outline"
+											size="icon"
+											className="size-8 absolute start-1 border-0 cursor-pointer rounded-2xl"
+											onClick={() => {
+												if (quantity === null) {
+													setQuantity(0);
+												} else {
+													setQuantity(quantity - 1);
+												}
+											}}
 										>
-											<path d="M200-440v-80h560v80H200Z" />
-										</svg>
-									</Button>
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												height="24px"
+												viewBox="0 -960 960 960"
+												width="24px"
+												fill="currentColor"
+											>
+												<path d="M200-440v-80h560v80H200Z" />
+											</svg>
+										</Button>
+									)}
+
 									<Input
 										type="text"
 										value={quantity}
 										onChange={(e) => setQuantity(Number(e.target.value))}
 										className="text-center rounded-2xl"
 									/>
-									<Button
-										variant="outline"
-										size="icon"
-										className="size-8 absolute end-1 border-0 cursor-pointer rounded-2xl"
-										onClick={() => setQuantity(quantity + 1)}
-									>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											height="24px"
-											viewBox="0 -960 960 960"
-											width="24px"
-											fill="currentColor"
+									{quantity ===
+									product.product_variants[productVariantIdx].stock ? (
+										""
+									) : (
+										<Button
+											variant="outline"
+											size="icon"
+											className="size-8 absolute end-1 border-0 cursor-pointer rounded-2xl"
+											onClick={() => {
+												if (quantity === null) {
+													setQuantity(0);
+												} else {
+													setQuantity(quantity + 1);
+												}
+											}}
 										>
-											<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
-										</svg>
-									</Button>
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												height="24px"
+												viewBox="0 -960 960 960"
+												width="24px"
+												fill="currentColor"
+											>
+												<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
+											</svg>
+										</Button>
+									)}
 								</section>
-								<p className="ms-5">Tersedia: {rawData.stock}</p>
+								<p className="ms-5">
+									Tersedia: {product.product_variants[productVariantIdx].stock}
+								</p>
 							</section>
-							{!variantState ? (
-								""
-							) : (
-								<section className="mb-3">
+							<section className="mb-3">
+								{variantState === "default" ? (
+									""
+								) : (
 									<p>
 										Variant:{" "}
 										<Badge variant="outline" className="mx-1">
 											{variantState}
 										</Badge>
 									</p>
-									<p>
-										Subscription:{" "}
-										<Badge variant="outline" className="mx-1">
-											{subscriptionState}
-										</Badge>
-									</p>
-								</section>
-							)}
+								)}
+								<p>
+									Subscription:{" "}
+									<Badge variant="outline" className="mx-1">
+										{product.product_variants[productVariantIdx].interval +
+											" " +
+											product.product_variants[productVariantIdx].i_name}
+									</Badge>
+								</p>
+							</section>
 							<section className="flex justify-between mb-5">
 								<p className="font-bold text-xl">Total</p>
-								<p className="font-bold text-xl">Rp240.000</p>
+								<p className="font-bold text-xl">Rp{formatedPrice}</p>
 							</section>
 							<section className="flex gap-5">
 								<Button
 									className="bg-green-600 hover:bg-green-800 mb-5 w-full cursor-pointer flex-1"
-									onClick={() => navigate("/checkout")}
+									onClick={() =>
+										navigate(
+											"/checkout?product=" +
+												product.id +
+												"&product-variant=" +
+												product.product_variants[productVariantIdx].pv_id
+										)
+									}
 								>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
@@ -291,37 +407,10 @@ export default function DetailItem() {
 							<p className="mb-3">
 								Min. Pemesanan:
 								<Badge variant="outline" className="mx-1">
-									1
+									{product.product_variants[productVariantIdx].min_order}
 								</Badge>
 							</p>
-							<p className="text-justify">
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-								Curabitur lobortis tempor lacus, et hendrerit orci viverra ut.
-								Nullam convallis neque dignissim leo venenatis, a semper elit
-								sollicitudin. Donec aliquet, magna ac efficitur commodo, risus
-								orci hendrerit massa, ac ultricies massa lacus in arcu. Nunc id
-								gravida est. Donec ac blandit nibh. Cras leo ex, imperdiet a
-								nisl in, tincidunt tincidunt ante. Morbi semper viverra
-								tincidunt. Quisque erat lectus, accumsan nec imperdiet
-								sollicitudin, cursus at arcu. Nullam aliquet consectetur orci et
-								condimentum. Vestibulum sit amet purus porttitor, volutpat dui
-								feugiat, accumsan lorem. Vivamus congue ac nulla porta faucibus.
-								Maecenas efficitur mauris eu sodales dictum.
-							</p>
-							<p className="text-justify">
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-								Curabitur lobortis tempor lacus, et hendrerit orci viverra ut.
-								Nullam convallis neque dignissim leo venenatis, a semper elit
-								sollicitudin. Donec aliquet, magna ac efficitur commodo, risus
-								orci hendrerit massa, ac ultricies massa lacus in arcu. Nunc id
-								gravida est. Donec ac blandit nibh. Cras leo ex, imperdiet a
-								nisl in, tincidunt tincidunt ante. Morbi semper viverra
-								tincidunt. Quisque erat lectus, accumsan nec imperdiet
-								sollicitudin, cursus at arcu. Nullam aliquet consectetur orci et
-								condimentum. Vestibulum sit amet purus porttitor, volutpat dui
-								feugiat, accumsan lorem. Vivamus congue ac nulla porta faucibus.
-								Maecenas efficitur mauris eu sodales dictum.
-							</p>
+							<p className="text-justify">{product.description}</p>
 						</section>
 					</section>
 				</section>
@@ -331,7 +420,8 @@ export default function DetailItem() {
 					<section className="flex justify-center gap-3 border rounded-md px-7 py-5">
 						<section>
 							<p className="font-semibold text-3xl">
-								⭐ 4.6<sub className="text-base"> / 5.0</sub>
+								⭐ {Math.floor(product.average_rating * 10) / 10}
+								<sub className="text-base"> / 5.0</sub>
 							</p>
 							<section className="flex ms-1.5 mt-3">
 								<svg
@@ -343,7 +433,7 @@ export default function DetailItem() {
 								>
 									<path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z" />
 								</svg>
-								<p className="ms-3">53 Pembeli</p>
+								<p className="ms-3">{product.rating_count} Pembeli</p>
 							</section>
 						</section>
 					</section>
