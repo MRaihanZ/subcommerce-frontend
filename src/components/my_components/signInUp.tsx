@@ -40,8 +40,8 @@ export default function SignInUp({
 						</CardHeader>
 						<CardContent>
 							<SignIn
-								isSignIn={isSignUpIn}
-								setOpenCloseDialog={setOpenCloseDialog}
+							// isSignIn={isSignUpIn}
+							// setOpenCloseDialog={setOpenCloseDialog}
 							/>
 						</CardContent>
 						<CardFooter className="hidden"></CardFooter>
