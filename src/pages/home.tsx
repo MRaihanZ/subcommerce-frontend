@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import {
 	Carousel,
 	CarouselContent,
@@ -11,6 +13,36 @@ import Items from "@/components/my_components/items";
 import FilterSideBar from "@/components/my_components/filterSideBar";
 
 export default function Home() {
+	const [products, setProducts] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		const fetchProducts = async () => {
+			try {
+				const res = await fetch("http://localhost:8080/api/v1/products");
+				const json = await res.json();
+				if (json.code === 200 && json.status === "ok") {
+					setProducts(json.data);
+					setLoading(false);
+				} else {
+					console.error("API Error:", json.error);
+					setError(json.error);
+					setLoading(false);
+				}
+			} catch (err) {
+				const errFetch = "Network Error: " + err;
+				setError(errFetch);
+				setLoading(false);
+			}
+		};
+		fetchProducts();
+	}, []);
+
+	if (loading) return <p>Loading...</p>;
+	if (error) {
+		return <p>{error}</p>;
+	}
 	return (
 		<>
 			<Carousel>
@@ -50,10 +82,10 @@ export default function Home() {
 							</TabsTrigger>
 						</TabsList>
 						<TabsContent value="hot">
-							<Items title="HOT" />
+							<Items data={products} />
 						</TabsContent>
 						<TabsContent value="diskon">
-							<Items title="DISKON" />
+							{/* <Items title="DISKON" /> */}
 						</TabsContent>
 					</Tabs>
 				</section>
