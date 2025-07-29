@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { useNavigate, useSearchParams, useLocation } from "react-router";
 
 import Comment from "@/components/my_components/comment";
 
@@ -55,10 +55,12 @@ export default function DetailItem() {
 	const [variantState, setVariantState] = useState("");
 	const [quantity, setQuantity] = useState<number>(0);
 	const [price, setPrice] = useState<number>(0);
-	const [formatedPrice, setFormatedPrice] = useState<number>(0);
+	const [formatedPrice, setFormatedPrice] = useState<string>("");
+	const [productVariantId, setProductVariantId] = useState<number | null>(null);
 	const [productVariantIdx, setProductVariantIdx] = useState<number>(0);
 
 	const navigate = useNavigate();
+	const locate = useLocation();
 
 	const [product, setProduct] = useState<ProductDetail | null>(null);
 	const [loading, setLoading] = useState(true);
@@ -66,6 +68,8 @@ export default function DetailItem() {
 	const [searchParams] = useSearchParams();
 
 	const prodParam = searchParams.get("product");
+	const prodVarParam = searchParams.get("variant");
+
 	useEffect(() => {
 		// Products
 		const fetchProduct = async () => {
@@ -76,6 +80,7 @@ export default function DetailItem() {
 				const json = await res.json();
 				if (json.code === 200 && json.status === "ok") {
 					setProduct(json.data);
+					setProductVariantId(json.data.product_variants[0].pv_id);
 					setProductVariantIdx(0);
 					setVariantState(json.data.product_variants[0].pv_name);
 					setPrice(json.data.product_variants[0].price);
@@ -98,6 +103,20 @@ export default function DetailItem() {
 
 		// comment
 	}, [prodParam]);
+	useEffect(() => {
+		if (!loading) {
+			const varParam = Number(prodVarParam);
+			if (Number.isNaN(varParam)) return;
+			for (let i = 0; i < product.product_variants.length; i++) {
+				if (product.product_variants[i].pv_id === varParam) {
+					setProductVariantId(product.product_variants[i].pv_id);
+					setProductVariantIdx(i);
+					setVariantState(product.product_variants[i].pv_name);
+					break;
+				}
+			}
+		}
+	}, [product, prodVarParam]);
 
 	useEffect(() => {
 		if (loading) return;
@@ -116,7 +135,7 @@ export default function DetailItem() {
 		} else {
 			setPrice(quantity * product.product_variants[productVariantIdx].price);
 			const formatted = new Intl.NumberFormat("id-ID").format(price);
-			setFormatedPrice(Number(formatted));
+			setFormatedPrice(formatted);
 		}
 	}, [quantity, price]);
 
@@ -254,8 +273,13 @@ export default function DetailItem() {
 													variantState === pv.pv_name ? "default" : "outline"
 												}
 												onClick={() => {
-													setVariantState(pv.pv_name);
-													setProductVariantIdx(idx);
+													navigate(
+														locate.pathname +
+															"?product=" +
+															product.id +
+															"&variant=" +
+															pv.pv_id
+													);
 												}}
 												className="cursor-pointer"
 											>

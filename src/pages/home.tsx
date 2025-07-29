@@ -14,30 +14,56 @@ import FilterSideBar from "@/components/my_components/filterSideBar";
 
 export default function Home() {
 	const [products, setProducts] = useState([]);
+	const [activeTab, setActiveTab] = useState("hot");
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
-
-	useEffect(() => {
-		const fetchProducts = async () => {
-			try {
-				const res = await fetch("http://localhost:8080/api/v1/products");
-				const json = await res.json();
-				if (json.code === 200 && json.status === "ok") {
-					setProducts(json.data);
-					setLoading(false);
-				} else {
-					console.error("API Error:", json.error);
-					setError(json.error);
-					setLoading(false);
-				}
-			} catch (err) {
-				const errFetch = "Network Error: " + err;
-				setError(errFetch);
+	const fetchProductsHot = async () => {
+		setProducts([]);
+		try {
+			const res = await fetch("http://localhost:8080/api/v1/products/hot");
+			const json = await res.json();
+			if (json.code === 200 && json.status === "ok") {
+				setProducts(json.data);
+				setLoading(false);
+			} else {
+				console.error("API Error:", json.error);
+				setError(json.error);
 				setLoading(false);
 			}
-		};
-		fetchProducts();
-	}, []);
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			setError(errFetch);
+			setLoading(false);
+		}
+	};
+	const fetchProductsDiscount = async () => {
+		setProducts([]);
+		try {
+			const res = await fetch("http://localhost:8080/api/v1/products/discount");
+			const json = await res.json();
+			if (json.code === 200 && json.status === "ok") {
+				setProducts(json.data);
+				setLoading(false);
+			} else {
+				console.error("API Error:", json.error);
+				setError(json.error);
+				setLoading(false);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			setError(errFetch);
+			setLoading(false);
+		}
+	};
+	useEffect(() => {
+		if (activeTab == "hot") {
+			fetchProductsHot();
+		}
+		if (activeTab == "discount") {
+			fetchProductsDiscount();
+		}
+	}, [activeTab]);
+	console.log(activeTab);
 
 	if (loading) return <p>Loading...</p>;
 	if (error) {
@@ -71,12 +97,14 @@ export default function Home() {
 							<TabsTrigger
 								value="hot"
 								className="data-[state=active]:shadow-none data-[state=active]:border-b-3 border-0 rounded-none cursor-pointer data-[state=active]:border-black mx-3"
+								onClick={() => setActiveTab("hot")}
 							>
 								Hot
 							</TabsTrigger>
 							<TabsTrigger
 								value="diskon"
 								className="data-[state=active]:shadow-none data-[state=active]:border-b-3 border-0 rounded-none cursor-pointer data-[state=active]:border-black mx-3"
+								onClick={() => setActiveTab("discount")}
 							>
 								Diskon
 							</TabsTrigger>
@@ -85,7 +113,7 @@ export default function Home() {
 							<Items data={products} />
 						</TabsContent>
 						<TabsContent value="diskon">
-							{/* <Items title="DISKON" /> */}
+							<Items data={products} />
 						</TabsContent>
 					</Tabs>
 				</section>
