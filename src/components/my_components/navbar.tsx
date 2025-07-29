@@ -1,3 +1,9 @@
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router";
+import { useGlobalData } from "@/contexts/GlobalDataContext";
+
+import { GetCsrf } from "../utils/csrf";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,12 +24,77 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Link, useNavigate } from "react-router";
-import { useState } from "react";
 export default function Navbar() {
 	const [openDialog, setOpenDialog] = useState(false);
-	const [isSignUpIn, setIsSignUpIn] = useState(0);
+	const [isSignUpIn, setIsSignUpIn] = useState(false);
+	const [notFound, setNotFound] = useState<boolean>();
+	const [error, setError] = useState<string | null>(null);
+	const [id, setId] = useState<string | null>(null);
+
+	const { setData, setGlobalLoading } = useGlobalData();
+
 	const navigate = useNavigate();
+
+	const locate = useLocation();
+	useEffect(() => {
+		const isLogin = async () => {
+			try {
+				const send = await fetch("http://localhost:8080/api/v1/auth/status", {
+					credentials: "include",
+				}).then();
+
+				const result = await send.json();
+				if (result.code === 200 && result.status === "ok") {
+					setIsSignUpIn(true);
+					setData(result);
+					setGlobalLoading(false);
+				} else {
+					setIsSignUpIn(false);
+					setData({ error: result.error });
+					setGlobalLoading(false);
+				}
+			} catch (err) {
+				const errFetch = "Network Error: " + err;
+				setData({ error: errFetch });
+				setNotFound(true);
+				setGlobalLoading(false);
+			}
+		};
+		isLogin();
+	}, [locate.pathname]);
+
+	const logout = async () => {
+		const csrfToken = await GetCsrf();
+		if (csrfToken === "error") {
+			setError("Error getting token");
+		}
+		try {
+			const send = await fetch("http://localhost:8080/api/v1/auth/logout", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRF-TOKEN": csrfToken,
+				},
+				body: JSON.stringify({}),
+				credentials: "include",
+			});
+			const result = await send.json();
+			if (result.code === 200 && result.status === "ok") {
+				setIsSignUpIn(false);
+				setId(null);
+				window.location.reload();
+			} else {
+				setError(result.error);
+				console.log(error);
+				setNotFound(true);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			setData({ error: errFetch });
+			// setLoading(false);
+		}
+	};
+
 	return (
 		<>
 			<nav className="container mx-auto flex justify-between py-3">
@@ -57,10 +128,7 @@ export default function Navbar() {
 									<DialogTitle></DialogTitle>
 									<DialogDescription></DialogDescription>
 								</DialogHeader>
-								<SignInUp
-									isSignUpIn={setIsSignUpIn}
-									setOpenCloseDialog={setOpenDialog}
-								/>
+								<SignInUp setOpenCloseDialog={setOpenDialog} />
 							</DialogContent>
 						</Dialog>
 					</section>
@@ -101,7 +169,7 @@ export default function Navbar() {
 								</DropdownMenuItem>
 								<DropdownMenuItem>
 									<Link
-										to={"http://" + location.host + "/cart"}
+										to={"http://" + location.host + "/cart?user=" + id}
 										className="w-full"
 									>
 										Keranjang
@@ -109,13 +177,13 @@ export default function Navbar() {
 								</DropdownMenuItem>
 								<DropdownMenuItem>
 									<Link
-										to={"http://" + location.host + "/chat"}
+										to={"http://" + location.host + "/chat?user=" + id}
 										className="w-full"
 									>
 										Pesan
 									</Link>
 								</DropdownMenuItem>
-								{isSignUpIn === 1 ? (
+								{isSignUpIn ? (
 									<>
 										<DropdownMenuItem>
 											<Link
@@ -127,11 +195,20 @@ export default function Navbar() {
 										</DropdownMenuItem>
 										<DropdownMenuItem>
 											<Link
-												to={"http://" + location.host + "/profile"}
+												to={"http://" + location.host + "/profile?user=" + id}
 												className="w-full"
 											>
 												Profile
 											</Link>
+										</DropdownMenuItem>
+										<DropdownMenuItem>
+											<Button
+												variant="outline"
+												className="border-0 shadow-none w-full justify-start p-0 font-normal h-5 bg-transparent cursor-pointer"
+												onClick={logout}
+											>
+												Logout
+											</Button>
 										</DropdownMenuItem>
 									</>
 								) : (
