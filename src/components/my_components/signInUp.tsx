@@ -13,14 +13,10 @@ import SignIn from "./signIn";
 import SignUp from "./signUp";
 
 interface SignInUpProps {
-	isSignUpIn: React.Dispatch<React.SetStateAction<number>>;
 	setOpenCloseDialog: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function SignInUp({
-	isSignUpIn,
-	setOpenCloseDialog,
-}: SignInUpProps) {
+export default function SignInUp({ setOpenCloseDialog }: SignInUpProps) {
 	return (
 		<>
 			<Tabs defaultValue="login">
@@ -39,10 +35,7 @@ export default function SignInUp({
 							<CardDescription></CardDescription>
 						</CardHeader>
 						<CardContent>
-							<SignIn
-							// isSignIn={isSignUpIn}
-							// setOpenCloseDialog={setOpenCloseDialog}
-							/>
+							<SignIn setOpenCloseDialog={setOpenCloseDialog} />
 						</CardContent>
 						<CardFooter className="hidden"></CardFooter>
 					</Card>
@@ -54,10 +47,7 @@ export default function SignInUp({
 							<CardDescription></CardDescription>
 						</CardHeader>
 						<CardContent>
-							<SignUp
-								isSignUp={isSignUpIn}
-								setOpenCloseDialog={setOpenCloseDialog}
-							/>
+							<SignUp setOpenCloseDialog={setOpenCloseDialog} />
 						</CardContent>
 						<CardFooter className="hidden"></CardFooter>
 					</Card>

@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
-// interface SignInProps {
-// 	isSignIn: React.Dispatch<React.SetStateAction<number>>;
-// 	setOpenCloseDialog: React.Dispatch<React.SetStateAction<boolean>>;
-// }
-export default function SignIn() {
+import { CreateCsrf } from "../utils/csrf";
+
+import { toast } from "sonner";
+
+interface SignInProps {
+	setOpenCloseDialog: React.Dispatch<React.SetStateAction<boolean>>;
+}
+export default function SignIn({ setOpenCloseDialog }: SignInProps) {
 	const navigate = useNavigate();
 	const [email, setEmail] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
@@ -15,6 +18,8 @@ export default function SignIn() {
 	const [ok, setOk] = useState<boolean>(false);
 
 	const handleSubmit = async () => {
+		const csrfToken = await CreateCsrf();
+
 		const payload = {
 			email,
 			password,
@@ -25,7 +30,9 @@ export default function SignIn() {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
+					"X-CSRF-TOKEN": csrfToken,
 				},
+				credentials: "include",
 				body: JSON.stringify(payload),
 			});
 
@@ -33,10 +40,10 @@ export default function SignIn() {
 			if (result.code === 200 && result.status === "ok") {
 				setId(result.data.id);
 				setOk(true);
-			} else if (result.code === 404 && result.status === "error") {
+			} else if (result.code === 401 && result.status === "error") {
 				setError(result.error);
 				setNotFound(true);
-			} else if (result.code === 401 && result.status === "error") {
+			} else if (result.code === 404 && result.status === "error") {
 				setError(result.error);
 				setNotFound(true);
 			} else {
@@ -52,8 +59,9 @@ export default function SignIn() {
 
 	useEffect(() => {
 		if (ok === true) {
-			//! CLOSE THE MODAL IN HERE
-			navigate("/profile?id=" + id);
+			toast("Sign in success");
+			setOpenCloseDialog(false);
+			window.location.reload();
 		}
 	}, [ok]);
 	return (

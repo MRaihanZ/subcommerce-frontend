@@ -11,11 +11,10 @@ import {
 } from "@/components/ui/popover";
 
 interface SignUpProps {
-	isSignUp: React.Dispatch<React.SetStateAction<number>>;
 	setOpenCloseDialog: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function SignUp({ isSignUp, setOpenCloseDialog }: SignUpProps) {
+export default function SignUp({ setOpenCloseDialog }: SignUpProps) {
 	const [date, setDate] = useState<Date | undefined>(undefined);
 	const [open, setOpen] = useState(false);
 	return (
@@ -103,7 +102,6 @@ export default function SignUp({ isSignUp, setOpenCloseDialog }: SignUpProps) {
 								type="button"
 								className="cursor-pointer bg-black rounded-lg hover:bg-primary-dark w-full p-4 text-sm text-white uppercase font-bold tracking-wider"
 								onClick={() => {
-									isSignUp(1);
 									setOpenCloseDialog(false);
 								}}
 							>
