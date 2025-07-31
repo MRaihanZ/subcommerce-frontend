@@ -21,8 +21,8 @@ export default function SignIn({ setOpenCloseDialog }: SignInProps) {
 		const csrfToken = await CreateCsrf();
 
 		const payload = {
-			email,
-			password,
+			email: email,
+			password: password,
 		};
 
 		try {
