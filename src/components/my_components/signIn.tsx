@@ -59,7 +59,7 @@ export default function SignIn({ setOpenCloseDialog }: SignInProps) {
 
 	useEffect(() => {
 		if (ok === true) {
-			toast("Sign in success");
+			toast("Sign in berhasil");
 			setOpenCloseDialog(false);
 			window.location.reload();
 		}
