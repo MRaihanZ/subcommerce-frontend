@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router";
 import { useGlobalData } from "@/contexts/GlobalDataContext";
 
-import { GetCsrf } from "../utils/csrf";
+import { GetCsrf } from "@/components/utils/csrf";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
