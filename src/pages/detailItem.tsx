@@ -114,7 +114,6 @@ export default function DetailItem() {
 		// comment
 	}, [prodParam]);
 	useEffect(() => {
-		//! TRY CHANGE (!loading) to (product !== null)
 		if (product !== null) {
 			const prodVarNumParam = Number(prodVarParam);
 			if (Number.isNaN(prodVarNumParam)) {
