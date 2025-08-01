@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/card";
 
 interface DataFetch {
-	id: number;
-	name: string;
+	p_id: number;
+	p_name: string;
 	pv_id: number;
 	pv_name: string;
 	img: string;
@@ -35,11 +35,11 @@ export default function Items({ data }: ItemsProps) {
 						key={index}
 						to={
 							prod.pv_name === "default"
-								? "http://" + location.host + "/detail?product=" + prod.id
+								? "http://" + location.host + "/detail?product=" + prod.p_id
 								: "http://" +
 								  location.host +
 								  "/detail?product=" +
-								  prod.id +
+								  prod.p_id +
 								  "&variant=" +
 								  prod.pv_id
 						}
@@ -65,10 +65,10 @@ export default function Items({ data }: ItemsProps) {
 							</CardHeader>
 							<CardContent className="mb-10">
 								{prod.pv_name === "default" ? (
-									<p className="">{prod.name}</p>
+									<p className="">{prod.p_name}</p>
 								) : (
 									<p className="">
-										{prod.name} - {prod.pv_name}
+										{prod.p_name} - {prod.pv_name}
 									</p>
 								)}
 								{prod.discount === 0 ? (
