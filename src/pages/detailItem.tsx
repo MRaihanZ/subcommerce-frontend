@@ -428,14 +428,14 @@ export default function DetailItem() {
 									""
 								) : (
 									<p>
-										Variant:{" "}
+										Varian:{" "}
 										<Badge variant="outline" className="mx-1">
 											{variantState}
 										</Badge>
 									</p>
 								)}
 								<p>
-									Subscription:{" "}
+									Periode:{" "}
 									<Badge variant="outline" className="mx-1">
 										{product.product_variants[productVariantIdx].interval +
 											" " +

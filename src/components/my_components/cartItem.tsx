@@ -36,9 +36,15 @@ export default function CartItem() {
 							finibus turpis a venenatis eleifend.
 						</p>
 						<p>
-							variant:
+							Varian:
 							<Badge variant="outline" className="mx-1">
 								2 Core 4GB
+							</Badge>
+						</p>
+						<p>
+							Periode:
+							<Badge variant="outline" className="mx-1">
+								1 bulan
 							</Badge>
 						</p>
 						<section className="flex w-full max-w-25 items-center my-3 relative">
