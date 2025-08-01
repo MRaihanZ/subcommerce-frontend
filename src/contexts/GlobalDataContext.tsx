@@ -17,6 +17,8 @@ type GlobalDataContextType = {
 	setData: (newData: GlobalData) => void;
 	globalLoading: boolean;
 	setGlobalLoading: (newData: boolean) => void;
+	globalToast: string | null;
+	setGlobalToast: (newData: string | null) => void;
 };
 
 const GlobalDataContext = createContext<GlobalDataContextType | undefined>(
@@ -27,20 +29,26 @@ export const GlobalDataProvider: React.FC<{ children: React.ReactNode }> = ({
 	children,
 }) => {
 	const [data, setData] = useState<GlobalData | null>(null);
-	const [globalLoading, setglobalLoading] = useState(true);
+	const [globalLoading, setGlobalLoading] = useState(true);
+	const [globalToast, setGlobalToast] = useState<string | null>(null);
 	const handleSetData = (newData: GlobalData) => {
 		setData(newData);
 	};
 	const handleSetLoading = (newData: boolean) => {
-		setglobalLoading(newData);
+		setGlobalLoading(newData);
+	};
+	const handleSetToast = (newData: string | null) => {
+		setGlobalToast(newData);
 	};
 	return (
 		<GlobalDataContext.Provider
 			value={{
 				data,
 				globalLoading,
+				globalToast,
 				setData: handleSetData,
 				setGlobalLoading: handleSetLoading,
+				setGlobalToast: handleSetToast,
 			}}
 		>
 			{children}
