@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { useGlobalData } from "@/contexts/GlobalDataContext";
+
 import {
 	Carousel,
 	CarouselContent,
@@ -11,12 +13,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import Items from "@/components/my_components/items";
 import FilterSideBar from "@/components/my_components/filterSideBar";
+import { toast } from "sonner";
 
 export default function Home() {
 	const [products, setProducts] = useState([]);
 	const [activeTab, setActiveTab] = useState("hot");
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+
+	const { globalToast, setGlobalToast } = useGlobalData();
+
+	useEffect(() => {
+		if (globalToast !== null) {
+			toast(globalToast);
+			setGlobalToast(null);
+		}
+	}, [globalToast]);
+
 	const fetchProductsHot = async () => {
 		setProducts([]);
 		try {
@@ -63,7 +76,6 @@ export default function Home() {
 			fetchProductsDiscount();
 		}
 	}, [activeTab]);
-	console.log(activeTab);
 
 	if (loading) return <p>Loading...</p>;
 	if (error) {

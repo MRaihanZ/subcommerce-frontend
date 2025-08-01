@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, useLocation } from "react-router";
 
+import { useGlobalData } from "@/contexts/GlobalDataContext";
+
 import Comment from "@/components/my_components/comment";
+import { GetCsrf } from "@/components/utils/csrf";
 
 import {
 	Carousel,
@@ -39,8 +42,8 @@ interface ProductVariant {
 
 // Item
 interface ProductDetail {
-	id: number;
-	name: string;
+	p_id: number;
+	p_name: string;
 	images: ProductImage[];
 	description: string;
 	sold: number;
@@ -67,11 +70,19 @@ export default function DetailItem() {
 	const [error, setError] = useState<string>();
 	const [searchParams] = useSearchParams();
 
+	const { data, setGlobalToast } = useGlobalData();
+
 	const prodParam = searchParams.get("product");
 	const prodVarParam = searchParams.get("variant");
 
 	useEffect(() => {
 		// Products
+		const prodNumParam = Number(prodParam);
+		if (Number.isNaN(prodNumParam)) {
+			setGlobalToast("Terjadi kesalahan pada query produk");
+			navigate("/");
+			return;
+		}
 		const fetchProduct = async () => {
 			try {
 				const res = await fetch(
@@ -87,7 +98,6 @@ export default function DetailItem() {
 					setQuantity(json.data.product_variants[0].min_order);
 					setLoading(false);
 				} else {
-					console.error("API Error:", json.error);
 					setError(json.error);
 					setLoading(false);
 				}
@@ -105,40 +115,91 @@ export default function DetailItem() {
 	}, [prodParam]);
 	useEffect(() => {
 		//! TRY CHANGE (!loading) to (product !== null)
-		if (!loading) {
-			const varParam = Number(prodVarParam);
-			if (Number.isNaN(varParam)) return;
+		if (product !== null) {
+			const prodVarNumParam = Number(prodVarParam);
+			if (Number.isNaN(prodVarNumParam)) {
+				navigate(
+					"/detail?product=" +
+						product.p_id +
+						"&variant=" +
+						product.product_variants[0].pv_id
+				);
+			}
 			for (let i = 0; i < product.product_variants.length; i++) {
-				if (product.product_variants[i].pv_id === varParam) {
+				if (product.product_variants[i].pv_id === prodVarNumParam) {
 					setProductVariantId(product.product_variants[i].pv_id);
 					setProductVariantIdx(i);
 					setVariantState(product.product_variants[i].pv_name);
 					break;
+				}
+				if (i + 1 === product.product_variants.length) {
+					navigate(
+						"/detail?product=" +
+							product.p_id +
+							"&variant=" +
+							product.product_variants[0].pv_id
+					);
 				}
 			}
 		}
 	}, [product, prodVarParam]);
 
 	useEffect(() => {
-		if (loading) return;
-		if (quantity < product.product_variants[productVariantIdx].min_order) {
-			setQuantity(product.product_variants[productVariantIdx].min_order);
-			setPrice(
-				product.product_variants[productVariantIdx].stock *
-					product.product_variants[productVariantIdx].price
-			);
-		} else if (quantity > product.product_variants[productVariantIdx].stock) {
-			setQuantity(product.product_variants[productVariantIdx].stock);
-			setPrice(
-				product.product_variants[productVariantIdx].stock *
-					product.product_variants[productVariantIdx].price
-			);
-		} else {
-			setPrice(quantity * product.product_variants[productVariantIdx].price);
-			const formatted = new Intl.NumberFormat("id-ID").format(price);
-			setFormatedPrice(formatted);
+		if (product !== null) {
+			if (quantity < product.product_variants[productVariantIdx].min_order) {
+				setQuantity(product.product_variants[productVariantIdx].min_order);
+				setPrice(
+					product.product_variants[productVariantIdx].stock *
+						product.product_variants[productVariantIdx].price
+				);
+			} else if (quantity > product.product_variants[productVariantIdx].stock) {
+				setQuantity(product.product_variants[productVariantIdx].stock);
+				setPrice(
+					product.product_variants[productVariantIdx].stock *
+						product.product_variants[productVariantIdx].price
+				);
+			} else {
+				setPrice(quantity * product.product_variants[productVariantIdx].price);
+				const formatted = new Intl.NumberFormat("id-ID").format(price);
+				setFormatedPrice(formatted);
+			}
 		}
 	}, [quantity, price]);
+
+	const handleCartSubmit = async () => {
+		if (data?.code !== 200) return;
+		const csrfToken = await GetCsrf();
+
+		const payload = {
+			p_id: Number(prodParam),
+			pv_id: productVariantId,
+			quantity: quantity,
+		};
+
+		try {
+			const send = await fetch("http://localhost:8080/api/v1/carts/", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRF-TOKEN": csrfToken,
+				},
+				credentials: "include",
+				body: JSON.stringify(payload),
+			});
+
+			const result = await send.json();
+			if (result.code === 200 && result.status === "ok") {
+				toast("Berhasil menambahkan barang");
+			} else {
+				toast(result.error);
+				setError(result.error);
+				// setLoading(false);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			setError(errFetch);
+		}
+	};
 
 	if (loading) return <p>Loading...</p>;
 	if (error) {
@@ -233,7 +294,7 @@ export default function DetailItem() {
 					<section className="px-3 py-3">
 						<section className="pb-3">
 							<p className="text-justify font-semibold text-xl">
-								{product.name}{" "}
+								{product.p_name}{" "}
 								{product.product_variants[productVariantIdx].pv_name ===
 								"default"
 									? ""
@@ -277,7 +338,7 @@ export default function DetailItem() {
 													navigate(
 														locate.pathname +
 															"?product=" +
-															product.id +
+															product.p_id +
 															"&variant=" +
 															pv.pv_id
 													);
@@ -393,7 +454,7 @@ export default function DetailItem() {
 									onClick={() =>
 										navigate(
 											"/checkout?product=" +
-												product.id +
+												product.p_id +
 												"&product-variant=" +
 												product.product_variants[productVariantIdx].pv_id
 										)
@@ -412,7 +473,7 @@ export default function DetailItem() {
 								</Button>
 								<Button
 									className="bg-blue-600 hover:bg-blue-800 w-full cursor-pointer flex-1"
-									onClick={() => navigate("/cart")}
+									onClick={handleCartSubmit}
 								>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
