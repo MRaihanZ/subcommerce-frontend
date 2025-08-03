@@ -147,21 +147,13 @@ export default function DetailItem() {
 		if (product !== null) {
 			if (quantity < product.product_variants[productVariantIdx].min_order) {
 				setQuantity(product.product_variants[productVariantIdx].min_order);
-				setPrice(
-					product.product_variants[productVariantIdx].stock *
-						product.product_variants[productVariantIdx].price
-				);
 			} else if (quantity > product.product_variants[productVariantIdx].stock) {
 				setQuantity(product.product_variants[productVariantIdx].stock);
-				setPrice(
-					product.product_variants[productVariantIdx].stock *
-						product.product_variants[productVariantIdx].price
-				);
 			} else {
-				setPrice(quantity * product.product_variants[productVariantIdx].price);
 				const formatted = new Intl.NumberFormat("id-ID").format(price);
 				setFormatedPrice(formatted);
 			}
+			setPrice(quantity * product.product_variants[productVariantIdx].price);
 		}
 	}, [quantity, price]);
 
