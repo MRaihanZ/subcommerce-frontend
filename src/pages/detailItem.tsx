@@ -147,12 +147,12 @@ export default function DetailItem() {
 		if (product !== null) {
 			if (quantity < product.product_variants[productVariantIdx].min_order) {
 				setQuantity(product.product_variants[productVariantIdx].min_order);
-			} else if (quantity > product.product_variants[productVariantIdx].stock) {
-				setQuantity(product.product_variants[productVariantIdx].stock);
-			} else {
-				const formatted = new Intl.NumberFormat("id-ID").format(price);
-				setFormatedPrice(formatted);
 			}
+			if (quantity > product.product_variants[productVariantIdx].stock) {
+				setQuantity(product.product_variants[productVariantIdx].stock);
+			}
+			const formatted = new Intl.NumberFormat("id-ID").format(price);
+			setFormatedPrice(formatted);
 			setPrice(quantity * product.product_variants[productVariantIdx].price);
 		}
 	}, [quantity, price]);
