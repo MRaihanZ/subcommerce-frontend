@@ -7,9 +7,12 @@ import { toast } from "sonner";
 
 interface SignInProps {
 	setOpenCloseDialog: React.Dispatch<React.SetStateAction<boolean>>;
+	setOpenCloseDropDownMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }
-export default function SignIn({ setOpenCloseDialog }: SignInProps) {
-	const navigate = useNavigate();
+export default function SignIn({
+	setOpenCloseDialog,
+	setOpenCloseDropDownMenu,
+}: SignInProps) {
 	const [email, setEmail] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
 	const [notFound, setNotFound] = useState<boolean>();
@@ -61,6 +64,7 @@ export default function SignIn({ setOpenCloseDialog }: SignInProps) {
 		if (ok === true) {
 			toast("Sign in berhasil");
 			setOpenCloseDialog(false);
+			setOpenCloseDropDownMenu(false);
 			window.location.reload();
 		}
 	}, [ok]);

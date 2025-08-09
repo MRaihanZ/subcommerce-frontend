@@ -25,7 +25,8 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 export default function Navbar() {
-	const [openDialog, setOpenDialog] = useState(false);
+	const [openDropDownMenu, setOpenDropDownMenu] = useState(false);
+	const [openDialogSignUpIn, setOpenDialogSignUpIn] = useState(false);
 	const [isSignUpIn, setIsSignUpIn] = useState(false);
 	const [notFound, setNotFound] = useState<boolean>();
 	const [error, setError] = useState<string | null>(null);
@@ -117,7 +118,10 @@ export default function Navbar() {
 						</Button>
 					</section>
 					<section className="md:ms-5 hidden">
-						<Dialog open={openDialog} onOpenChange={setOpenDialog}>
+						<Dialog
+							open={openDialogSignUpIn}
+							onOpenChange={setOpenDialogSignUpIn}
+						>
 							<DialogTrigger asChild>
 								<Button variant="outline" className="cursor-pointer">
 									Login
@@ -128,12 +132,18 @@ export default function Navbar() {
 									<DialogTitle></DialogTitle>
 									<DialogDescription></DialogDescription>
 								</DialogHeader>
-								<SignInUp setOpenCloseDialog={setOpenDialog} />
+								<SignInUp
+									setOpenCloseDialog={setOpenDialogSignUpIn}
+									setOpenCloseDropDownMenu={setOpenDropDownMenu}
+								/>
 							</DialogContent>
 						</Dialog>
 					</section>
 					<section className="ms-5">
-						<DropdownMenu>
+						<DropdownMenu
+							open={openDropDownMenu}
+							onOpenChange={setOpenDropDownMenu}
+						>
 							<DropdownMenuTrigger asChild>
 								<Button variant="outline" className="cursor-pointer">
 									<svg
@@ -167,57 +177,61 @@ export default function Navbar() {
 										</Button>
 									</section>
 								</DropdownMenuItem>
-								<DropdownMenuItem>
-									<Link
-										to={"http://" + location.host + "/cart?user=" + id}
-										className="w-full"
-									>
-										Keranjang
-									</Link>
+								<DropdownMenuItem
+									className="cursor-pointer"
+									onSelect={() => {
+										setOpenDropDownMenu(false);
+										navigate("/cart");
+									}}
+								>
+									Keranjang
 								</DropdownMenuItem>
-								<DropdownMenuItem>
-									<Link
-										to={"http://" + location.host + "/chat?user=" + id}
-										className="w-full"
-									>
-										Pesan
-									</Link>
+								<DropdownMenuItem
+									className="cursor-pointer"
+									onSelect={() => {
+										setOpenDropDownMenu(false);
+										navigate("/chat?user=" + id);
+									}}
+								>
+									Pesan
 								</DropdownMenuItem>
 								{isSignUpIn ? (
 									<>
-										<DropdownMenuItem>
-											<Link
-												to={"http://" + location.host + "/seller/register"}
-												className="w-full"
-											>
-												Daftar Penjual
-											</Link>
+										<DropdownMenuItem
+											className="cursor-pointer"
+											onSelect={() => {
+												setOpenDropDownMenu(false);
+												navigate("/seller/register");
+											}}
+										>
+											Daftar Penjual
 										</DropdownMenuItem>
-										<DropdownMenuItem>
-											<Link
-												to={"http://" + location.host + "/profile?user=" + id}
-												className="w-full"
-											>
-												Profile
-											</Link>
+										<DropdownMenuItem
+											className="cursor-pointer"
+											onSelect={() => {
+												setOpenDropDownMenu(false);
+												navigate("/profile?user=" + id);
+											}}
+										>
+											Profile
 										</DropdownMenuItem>
-										<DropdownMenuItem>
-											<Button
-												variant="outline"
-												className="border-0 shadow-none w-full justify-start p-0 font-normal h-5 bg-transparent cursor-pointer"
-												onClick={logout}
-											>
-												Logout
-											</Button>
+										<DropdownMenuItem
+											className="cursor-pointer"
+											onSelect={() => {
+												setOpenDropDownMenu(false);
+												logout();
+											}}
+										>
+											Logout
 										</DropdownMenuItem>
 									</>
 								) : (
 									<DropdownMenuItem
+										className="cursor-pointer"
 										onSelect={(e) => {
 											e.preventDefault(); // prevent default close/focus behavior
-											setTimeout(() => setOpenDialog(true), 10); // delay to avoid race condition
+											setTimeout(() => setOpenDialogSignUpIn(true), 10); // delay to avoid race condition
 										}}
-										className="cursor-pointer"
 									>
 										Masuk/Daftar
 									</DropdownMenuItem>

@@ -12,9 +12,13 @@ import {
 
 interface SignUpProps {
 	setOpenCloseDialog: React.Dispatch<React.SetStateAction<boolean>>;
+	setOpenCloseDropDownMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function SignUp({ setOpenCloseDialog }: SignUpProps) {
+export default function SignUp({
+	setOpenCloseDialog,
+	setOpenCloseDropDownMenu,
+}: SignUpProps) {
 	const [date, setDate] = useState<Date | undefined>(undefined);
 	const [open, setOpen] = useState(false);
 	return (
@@ -103,6 +107,7 @@ export default function SignUp({ setOpenCloseDialog }: SignUpProps) {
 								className="cursor-pointer bg-black rounded-lg hover:bg-primary-dark w-full p-4 text-sm text-white uppercase font-bold tracking-wider"
 								onClick={() => {
 									setOpenCloseDialog(false);
+									setOpenCloseDropDownMenu(false);
 								}}
 							>
 								Daftar
