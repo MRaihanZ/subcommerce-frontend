@@ -1,9 +1,13 @@
 import { useState } from "react";
 
+import { CreateCsrf } from "../utils/csrf";
+
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Calendar as CalendarIcon } from "lucide-react";
+import { toast } from "sonner";
+
 import {
 	Popover,
 	PopoverContent,
@@ -21,6 +25,53 @@ export default function SignUp({
 }: SignUpProps) {
 	const [date, setDate] = useState<Date | undefined>(undefined);
 	const [open, setOpen] = useState(false);
+	const [name, setName] = useState<string | null>();
+	const [email, setEmail] = useState<string | null>();
+	const [password, setPassword] = useState<string | null>();
+	const [error, setError] = useState<string | null>(null);
+	const [emailExist, setEmailExist] = useState<boolean>();
+
+	const handleSubmit = async () => {
+		const csrfToken = await CreateCsrf();
+
+		const payload = {
+			name: name,
+			email: email,
+			dob: date,
+			password: password,
+		};
+
+		try {
+			const send = await fetch("http://localhost:8080/api/v1/auth/register", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRF-TOKEN": csrfToken,
+				},
+				credentials: "include",
+				body: JSON.stringify(payload),
+			});
+
+			const result = await send.json();
+			if (result.code === 200 && result.status === "ok") {
+				toast("Sign up berhasil");
+				setOpenCloseDialog(false);
+				setOpenCloseDropDownMenu(false);
+				window.location.reload();
+			} else if (result.code === 409 && result.status === "error") {
+				setEmailExist(true);
+			} else {
+				toast(result.error);
+				setError(result.error);
+				// setLoading(false);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			toast(errFetch);
+			setError(errFetch);
+			// setLoading(false);
+		}
+	};
 	return (
 		<>
 			<section className="mx-auto max-w-md">
@@ -47,6 +98,8 @@ export default function SignUp({
 								type="text"
 								id="name"
 								placeholder="Enter your full name..."
+								onChange={(e) => setName(e.target.value)}
+								onFocus={() => setEmailExist(false)}
 							/>
 						</section>
 						<section className="mb-3">
@@ -57,6 +110,8 @@ export default function SignUp({
 								type="email"
 								id="email"
 								placeholder="Enter your E-Mail..."
+								onChange={(e) => setEmail(e.target.value)}
+								onFocus={() => setEmailExist(false)}
 							/>
 						</section>
 						<section className="flex flex-col mb-3">
@@ -99,16 +154,22 @@ export default function SignUp({
 								type="password"
 								id="password"
 								placeholder="* * * * * * * * * *"
+								onChange={(e) => setPassword(e.target.value)}
+								onFocus={() => setEmailExist(false)}
 							/>
 						</section>
+						{emailExist === true ? (
+							<p className="mb-6 ms-1 text-red-500 font-semibold">
+								Email sudah terdaftar
+							</p>
+						) : (
+							""
+						)}
 						<section className="flex">
 							<button
 								type="button"
 								className="cursor-pointer bg-black rounded-lg hover:bg-primary-dark w-full p-4 text-sm text-white uppercase font-bold tracking-wider"
-								onClick={() => {
-									setOpenCloseDialog(false);
-									setOpenCloseDropDownMenu(false);
-								}}
+								onClick={handleSubmit}
 							>
 								Daftar
 							</button>
