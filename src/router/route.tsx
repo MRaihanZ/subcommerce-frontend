@@ -20,6 +20,7 @@ import Checkout from "@/pages/checkout";
 import DetailItem from "@/pages/detailItem";
 import ForgotPassword from "@/pages/forgotPassword";
 import OrderList from "@/pages/orderList";
+import Otp from "@/pages/otp";
 import Search from "@/pages/search";
 import Subscription from "@/pages/subscription";
 import Seller from "@/pages/seller";
@@ -129,6 +130,15 @@ const routes = createBrowserRouter([
 		element: handleFallbackUser({
 			title: "Order List Page",
 			component: OrderList,
+			showNavbar: true,
+			showFooter: true,
+		}),
+	},
+	{
+		path: "/otp",
+		element: handleFallbackUser({
+			title: "OTP Page",
+			component: Otp,
 			showNavbar: true,
 			showFooter: true,
 		}),
