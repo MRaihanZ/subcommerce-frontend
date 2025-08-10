@@ -210,7 +210,7 @@ export default function Navbar() {
 											className="cursor-pointer"
 											onSelect={() => {
 												setOpenDropDownMenu(false);
-												navigate("/profile?user=" + id);
+												navigate("/profile");
 											}}
 										>
 											Profile
