@@ -54,7 +54,10 @@ export default function SignInUp({
 							<CardDescription></CardDescription>
 						</CardHeader>
 						<CardContent>
-							<SignUp setOpenCloseDialog={setOpenCloseDialog} />
+							<SignUp
+								setOpenCloseDialog={setOpenCloseDialog}
+								setOpenCloseDropDownMenu={setOpenCloseDropDownMenu}
+							/>
 						</CardContent>
 						<CardFooter className="hidden"></CardFooter>
 					</Card>
