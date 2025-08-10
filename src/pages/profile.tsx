@@ -19,10 +19,10 @@ import { Input } from "@/components/ui/input";
 export default function Profile() {
 	const [nama, setNama] = useState("Rai");
 	const [email, setEmail] = useState("rai@gmail.com");
-	// const [dob, setDob] = useState("13/mm/yyyy");
-	const [date, setDate] = useState<Date | undefined>(undefined);
+	const [date, setDate] = useState<Date | undefined>(new Date("1972-05-14"));
 	const [isDisableButton, setIsDisableButton] = useState(true);
 	const [open, setOpen] = useState(false);
+	const [isEdit, setIsEdit] = useState(false);
 	const [isEditPassword, setIsEditPassword] = useState(false);
 	const [isEditProfile, setIsEditProfile] = useState(false);
 	return (
@@ -124,19 +124,28 @@ export default function Profile() {
 						<section className="flex justify-around flex-col 2xl:flex-row gap-5 mt-5">
 							<Button
 								className="cursor-pointer"
-								onClick={() => setIsDisableButton((prev) => !prev)}
+								onClick={() => {
+									setIsEdit((prev) => !prev);
+									setIsDisableButton((prev) => !prev);
+								}}
 							>
-								{isDisableButton ? "Edit" : "Batalkan"}
+								{isEdit ? "Batalkan" : "Edit"}
 							</Button>
 							<Button
 								className="cursor-pointer"
-								onClick={() => setIsEditPassword((prev) => !prev)}
+								onClick={() => {
+									setIsEditPassword((prev) => !prev);
+									setIsDisableButton((prev) => !prev);
+								}}
 							>
-								Change Password
+								{isEditPassword ? "Batalkan" : "Change Password"}
 							</Button>
 							<Button
 								className="cursor-pointer"
-								onClick={() => setIsEditProfile((prev) => !prev)}
+								onClick={() => {
+									setIsEditProfile((prev) => !prev);
+									setIsDisableButton((prev) => !prev);
+								}}
 							>
 								{isEditProfile ? "Batalkan" : "Change Profile Picture"}
 							</Button>
