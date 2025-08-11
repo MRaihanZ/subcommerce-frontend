@@ -25,13 +25,27 @@ export default function SignUp({
 }: SignUpProps) {
 	const [date, setDate] = useState<Date | undefined>(undefined);
 	const [open, setOpen] = useState(false);
-	const [name, setName] = useState<string | null>();
-	const [email, setEmail] = useState<string | null>();
-	const [password, setPassword] = useState<string | null>();
+	const [name, setName] = useState<string>("");
+	const [email, setEmail] = useState<string>("");
+	const [password, setPassword] = useState<string>("");
 	const [error, setError] = useState<string | null>(null);
+	const [inputRequired, setInputRequired] = useState(false);
 	const [emailExist, setEmailExist] = useState<boolean>();
 
 	const handleSubmit = async () => {
+		if (name === "") {
+			setInputRequired(true);
+			return;
+		} else if (email === "") {
+			setInputRequired(true);
+			return;
+		} else if (date === undefined) {
+			setInputRequired(true);
+			return;
+		} else if (password === "") {
+			setInputRequired(true);
+			return;
+		}
 		const csrfToken = await CreateCsrf();
 
 		const payload = {
@@ -83,35 +97,43 @@ export default function SignUp({
 						<p className="text-2xl font-bold">SubCommerce</p>
 					</span>
 					<section className="pt-8 font-bold text-black text-center text-xl tracking-widest uppercase">
-						Welcome!
+						Selamat Datang!
 					</section>
 					<section className="text-center mb-5 mt-3">
-						Please enter your details to sign up.
+						Silahkan isi form dibawah ini
 					</section>
 					<form className="bg-grey-lightest py-3">
 						{/* {{ csrf_field() }} */}
 						<section className="mb-3">
-							<label htmlFor="name">Full Name</label>
+							<label htmlFor="name">Nama</label>
 							<input
 								className="border w-full p-3 rounded-lg"
 								name="name"
 								type="text"
 								id="name"
-								placeholder="Enter your full name..."
+								placeholder="Nama..."
+								required
 								onChange={(e) => setName(e.target.value)}
-								onFocus={() => setEmailExist(false)}
+								onFocus={() => {
+									setEmailExist(false);
+									setInputRequired(false);
+								}}
 							/>
 						</section>
 						<section className="mb-3">
-							<label htmlFor="email">E-Mail Address</label>
+							<label htmlFor="email">Email</label>
 							<input
 								className="border w-full p-3 rounded-lg"
 								name="email"
 								type="email"
 								id="email"
-								placeholder="Enter your E-Mail..."
+								placeholder="Email..."
+								required
 								onChange={(e) => setEmail(e.target.value)}
-								onFocus={() => setEmailExist(false)}
+								onFocus={() => {
+									setEmailExist(false);
+									setInputRequired(false);
+								}}
 							/>
 						</section>
 						<section className="flex flex-col mb-3">
@@ -137,9 +159,11 @@ export default function SignUp({
 										mode="single"
 										selected={date}
 										captionLayout="dropdown"
+										required
 										onSelect={(date) => {
 											setDate(date);
 											setOpen(false);
+											setInputRequired(false);
 										}}
 										className="mx-auto"
 									/>
@@ -154,10 +178,21 @@ export default function SignUp({
 								type="password"
 								id="password"
 								placeholder="* * * * * * * * * *"
+								required
 								onChange={(e) => setPassword(e.target.value)}
-								onFocus={() => setEmailExist(false)}
+								onFocus={() => {
+									setEmailExist(false);
+									setInputRequired(false);
+								}}
 							/>
 						</section>
+						{inputRequired === true ? (
+							<p className="mb-6 ms-1 text-red-500 font-semibold">
+								Nama, email, tanggal dan password harus diisi
+							</p>
+						) : (
+							""
+						)}
 						{emailExist === true ? (
 							<p className="mb-6 ms-1 text-red-500 font-semibold">
 								Email sudah terdaftar

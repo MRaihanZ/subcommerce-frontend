@@ -15,12 +15,20 @@ export default function SignIn({
 }: SignInProps) {
 	const [email, setEmail] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
+	const [inputRequired, setInputRequired] = useState(false);
 	const [notFound, setNotFound] = useState<boolean>();
 	const [error, setError] = useState<string | null>(null);
 	const [id, setId] = useState<string>("");
 	const [ok, setOk] = useState<boolean>(false);
 
 	const handleSubmit = async () => {
+		if (email === "") {
+			setInputRequired(true);
+			return;
+		} else if (password === "") {
+			setInputRequired(true);
+			return;
+		}
 		const csrfToken = await CreateCsrf();
 
 		const payload = {
@@ -79,23 +87,27 @@ export default function SignIn({
 						<p className="text-2xl font-bold">SubCommerce</p>
 					</span>
 					<section className="pt-8 font-bold text-black text-center text-xl tracking-widest uppercase">
-						Welcome back!
+						Selamat Datang!
 					</section>
 					<section className="text-center mb-5 mt-3">
-						Please enter your details to sign in.
+						Silahkan isi form dibawah ini
 					</section>
 					<section className="bg-grey-lightest py-3">
 						{/* {{ csrf_field() }} */}
 
 						<section className="mb-3">
-							<label htmlFor="email">E-Mail Address</label>
+							<label htmlFor="email">Email</label>
 							<input
 								className="border w-full p-3 rounded-lg"
 								type="email"
 								id="email"
-								placeholder="E-Mail"
+								placeholder="Email..."
+								required
 								onChange={(e) => setEmail(e.target.value)}
-								onFocus={() => setNotFound(false)}
+								onFocus={() => {
+									setNotFound(false);
+									setInputRequired(false);
+								}}
 							/>
 						</section>
 						<section className={notFound === true ? "mb-6" : "mb-3"}>
@@ -105,10 +117,21 @@ export default function SignIn({
 								type="password"
 								id="password"
 								placeholder="* * * * * * * * * *"
+								required
 								onChange={(e) => setPassword(e.target.value)}
-								onFocus={() => setNotFound(false)}
+								onFocus={() => {
+									setNotFound(false);
+									setInputRequired(false);
+								}}
 							/>
 						</section>
+						{inputRequired === true ? (
+							<p className="mb-6 ms-1 text-red-500 font-semibold">
+								Email atau password harus diisi
+							</p>
+						) : (
+							""
+						)}
 						{notFound === true ? (
 							<p className="mb-6 ms-1 text-red-500 font-semibold">
 								Email atau password salah
