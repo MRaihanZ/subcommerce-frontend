@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+import { GetCsrf } from "@/components/utils/csrf";
 
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 import InputFormProfile from "@/components/my_components/inputFormProfile";
 
 import { Calendar as CalendarIcon } from "lucide-react";
@@ -14,17 +17,149 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 
+import {
+	Dialog,
+	// DialogClose,
+	DialogContent,
+	DialogDescription,
+	// DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
+
 import { Input } from "@/components/ui/input";
 
 export default function Profile() {
-	const [nama, setNama] = useState("Rai");
-	const [email, setEmail] = useState("rai@gmail.com");
-	const [date, setDate] = useState<Date | undefined>(new Date("1972-05-14"));
+	const [defProfileImg, setDefProfileImg] = useState("");
+	const [profileImg, setProfileImg] = useState<File | null>(null);
+	const [name, setName] = useState("");
+	const [email, setEmail] = useState("");
+	const [date, setDate] = useState<Date | undefined>(undefined);
+	const [password, setPassword] = useState("");
 	const [isDisableButton, setIsDisableButton] = useState(true);
 	const [open, setOpen] = useState(false);
 	const [isEdit, setIsEdit] = useState(false);
 	const [isEditPassword, setIsEditPassword] = useState(false);
 	const [isEditProfile, setIsEditProfile] = useState(false);
+
+	const [openDialog, setOpenDialog] = useState(false);
+
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string>();
+
+	useEffect(() => {
+		const fetchComments = async () => {
+			try {
+				const res = await fetch("http://localhost:8080/api/v1/users/", {
+					credentials: "include",
+				});
+				const json = await res.json();
+				if (json.code === 200 && json.status === "ok") {
+					setName(json.data.name);
+					setEmail(json.data.email);
+					setDate(new Date(json.data.dob));
+					setDefProfileImg(json.data.img);
+					setLoading(false);
+				} else {
+					setError(json.error);
+					setLoading(false);
+				}
+			} catch (err) {
+				const errFetch = "Network Error: " + err;
+				setError(errFetch);
+				setLoading(false);
+			}
+		};
+		fetchComments();
+	}, []);
+
+	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (e.target.files && e.target.files[0]) {
+			setProfileImg(e.target.files[0]); // store the first selected file
+		}
+	};
+
+	const handleUpdate = async () => {
+		const csrfToken = await GetCsrf();
+
+		const payload = new FormData();
+		payload.append("name", name);
+		payload.append("email", email);
+		payload.append("dob", date ? date.toISOString().split("T")[0] : "");
+		payload.append("password", password);
+		if (profileImg) {
+			payload.append("img", profileImg);
+		} else {
+			payload.append("imgPath", defProfileImg);
+		}
+
+		try {
+			const send = await fetch("http://localhost:8080/api/v1/users/", {
+				method: "PATCH",
+				headers: {
+					"X-CSRF-TOKEN": csrfToken,
+				},
+				credentials: "include",
+				body: payload,
+			});
+
+			const json = await send.json();
+			if (json.code === 200 && json.status === "ok") {
+				setName(json.data.name);
+				setEmail(json.data.email);
+				setDate(new Date(json.data.dob));
+				setDefProfileImg(json.data.img);
+				setIsDisableButton(true);
+				setIsEdit(false);
+				setIsEditPassword(false);
+				setIsEditProfile(false);
+				toast("Profile berhasil di update");
+			} else {
+				toast("Gagal mengupdate profil: " + json.error);
+				setError(json.error);
+				// setLoading(false);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			toast(errFetch);
+			setError(errFetch);
+			// setLoading(false);
+		}
+	};
+
+	const handleDelete = async () => {
+		const csrfToken = await GetCsrf();
+
+		try {
+			const send = await fetch("http://localhost:8080/api/v1/users/", {
+				method: "DELETE",
+				headers: {
+					"X-CSRF-TOKEN": csrfToken,
+				},
+				credentials: "include",
+			});
+
+			const json = await send.json();
+			if (json.code === 200 && json.status === "ok") {
+				toast("akun berhasil di hapus");
+			} else {
+				toast("Gagal menghapus akun: " + json.error);
+				setError(json.error);
+				// setLoading(false);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			toast(errFetch);
+			setError(errFetch);
+			// setLoading(false);
+		}
+	};
+
+	if (loading) return <p>Loading...</p>;
+	if (error) {
+		return <p>{error}</p>;
+	}
 	return (
 		<>
 			<section className="grid lg:grid-cols-5 xl:grid-cols-7 2xl:grid-cols-9 mt-7">
@@ -32,7 +167,7 @@ export default function Profile() {
 					<p className="text-center py-3">Bio Data</p>
 					<Separator />
 					<section className="place-self-center mt-5 p-3 border rounded-xl">
-						<img src="/assets/img/item.jpg" alt="" className="w-60 h-60" />
+						<img src={defProfileImg} alt="" className="w-60 h-60" />
 					</section>
 					<section className="mx-5 mb-5">
 						<section
@@ -46,15 +181,21 @@ export default function Profile() {
 							<Label htmlFor="picture" className="mb-1">
 								Picture
 							</Label>
-							<Input id="picture" type="file" name="picture" />
+							<Input
+								id="picture"
+								type="file"
+								name="picture"
+								accept="image/*"
+								onChange={handleFileChange}
+							/>
 						</section>
 						<InputFormProfile
 							labelName="Nama"
 							id="nama"
 							name="nama"
 							type="text"
-							value={nama}
-							setValue={setNama}
+							value={name}
+							setValue={setName}
 							isDisabled={isDisableButton}
 						/>
 						<InputFormProfile
@@ -104,10 +245,11 @@ export default function Profile() {
 								password
 							</Label>
 							<Input
-								id="{id}"
+								id="password"
 								name="password"
 								type="password"
 								placeholder="********"
+								onChange={(e) => setPassword(e.target.value)}
 							/>
 						</section>
 						<section className={isDisableButton ? "hidden mt-5" : "mt-5"}>
@@ -117,6 +259,7 @@ export default function Profile() {
 										? "hidden cursor-pointer w-full"
 										: "cursor-pointer w-full"
 								}
+								onClick={handleUpdate}
 							>
 								Submit
 							</Button>
@@ -150,6 +293,36 @@ export default function Profile() {
 								{isEditProfile ? "Batalkan" : "Change Profile Picture"}
 							</Button>
 						</section>
+						<Dialog open={openDialog} onOpenChange={setOpenDialog}>
+							<DialogTrigger asChild>
+								<Button
+									variant="destructive"
+									className="cursor-pointer w-full mt-5"
+								>
+									Hapus Akun
+								</Button>
+							</DialogTrigger>
+							<DialogContent>
+								<DialogHeader>
+									<DialogTitle>Konfirmasi Hapus Akun</DialogTitle>
+									<DialogDescription></DialogDescription>
+								</DialogHeader>
+								<section className="flex gap-5">
+									<Button
+										className="w-full flex-1 cursor-pointer mt-5"
+										onClick={() => setOpenDialog(false)}
+									>
+										Tidak
+									</Button>
+									<Button
+										className="w-full flex-1 cursor-pointer mt-5"
+										variant="destructive"
+									>
+										Ya
+									</Button>
+								</section>
+							</DialogContent>
+						</Dialog>
 					</section>
 				</section>
 			</section>
