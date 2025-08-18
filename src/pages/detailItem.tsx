@@ -372,7 +372,7 @@ export default function DetailItem() {
 							<>
 								<section className="my-3">
 									<p className="text-sm font-medium capitalize mb-2">
-										Variant:{" "}
+										Varian:{" "}
 									</p>
 									<section className="flex gap-2 flex-wrap">
 										{product.product_variants.map((pv, idx) => (
