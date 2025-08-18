@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
+
+import { useGlobalData } from "@/contexts/GlobalDataContext";
 
 import { GetCsrf } from "@/components/utils/csrf";
 
@@ -47,6 +50,10 @@ export default function Profile() {
 
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string>();
+
+	const navigate = useNavigate();
+
+	const { setGlobalToast } = useGlobalData();
 
 	useEffect(() => {
 		const fetchComments = async () => {
@@ -142,7 +149,8 @@ export default function Profile() {
 
 			const json = await send.json();
 			if (json.code === 200 && json.status === "ok") {
-				toast("akun berhasil di hapus");
+				navigate("/");
+				setGlobalToast("akun berhasil di hapus");
 			} else {
 				toast("Gagal menghapus akun: " + json.error);
 				setError(json.error);
@@ -317,6 +325,7 @@ export default function Profile() {
 									<Button
 										className="w-full flex-1 cursor-pointer mt-5"
 										variant="destructive"
+										onClick={handleDelete}
 									>
 										Ya
 									</Button>
