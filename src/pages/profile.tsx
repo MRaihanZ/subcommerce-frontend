@@ -56,7 +56,7 @@ export default function Profile() {
 	const { setGlobalToast } = useGlobalData();
 
 	useEffect(() => {
-		const fetchComments = async () => {
+		const fetchProfile = async () => {
 			try {
 				const res = await fetch("http://localhost:8080/api/v1/users/", {
 					credentials: "include",
@@ -78,7 +78,7 @@ export default function Profile() {
 				setLoading(false);
 			}
 		};
-		fetchComments();
+		fetchProfile();
 	}, []);
 
 	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
