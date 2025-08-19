@@ -114,11 +114,13 @@ export default function DetailItem() {
 					setQuantity(json.data.product_variants[0].min_order);
 					setLoading(false);
 				} else {
+					toast.error(json.error);
 					setError(json.error);
 					setLoading(false);
 				}
 			} catch (err) {
 				const errFetch = "Network Error: " + err;
+				toast.error(errFetch);
 				setError(errFetch);
 				setLoading(false);
 			}
@@ -136,11 +138,13 @@ export default function DetailItem() {
 					setSeller(json.data);
 					setLoading(false);
 				} else {
+					toast.error(json.error);
 					setError(json.error);
 					setLoading(false);
 				}
 			} catch (err) {
 				const errFetch = "Network Error: " + err;
+				toast.error(errFetch);
 				setError(errFetch);
 				setLoading(false);
 			}
@@ -158,11 +162,13 @@ export default function DetailItem() {
 					setRating(json.data);
 					setLoading(false);
 				} else {
+					toast.error(json.error);
 					setError(json.error);
 					setLoading(false);
 				}
 			} catch (err) {
 				const errFetch = "Network Error: " + err;
+				toast.error(errFetch);
 				setError(errFetch);
 				setLoading(false);
 			}
@@ -236,9 +242,9 @@ export default function DetailItem() {
 
 			const result = await send.json();
 			if (result.code === 200 && result.status === "ok") {
-				toast("Berhasil menambahkan barang");
+				toast.success("Berhasil menambahkan barang");
 			} else {
-				toast(result.error);
+				toast.error(result.error);
 				setError(result.error);
 				// setLoading(false);
 			}
