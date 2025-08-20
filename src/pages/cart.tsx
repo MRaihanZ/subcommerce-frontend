@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 
 import { GetCsrf } from "@/components/utils/csrf";
 
@@ -8,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import CartItem from "@/components/my_components/cartItem";
 import { toast } from "sonner";
-interface CartProducts {
+interface CartProduct {
 	s_name: string;
 	p_id: number;
 	p_name: string;
@@ -24,10 +25,20 @@ interface CartProducts {
 	quantity: number;
 }
 
+interface CheckoutProduct {
+	p_id: number;
+	pv_id: number;
+	quantity: number;
+	unit_price: number;
+	total_price: number;
+}
+
 export default function Cart() {
-	const [products, setProducts] = useState<CartProducts[] | null>(null);
+	const [products, setProducts] = useState<CartProduct[] | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string>();
+
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const fetchProducts = async () => {
@@ -61,7 +72,7 @@ export default function Cart() {
 	useEffect(() => {
 		if (products !== null) {
 			if (totalPrice.length === products.length) {
-				const total = totalPrice.reduce((acc, val) => acc + val, 0);
+				const total = totalPrice.reduce((total, val) => total + val, 0);
 				setCountTotal(total);
 			}
 		}
@@ -120,6 +131,45 @@ export default function Cart() {
 		setProducts(updated);
 	};
 
+	const [checkoutProducts, setCheckoutProducts] = useState<CheckoutProduct[]>(
+		[]
+	);
+
+	const handleCheckoutSubmit = async () => {
+		if (checkoutProducts.length === 0) {
+			toast.warning("Pilih produk terlebih dahulu");
+			return;
+		}
+		const csrfToken = await GetCsrf();
+
+		try {
+			const send = await fetch(
+				"http://localhost:8080/api/v1/orders/checkouts?state=cart",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						"X-CSRF-TOKEN": csrfToken,
+					},
+					credentials: "include",
+					body: JSON.stringify(checkoutProducts),
+				}
+			);
+
+			const result = await send.json();
+			if (result.code === 200 && result.status === "ok") {
+				navigate("/checkout");
+			} else {
+				toast.error(result.error);
+				setError(result.error);
+				// setLoading(false);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			setError(errFetch);
+		}
+	};
+
 	if (loading) return <p>Loading...</p>;
 	if (error) {
 		return <p>{error}</p>;
@@ -170,6 +220,8 @@ export default function Cart() {
 									key={index}
 									index={index}
 									data={prod}
+									checkoutData={checkoutProducts}
+									checkoutDataFunc={setCheckoutProducts}
 									totalFunc={setTotalPrice}
 									allCheck={allCheck}
 									allCheckFunc={setAllCheck}
@@ -191,7 +243,10 @@ export default function Cart() {
 							<p className="font-bold text-xl">Total</p>
 							<p className="font-bold text-xl">Rp{formatedTotalPrice}</p>
 						</section>
-						<Button className="bg-green-600 hover:bg-green-800 w-full cursor-pointer">
+						<Button
+							className="bg-green-600 hover:bg-green-800 w-full cursor-pointer"
+							onClick={handleCheckoutSubmit}
+						>
 							Beli
 						</Button>
 					</section>

@@ -25,9 +25,19 @@ interface CartProducts {
 	quantity: number;
 }
 
+interface CheckoutProduct {
+	p_id: number;
+	pv_id: number;
+	quantity: number;
+	unit_price: number;
+	total_price: number;
+}
+
 interface CartItemProps {
 	index: number;
 	data: CartProducts;
+	checkoutData: CheckoutProduct[];
+	checkoutDataFunc: React.Dispatch<React.SetStateAction<CheckoutProduct[]>>;
 	totalFunc: React.Dispatch<React.SetStateAction<number[]>>;
 	allCheck: boolean;
 	allCheckFunc: React.Dispatch<React.SetStateAction<boolean>>;
@@ -39,6 +49,8 @@ interface CartItemProps {
 export default function CartItem({
 	index,
 	data,
+	checkoutData,
+	checkoutDataFunc,
 	totalFunc,
 	allCheck,
 	allCheckFunc,
@@ -82,12 +94,30 @@ export default function CartItem({
 				newArray[index] = price;
 				return newArray;
 			});
+			checkoutDataFunc((prev) => {
+				return [
+					...prev,
+					{
+						p_id: data.p_id,
+						pv_id: data.pv_id,
+						quantity,
+						unit_price: data.price,
+						total_price: price,
+					},
+				];
+			});
 		} else {
 			totalFunc((prev) => {
 				const newArray = [...prev];
 				newArray[index] = 0;
 				return newArray;
 			});
+			// change this function from adding item to the array to delete the item in array
+			checkoutDataFunc((prev) =>
+				prev.filter(
+					(data) => data.p_id !== deleteProd && data.pv_id !== deleteProdVar
+				)
+			);
 		}
 	}, [price, localCheck]);
 
@@ -95,9 +125,9 @@ export default function CartItem({
 		const csrfToken = await GetCsrf();
 		try {
 			const res = await fetch(
-				"http://localhost:8080/api/v1/carts/product?product_id=" +
+				"http://localhost:8080/api/v1/carts/product/" +
 					deleteProd +
-					"&product_variant_id=" +
+					"/" +
 					deleteProdVar,
 				{
 					method: "DELETE",
