@@ -53,8 +53,8 @@ export default function Comment({ prodId }: CommentProps) {
 	return (
 		<>
 			{ratingComments?.map((r, i) => (
-				<>
-					<section key={i} className="mt-3 pb-5">
+				<section key={i}>
+					<section className="mt-3 pb-5">
 						<section className="flex items-center mt-3">
 							<section className="flex">
 								<svg
@@ -88,8 +88,8 @@ export default function Comment({ prodId }: CommentProps) {
 							<p>{r.comment}</p>
 						</section>
 					</section>
-					<Separator key={i} />
-				</>
+					<Separator />
+				</section>
 			))}
 		</>
 	);
