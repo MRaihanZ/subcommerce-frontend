@@ -70,6 +70,7 @@ export default function DetailItem() {
 	// const selectedLength = Array(rawData.variantTitle.length).fill("");
 	const [variantState, setVariantState] = useState("");
 	const [quantity, setQuantity] = useState<number>(0);
+	const [basePrice, setBasePrice] = useState<number>(0);
 	const [price, setPrice] = useState<number>(0);
 	const [formatedPrice, setFormatedPrice] = useState<string>("");
 	const [productVariantId, setProductVariantId] = useState<number | null>(null);
@@ -175,6 +176,7 @@ export default function DetailItem() {
 		};
 		fetchRating();
 	}, [prodParam]);
+
 	useEffect(() => {
 		if (product !== null) {
 			const prodVarNumParam = Number(prodVarParam);
@@ -216,8 +218,49 @@ export default function DetailItem() {
 			const formatted = new Intl.NumberFormat("id-ID").format(price);
 			setFormatedPrice(formatted);
 			setPrice(quantity * product.product_variants[productVariantIdx].price);
+			setBasePrice(product.product_variants[productVariantIdx].price);
 		}
-	}, [quantity, price]);
+	}, [quantity, price, productVariantIdx]);
+
+	const handleCheckoutSubmit = async () => {
+		if (data?.code !== 200) return;
+		const csrfToken = await GetCsrf();
+
+		const payload = {
+			p_id: Number(prodParam),
+			pv_id: productVariantId,
+			quantity: quantity,
+			unit_price: basePrice,
+			total_price: price,
+		};
+
+		try {
+			const send = await fetch(
+				"http://localhost:8080/api/v1/orders/checkouts?state=direct",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						"X-CSRF-TOKEN": csrfToken,
+					},
+					credentials: "include",
+					body: JSON.stringify([payload]),
+				}
+			);
+
+			const result = await send.json();
+			if (result.code === 200 && result.status === "ok") {
+				navigate("/checkout");
+			} else {
+				toast.error(result.error);
+				setError(result.error);
+				// setLoading(false);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			setError(errFetch);
+		}
+	};
 
 	const handleCartSubmit = async () => {
 		if (data?.code !== 200) return;
@@ -504,14 +547,7 @@ export default function DetailItem() {
 							<section className="flex gap-5">
 								<Button
 									className="bg-green-600 hover:bg-green-800 mb-5 w-full cursor-pointer flex-1"
-									onClick={() =>
-										navigate(
-											"/checkout?product=" +
-												product.p_id +
-												"&product-variant=" +
-												product.product_variants[productVariantIdx].pv_id
-										)
-									}
+									onClick={handleCheckoutSubmit}
 								>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
