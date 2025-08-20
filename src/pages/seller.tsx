@@ -198,6 +198,7 @@ export default function Seller() {
 							<TableRow>
 								<TableHead className="w-[100px]">Id</TableHead>
 								<TableHead>Nama</TableHead>
+								<TableHead>Nama Varian</TableHead>
 								<TableHead>Status</TableHead>
 								<TableHead>Tanggal Pembelian</TableHead>
 								<TableHead>Payment Id</TableHead>
@@ -208,6 +209,7 @@ export default function Seller() {
 							<TableRow>
 								<TableCell className="font-medium">INV001</TableCell>
 								<TableCell>VPS Linux Indonesia</TableCell>
+								<TableCell>default</TableCell>
 								<TableCell>Paid</TableCell>
 								<TableCell>2024-03-07 23:19</TableCell>
 								<TableCell>PAY001</TableCell>
@@ -216,6 +218,7 @@ export default function Seller() {
 							<TableRow>
 								<TableCell className="font-medium">INV001</TableCell>
 								<TableCell>VPS Linux Indonesia</TableCell>
+								<TableCell>A</TableCell>
 								<TableCell>Paid</TableCell>
 								<TableCell>2024-03-07 23:19</TableCell>
 								<TableCell>PAY001</TableCell>
@@ -224,6 +227,7 @@ export default function Seller() {
 							<TableRow>
 								<TableCell className="font-medium">INV001</TableCell>
 								<TableCell>VPS Linux Indonesia</TableCell>
+								<TableCell>B</TableCell>
 								<TableCell>Paid</TableCell>
 								<TableCell>2024-03-07 23:19</TableCell>
 								<TableCell>PAY001</TableCell>
@@ -232,6 +236,7 @@ export default function Seller() {
 							<TableRow>
 								<TableCell className="font-medium">INV001</TableCell>
 								<TableCell>VPS Linux Indonesia</TableCell>
+								<TableCell>default</TableCell>
 								<TableCell>Paid</TableCell>
 								<TableCell>2024-03-07 23:19</TableCell>
 								<TableCell>PAY001</TableCell>
@@ -240,6 +245,7 @@ export default function Seller() {
 							<TableRow>
 								<TableCell className="font-medium">INV001</TableCell>
 								<TableCell>VPS Linux Indonesia</TableCell>
+								<TableCell>default</TableCell>
 								<TableCell>Paid</TableCell>
 								<TableCell>2024-03-07 23:19</TableCell>
 								<TableCell>PAY001</TableCell>
@@ -248,6 +254,7 @@ export default function Seller() {
 							<TableRow>
 								<TableCell className="font-medium">INV001</TableCell>
 								<TableCell>VPS Linux Indonesia</TableCell>
+								<TableCell>default</TableCell>
 								<TableCell>Paid</TableCell>
 								<TableCell>2024-03-07 23:19</TableCell>
 								<TableCell>PAY001</TableCell>
@@ -256,6 +263,7 @@ export default function Seller() {
 							<TableRow>
 								<TableCell className="font-medium">INV001</TableCell>
 								<TableCell>VPS Linux Indonesia</TableCell>
+								<TableCell>default</TableCell>
 								<TableCell>Paid</TableCell>
 								<TableCell>2024-03-07 23:19</TableCell>
 								<TableCell>PAY001</TableCell>
@@ -264,6 +272,7 @@ export default function Seller() {
 							<TableRow>
 								<TableCell className="font-medium">INV001</TableCell>
 								<TableCell>VPS Linux Indonesia</TableCell>
+								<TableCell>default</TableCell>
 								<TableCell>Paid</TableCell>
 								<TableCell>2024-03-07 23:19</TableCell>
 								<TableCell>PAY001</TableCell>
