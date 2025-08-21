@@ -57,6 +57,7 @@ interface SellerSummarize {
 	id: string;
 	name: string;
 	img: string;
+	address: string;
 	sold_products: number;
 	average_rating: number;
 }
@@ -132,7 +133,7 @@ export default function DetailItem() {
 		const fetchSeller = async () => {
 			try {
 				const res = await fetch(
-					"http://localhost:8080/api/v1/sellers/" + prodParam + "/summarize"
+					"http://localhost:8080/api/v1/sellers/summarize/" + prodParam
 				);
 				const json = await res.json();
 				if (json.code === 200 && json.status === "ok") {
