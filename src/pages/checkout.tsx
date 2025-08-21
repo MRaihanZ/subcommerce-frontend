@@ -40,6 +40,8 @@ interface CheckoutProduct {
 	p_name: string;
 	p_img: string;
 	pv_name: string;
+	interval: string;
+	i_name: string;
 	quantity: number;
 	total_price: number;
 }

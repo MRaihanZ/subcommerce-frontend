@@ -14,6 +14,8 @@ interface CheckoutProduct {
 	p_name: string;
 	p_img: string;
 	pv_name: string;
+	interval: string;
+	i_name: string;
 	quantity: number;
 	total_price: number;
 }
@@ -86,6 +88,12 @@ export default function CheckoutItem({
 								</Badge>
 							</p>
 						)}
+						<p>
+							Periode:
+							<Badge variant="outline" className="mx-1">
+								{data.interval + " " + data.i_name}
+							</Badge>
+						</p>
 						<p>
 							Jumlah:
 							<Badge variant="outline" className="ms-1">
