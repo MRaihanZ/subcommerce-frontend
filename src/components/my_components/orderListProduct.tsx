@@ -39,6 +39,12 @@ export default function OrderListProduct() {
 							</Badge>
 						</p>
 						<p>
+							Periode:
+							<Badge variant="outline" className="mx-1">
+								1 bulan
+							</Badge>
+						</p>
+						<p>
 							Jumlah:
 							<Badge variant="outline" className="ms-1">
 								1
@@ -57,13 +63,7 @@ export default function OrderListProduct() {
 				</section>
 				{penilaian ? (
 					<section className="mt-5">
-						<section className="w-full">
-							<Label htmlFor="note" className="mb-1">
-								Komen
-							</Label>
-							<Input id="note" name="note" type="text" placeholder="..." />
-						</section>
-						<section className="flex items-center gap-3 my-5">
+						<section className="flex items-center gap-3 mb-3">
 							<p>Beri Penilaian:</p>
 							<Button variant="outline" className="cursor-pointer">
 								⭐
@@ -80,6 +80,18 @@ export default function OrderListProduct() {
 							<Button variant="outline" className="cursor-pointer">
 								⭐⭐⭐⭐⭐
 							</Button>
+						</section>
+						<section className="w-full mb-5">
+							<Label htmlFor="note" className="mb-1">
+								Komen
+							</Label>
+							<textarea
+								className="border w-full p-3 rounded-lg"
+								id="note"
+								name="note"
+								placeholder="..."
+								rows={3}
+							></textarea>
 						</section>
 						<Button className="cursor-pointer w-full">Kirim</Button>
 					</section>
