@@ -1,4 +1,56 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
+
+import { useGlobalData } from "@/contexts/GlobalDataContext";
+import { GetCsrf } from "@/components/utils/csrf";
+
+import { toast } from "sonner";
+
 export default function SellerRegistration() {
+	const [name, setName] = useState<string>("");
+	const [address, setAddress] = useState<string>("");
+	const [error, setError] = useState<string>();
+	const { data, setGlobalToast } = useGlobalData();
+
+	const navigate = useNavigate();
+
+	const handleRegisterSellerSubmit = async () => {
+		if (data?.code !== 200) return;
+		const csrfToken = await GetCsrf();
+
+		const payload = {
+			name: name,
+			address: address,
+		};
+
+		try {
+			const send = await fetch(
+				"http://localhost:8080/api/v1/auth/register/seller",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						"X-CSRF-TOKEN": csrfToken,
+					},
+					credentials: "include",
+					body: JSON.stringify(payload),
+				}
+			);
+
+			const result = await send.json();
+			if (result.code === 200 && result.status === "ok") {
+				setGlobalToast("Berhasil Registrasi");
+				navigate("/seller");
+			} else {
+				toast.error(result.error);
+				setError(result.error);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			toast.error(errFetch);
+			setError(errFetch);
+		}
+	};
 	return (
 		<>
 			<section className="mx-auto max-w-md">
@@ -23,7 +75,9 @@ export default function SellerRegistration() {
 									name="name"
 									type="text"
 									id="name"
+									value={name}
 									placeholder="Masukkan nama toko..."
+									onChange={(e) => setName(e.target.value)}
 								/>
 							</section>
 							<section className="mb-3">
@@ -33,17 +87,16 @@ export default function SellerRegistration() {
 									name="alamat"
 									type="text"
 									id="alamat"
+									value={address}
 									placeholder="Masukkan alamat toko..."
+									onChange={(e) => setAddress(e.target.value)}
 								/>
 							</section>
 							<section className="flex">
 								<button
 									type="button"
 									className="cursor-pointer bg-black rounded-lg hover:bg-primary-dark w-full p-4 text-sm text-white uppercase font-bold tracking-wider"
-									// onClick={() => {
-									// 	isSignUp(1);
-									// 	setOpenCloseDialog(false);
-									// }}
+									onClick={handleRegisterSellerSubmit}
 								>
 									Daftar
 								</button>
