@@ -28,6 +28,7 @@ export default function Navbar() {
 	const [openDropDownMenu, setOpenDropDownMenu] = useState(false);
 	const [openDialogSignUpIn, setOpenDialogSignUpIn] = useState(false);
 	const [isSignUpIn, setIsSignUpIn] = useState(false);
+	const [sellerId, setSellerId] = useState<string | null>(null);
 	const [notFound, setNotFound] = useState<boolean>();
 	const [error, setError] = useState<string | null>(null);
 	const [id, setId] = useState<string | null>(null);
@@ -47,6 +48,7 @@ export default function Navbar() {
 				const result = await send.json();
 				if (result.code === 200 && result.status === "ok") {
 					setIsSignUpIn(true);
+					setSellerId(result.data.seller_id);
 					setData(result);
 					setGlobalLoading(false);
 				} else {
@@ -190,6 +192,15 @@ export default function Navbar() {
 									className="cursor-pointer"
 									onSelect={() => {
 										setOpenDropDownMenu(false);
+										navigate("/order-list");
+									}}
+								>
+									Pesanan
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									className="cursor-pointer"
+									onSelect={() => {
+										setOpenDropDownMenu(false);
 										navigate("/chat?user=" + id);
 									}}
 								>
@@ -197,15 +208,27 @@ export default function Navbar() {
 								</DropdownMenuItem>
 								{isSignUpIn ? (
 									<>
-										<DropdownMenuItem
-											className="cursor-pointer"
-											onSelect={() => {
-												setOpenDropDownMenu(false);
-												navigate("/seller/register");
-											}}
-										>
-											Daftar Penjual
-										</DropdownMenuItem>
+										{sellerId === "no_id" ? (
+											<DropdownMenuItem
+												className="cursor-pointer"
+												onSelect={() => {
+													setOpenDropDownMenu(false);
+													navigate("/seller/register");
+												}}
+											>
+												Daftar Penjual
+											</DropdownMenuItem>
+										) : (
+											<DropdownMenuItem
+												className="cursor-pointer"
+												onSelect={() => {
+													setOpenDropDownMenu(false);
+													navigate("/seller");
+												}}
+											>
+												Dashboard Penjual
+											</DropdownMenuItem>
+										)}
 										<DropdownMenuItem
 											className="cursor-pointer"
 											onSelect={() => {

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState } from "react";
 
 type Status = {
 	status: string;
+	seller_id: string;
 	id: string;
 };
 
