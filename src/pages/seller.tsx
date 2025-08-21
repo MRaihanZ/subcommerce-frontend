@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 
 import {
@@ -27,32 +28,98 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
+interface SellerSummarize {
+	id: string;
+	name: string;
+	img: string;
+	address: string;
+	sold_products: number;
+	average_rating: number;
+}
 
 export default function Seller() {
+	const [seller, setSeller] = useState<SellerSummarize | null>(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string>();
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		// seller
+		const fetchSeller = async () => {
+			try {
+				const res = await fetch("http://localhost:8080/api/v1/sellers/", {
+					credentials: "include",
+				});
+				const json = await res.json();
+				if (json.code === 200 && json.status === "ok") {
+					setSeller({
+						id: json.data.id,
+						name: json.data.name,
+						img: json.data.img,
+						address: json.data.address,
+						sold_products: json.data.sold_products,
+						average_rating: json.data.average_rating,
+					});
+					setLoading(false);
+				} else {
+					toast.error(json.error);
+					setError(json.error);
+					setLoading(false);
+				}
+			} catch (err) {
+				const errFetch = "Network Error: " + err;
+				toast.error(errFetch);
+				setError(errFetch);
+				setLoading(false);
+			}
+		};
+		fetchSeller();
+	}, []);
+	if (loading) return <p>Loading...</p>;
+	if (error) {
+		return <p>{error}</p>;
+	}
 	return (
 		<>
 			<section className="mt-10">
-				<section className="flex justify-around ms-30">
+				<section className="flex justify-around">
 					<section className="flex items-center gap-3">
 						<Avatar>
-							<AvatarImage src="/assets/img/profile1.jpg" />
+							<AvatarImage src={seller?.img} />
 							<AvatarFallback>Profile1</AvatarFallback>
 						</Avatar>
-						<section>
-							<p className="text-xl font-semibold">User Name</p>
-							<section className="flex items-center">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									height="16px"
-									viewBox="0 -960 960 960"
-									width="16px"
-									fill="currentColor"
-								>
-									<path d="M480-480q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Zm0 294q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z" />
-								</svg>
-								<p className="ms-1">location</p>
-							</section>
+						<section className="flex flex-col items-start">
+							<Tooltip>
+								<TooltipTrigger className="align-top ms-1">
+									<p className="text-xl font-semibold text-left truncate w-30">
+										{seller?.name}
+									</p>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>{seller?.name}</p>
+								</TooltipContent>
+							</Tooltip>
+							<Tooltip>
+								<TooltipTrigger className="align-top ms-1">
+									<section className="flex items-center">
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											height="16px"
+											viewBox="0 -960 960 960"
+											width="16px"
+											fill="currentColor"
+										>
+											<path d="M480-480q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Zm0 294q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z" />
+										</svg>
+										<p className="ms-1 truncate w-30">{seller?.address}</p>
+									</section>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>{seller?.address}</p>
+								</TooltipContent>
+							</Tooltip>
 						</section>
 						<section className="h-7 flex justify-center">
 							<Separator orientation="vertical" />
@@ -67,8 +134,12 @@ export default function Seller() {
 							>
 								<path d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z" />
 							</svg>
-							<p className="ms-2">500+ Barang Terjual</p>
+							<p className="ms-2">{seller?.sold_products} Barang Terjual</p>
 						</section>
+						<section className="h-7 flex justify-center">
+							<Separator orientation="vertical" />
+						</section>
+						<p>⭐ {Math.floor(seller?.average_rating * 10) / 10}</p>
 					</section>
 					<section className="flex gap-5">
 						<Button
