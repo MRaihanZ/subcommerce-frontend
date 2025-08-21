@@ -38,9 +38,9 @@ export default function OrderListProduct({ data }: OrderListProductProps) {
 	const [comment, setComment] = useState<string>("");
 	const [error, setError] = useState<string>();
 
-	const handleOrderSubmit = async () => {
+	const handleOrderRatingSubmit = async () => {
 		if (!rate) {
-			toast.warning("Pilih jenis pembayaran terlebih dahulu");
+			toast.warning("Pilih rating terlebih dahulu");
 			return;
 		}
 		const csrfToken = await GetCsrf();
@@ -274,7 +274,7 @@ export default function OrderListProduct({ data }: OrderListProductProps) {
 						</section>
 						<Button
 							className="cursor-pointer w-full"
-							onClick={handleOrderSubmit}
+							onClick={handleOrderRatingSubmit}
 						>
 							Kirim
 						</Button>
