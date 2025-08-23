@@ -75,7 +75,6 @@ export default function Navbar() {
 				},
 				error: null,
 			});
-			console.log("default data initiated");
 		}
 
 		if (isSignUpIn === false) isLogin();
