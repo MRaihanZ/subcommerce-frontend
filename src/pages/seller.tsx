@@ -30,17 +30,25 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-interface SellerSummarize {
+interface Seller {
 	id: string;
 	name: string;
 	img: string;
 	address: string;
-	sold_products: number;
+	total_sold_products: number;
 	average_rating: number;
+	current_month_sales: number;
+	previous_month_sales: number | null;
+	current_month_cancellations: number;
+	previous_month_cancellations: number | null;
+	current_month_revenue: number;
+	previous_month_revenue: number | null;
+	current_month: string;
+	previous_month: string | null;
 }
 
 export default function Seller() {
-	const [seller, setSeller] = useState<SellerSummarize | null>(null);
+	const [seller, setSeller] = useState<Seller | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string>();
 	const navigate = useNavigate();
@@ -59,8 +67,17 @@ export default function Seller() {
 						name: json.data.name,
 						img: json.data.img,
 						address: json.data.address,
-						sold_products: json.data.sold_products,
+						total_sold_products: json.data.total_sold_products,
 						average_rating: json.data.average_rating,
+						current_month_sales: json.data.current_month_sales,
+						previous_month_sales: json.data.previous_month_sales,
+						current_month_cancellations: json.data.current_month_cancellations,
+						previous_month_cancellations:
+							json.data.previous_month_cancellations,
+						current_month_revenue: json.data.current_month_revenue,
+						previous_month_revenue: json.data.previous_month_revenue,
+						current_month: json.data.current_month,
+						previous_month: json.data.previous_month,
 					});
 					setLoading(false);
 				} else {
@@ -134,7 +151,9 @@ export default function Seller() {
 							>
 								<path d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z" />
 							</svg>
-							<p className="ms-2">{seller?.sold_products} Barang Terjual</p>
+							<p className="ms-2">
+								{seller?.total_sold_products} Barang Terjual
+							</p>
 						</section>
 						<section className="h-7 flex justify-center">
 							<Separator orientation="vertical" />
@@ -186,11 +205,18 @@ export default function Seller() {
 							{/* <CardAction>Card Action</CardAction> */}
 						</CardHeader>
 						<CardContent>
-							<p className="font-bold text-2xl">173</p>
+							<p className="font-bold text-2xl">
+								{seller?.current_month_sales}
+							</p>
 						</CardContent>
 						<CardFooter>
 							<p>
-								Bulan Lalu: <span className="font-bold text-xl">64</span>
+								Bulan Lalu:{" "}
+								<span className="font-bold text-xl">
+									{seller?.previous_month_sales === null
+										? 0
+										: seller?.previous_month_sales}
+								</span>
 							</p>
 						</CardFooter>
 					</Card>
@@ -219,11 +245,18 @@ export default function Seller() {
 							{/* <CardAction>Card Action</CardAction> */}
 						</CardHeader>
 						<CardContent>
-							<p className="font-bold text-2xl">24</p>
+							<p className="font-bold text-2xl">
+								{seller?.current_month_cancellations}
+							</p>
 						</CardContent>
 						<CardFooter>
 							<p>
-								Bulan Lalu: <span className="font-bold text-xl">5</span>
+								Bulan Lalu:{" "}
+								<span className="font-bold text-xl">
+									{seller?.previous_month_cancellations === null
+										? 0
+										: seller?.previous_month_cancellations}
+								</span>
 							</p>
 						</CardFooter>
 					</Card>
@@ -252,12 +285,24 @@ export default function Seller() {
 							{/* <CardAction>Card Action</CardAction> */}
 						</CardHeader>
 						<CardContent>
-							<p className="font-bold text-2xl">Rp65.000.000</p>
+							<p className="font-bold text-2xl">
+								Rp
+								{new Intl.NumberFormat("id-ID").format(
+									seller.current_month_revenue
+								)}
+							</p>
 						</CardContent>
 						<CardFooter>
 							<p>
 								Bulan Lalu:{" "}
-								<span className="font-bold text-xl">Rp45.000.000</span>
+								<span className="font-bold text-xl">
+									Rp
+									{seller?.previous_month_revenue === null
+										? 0
+										: new Intl.NumberFormat("id-ID").format(
+												seller.previous_month_revenue
+										  )}
+								</span>
 							</p>
 						</CardFooter>
 					</Card>
