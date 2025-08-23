@@ -10,7 +10,7 @@ export default function SellerRegistration() {
 	const [name, setName] = useState<string>("");
 	const [address, setAddress] = useState<string>("");
 	const [error, setError] = useState<string>();
-	const { data, setGlobalToast } = useGlobalData();
+	const { data, setData, setGlobalToast } = useGlobalData();
 
 	const navigate = useNavigate();
 
@@ -39,6 +39,15 @@ export default function SellerRegistration() {
 
 			const result = await send.json();
 			if (result.code === 200 && result.status === "ok") {
+				setData({
+					code: result.code,
+					status: result.status,
+					data: {
+						is_login: true,
+						is_seller: true,
+					},
+					error: null,
+				});
 				setGlobalToast("Berhasil Registrasi");
 				navigate("/seller");
 			} else {

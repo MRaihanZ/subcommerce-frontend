@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useGlobalData } from "@/contexts/GlobalDataContext";
 
 import { CreateCsrf } from "../utils/csrf";
 
@@ -31,6 +32,8 @@ export default function SignUp({
 	const [error, setError] = useState<string | null>(null);
 	const [inputRequired, setInputRequired] = useState(false);
 	const [emailExist, setEmailExist] = useState<boolean>();
+
+	const { setData } = useGlobalData();
 
 	const handleSubmit = async () => {
 		if (name === "") {
@@ -68,6 +71,15 @@ export default function SignUp({
 
 			const result = await send.json();
 			if (result.code === 200 && result.status === "ok") {
+				setData({
+					code: result.code,
+					status: result.status,
+					data: {
+						is_login: true,
+						is_seller: false,
+					},
+					error: null,
+				});
 				toast("Sign up berhasil");
 				setOpenCloseDialog(false);
 				setOpenCloseDropDownMenu(false);

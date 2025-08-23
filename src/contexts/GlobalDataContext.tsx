@@ -1,9 +1,8 @@
 import React, { createContext, useContext, useState } from "react";
 
 type Status = {
-	status: string;
-	seller_id: string;
-	id: string;
+	is_login: boolean;
+	is_seller: boolean;
 };
 
 type GlobalData = {

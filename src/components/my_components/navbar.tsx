@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useGlobalData } from "@/contexts/GlobalDataContext";
 
 import { GetCsrf } from "@/components/utils/csrf";
 
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -28,43 +29,57 @@ export default function Navbar() {
 	const [openDropDownMenu, setOpenDropDownMenu] = useState(false);
 	const [openDialogSignUpIn, setOpenDialogSignUpIn] = useState(false);
 	const [isSignUpIn, setIsSignUpIn] = useState(false);
-	const [sellerId, setSellerId] = useState<string | null>(null);
+	const [isSeller, setIsSeller] = useState<boolean>(false);
 	const [notFound, setNotFound] = useState<boolean>();
 	const [error, setError] = useState<string | null>(null);
-	const [id, setId] = useState<string | null>(null);
 
-	const { setData, setGlobalLoading } = useGlobalData();
+	const { data, setData, setGlobalLoading } = useGlobalData();
 
 	const navigate = useNavigate();
 
-	const locate = useLocation();
-	useEffect(() => {
-		const isLogin = async () => {
-			try {
-				const send = await fetch("http://localhost:8080/api/v1/auth/status", {
-					credentials: "include",
-				}).then();
+	// useEffect(() => {}, []);
 
-				const result = await send.json();
-				if (result.code === 200 && result.status === "ok") {
-					setIsSignUpIn(true);
-					setSellerId(result.data.seller_id);
-					setData(result);
-					setGlobalLoading(false);
-				} else {
-					setIsSignUpIn(false);
-					setData({ error: result.error });
-					setGlobalLoading(false);
-				}
-			} catch (err) {
-				const errFetch = "Network Error: " + err;
-				setData({ error: errFetch });
-				setNotFound(true);
+	const isLogin = async () => {
+		try {
+			const send = await fetch("http://localhost:8080/api/v1/auth/status", {
+				credentials: "include",
+			}).then();
+
+			const result = await send.json();
+			if (result.code === 200 && result.status === "ok") {
+				setIsSignUpIn(true);
+				setIsSeller(result.data.is_seller);
+				setData(result);
+				setGlobalLoading(false);
+			} else {
+				toast.error(result.error);
+				setIsSignUpIn(false);
 				setGlobalLoading(false);
 			}
-		};
-		isLogin();
-	}, [locate.pathname]);
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			toast.error(errFetch);
+			setNotFound(true);
+			setGlobalLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		if (data?.code === undefined) {
+			setData({
+				code: null,
+				status: null,
+				data: {
+					is_login: false,
+					is_seller: false,
+				},
+				error: null,
+			});
+			console.log("default data initiated");
+		}
+
+		if (isSignUpIn === false) isLogin();
+	}, [data]);
 
 	const logout = async () => {
 		const csrfToken = await GetCsrf();
@@ -84,7 +99,6 @@ export default function Navbar() {
 			const result = await send.json();
 			if (result.code === 200 && result.status === "ok") {
 				setIsSignUpIn(false);
-				setId(null);
 				window.location.reload();
 			} else {
 				setError(result.error);
@@ -201,14 +215,14 @@ export default function Navbar() {
 									className="cursor-pointer"
 									onSelect={() => {
 										setOpenDropDownMenu(false);
-										navigate("/chat?user=" + id);
+										navigate("/chat");
 									}}
 								>
 									Pesan
 								</DropdownMenuItem>
 								{isSignUpIn ? (
 									<>
-										{sellerId === "no_id" ? (
+										{isSeller === false ? (
 											<DropdownMenuItem
 												className="cursor-pointer"
 												onSelect={() => {

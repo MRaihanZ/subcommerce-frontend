@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useGlobalData } from "@/contexts/GlobalDataContext";
 
 import { CreateCsrf } from "../utils/csrf";
 
@@ -19,6 +20,8 @@ export default function SignIn({
 	const [error, setError] = useState<string | null>(null);
 	const [id, setId] = useState<string>("");
 	const [ok, setOk] = useState<boolean>(false);
+
+	const { setData } = useGlobalData();
 
 	const handleSubmit = async () => {
 		if (email === "") {
@@ -48,6 +51,15 @@ export default function SignIn({
 
 			const result = await send.json();
 			if (result.code === 200 && result.status === "ok") {
+				setData({
+					code: result.code,
+					status: result.status,
+					data: {
+						is_login: true,
+						is_seller: false,
+					},
+					error: null,
+				});
 				setId(result.data.id);
 				setOk(true);
 			} else if (result.code === 401 && result.status === "error") {
