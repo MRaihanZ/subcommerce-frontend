@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useLocation } from "react-router";
 import { useGlobalData } from "@/contexts/GlobalDataContext";
 
 import { GetCsrf } from "@/components/utils/csrf";
@@ -36,8 +36,7 @@ export default function Navbar() {
 	const { data, setData, setGlobalLoading } = useGlobalData();
 
 	const navigate = useNavigate();
-
-	// useEffect(() => {}, []);
+	const locate = useLocation();
 
 	const isLogin = async () => {
 		try {
@@ -53,6 +52,7 @@ export default function Navbar() {
 				setGlobalLoading(false);
 			} else {
 				toast.error(result.error);
+				setData(result);
 				setIsSignUpIn(false);
 				setGlobalLoading(false);
 			}
@@ -65,20 +65,10 @@ export default function Navbar() {
 	};
 
 	useEffect(() => {
-		if (data?.code === undefined) {
-			setData({
-				code: null,
-				status: null,
-				data: {
-					is_login: false,
-					is_seller: false,
-				},
-				error: null,
-			});
+		if (!isSignUpIn) {
+			isLogin();
 		}
-
-		if (isSignUpIn === false) isLogin();
-	}, [data]);
+	}, []);
 
 	const logout = async () => {
 		const csrfToken = await GetCsrf();
