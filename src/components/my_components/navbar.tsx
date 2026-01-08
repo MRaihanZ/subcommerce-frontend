@@ -30,10 +30,11 @@ export default function Navbar() {
 	const [openDialogSignUpIn, setOpenDialogSignUpIn] = useState(false);
 	const [isSignUpIn, setIsSignUpIn] = useState(false);
 	const [isSeller, setIsSeller] = useState<boolean>(false);
+	const [search, setSearch] = useState<string>("");
 	const [notFound, setNotFound] = useState<boolean>();
 	const [error, setError] = useState<string | null>(null);
 
-	const { data, setData, setGlobalLoading } = useGlobalData();
+	const { setData, setGlobalLoading } = useGlobalData();
 
 	const navigate = useNavigate();
 	const locate = useLocation();
@@ -51,7 +52,6 @@ export default function Navbar() {
 				setData(result);
 				setGlobalLoading(false);
 			} else {
-				toast.error(result.error);
 				setData(result);
 				setIsSignUpIn(false);
 				setGlobalLoading(false);
@@ -68,7 +68,7 @@ export default function Navbar() {
 		if (!isSignUpIn) {
 			isLogin();
 		}
-	}, []);
+	}, [isSignUpIn]);
 
 	const logout = async () => {
 		const csrfToken = await GetCsrf();
@@ -91,7 +91,6 @@ export default function Navbar() {
 				window.location.reload();
 			} else {
 				setError(result.error);
-				console.log(error);
 				setNotFound(true);
 			}
 		} catch (err) {
@@ -99,6 +98,11 @@ export default function Navbar() {
 			setData({ error: errFetch });
 			// setLoading(false);
 		}
+	};
+
+	const handleSearch = () => {
+		if (!search.trim()) return; // optional: prevent empty search
+		navigate(`/search?s=${encodeURIComponent(search)}`);
 	};
 
 	return (
@@ -111,12 +115,13 @@ export default function Navbar() {
 							id="search"
 							type="text"
 							placeholder="..."
+							onChange={(e) => setSearch(e.target.value)}
 							className="rounded-r-none border-l-1 border-t-1 border-r-0 border-b-1"
 						/>
 						<Button
 							type="submit"
 							variant="outline"
-							onClick={() => navigate("/search")}
+							onClick={handleSearch}
 							className="rounded-l-none border-l-1 border-t-1 border-r-1 border-b-1 cursor-pointer"
 						>
 							Cari
@@ -171,47 +176,58 @@ export default function Navbar() {
 											id="search"
 											type="text"
 											placeholder="..."
+											onChange={(e) => setSearch(e.target.value)}
 											className="rounded-r-none border-l-1 border-t-1 border-r-0 border-b-1"
 										/>
 										<Button
 											type="submit"
 											variant="outline"
+											onClick={handleSearch}
 											className="rounded-l-none border-l-1 border-t-1 border-r-1 border-b-1 cursor-pointer"
 										>
 											Cari
 										</Button>
 									</section>
 								</DropdownMenuItem>
-								<DropdownMenuItem
-									className="cursor-pointer"
-									onSelect={() => {
-										setOpenDropDownMenu(false);
-										navigate("/cart");
-									}}
-								>
-									Keranjang
-								</DropdownMenuItem>
-								<DropdownMenuItem
-									className="cursor-pointer"
-									onSelect={() => {
-										setOpenDropDownMenu(false);
-										navigate("/order-list");
-									}}
-								>
-									Pesanan
-								</DropdownMenuItem>
-								<DropdownMenuItem
-									className="cursor-pointer"
-									onSelect={() => {
-										setOpenDropDownMenu(false);
-										navigate("/chat");
-									}}
-								>
-									Pesan
-								</DropdownMenuItem>
 								{isSignUpIn ? (
 									<>
-										{isSeller === false ? (
+										<DropdownMenuItem
+											className="cursor-pointer"
+											onSelect={() => {
+												setOpenDropDownMenu(false);
+												navigate("/cart");
+											}}
+										>
+											Keranjang
+										</DropdownMenuItem>
+										<DropdownMenuItem
+											className="cursor-pointer"
+											onSelect={() => {
+												setOpenDropDownMenu(false);
+												navigate("/subscription");
+											}}
+										>
+											Langganan
+										</DropdownMenuItem>
+										<DropdownMenuItem
+											className="cursor-pointer"
+											onSelect={() => {
+												setOpenDropDownMenu(false);
+												navigate("/order-list");
+											}}
+										>
+											Pesanan
+										</DropdownMenuItem>
+										<DropdownMenuItem
+											className="cursor-pointer"
+											onSelect={() => {
+												setOpenDropDownMenu(false);
+												navigate("/chat");
+											}}
+										>
+											Pesan
+										</DropdownMenuItem>
+										{!isSeller ? (
 											<DropdownMenuItem
 												className="cursor-pointer"
 												onSelect={() => {
