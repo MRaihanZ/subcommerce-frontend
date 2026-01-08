@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router";
 
 import { useGlobalData } from "@/contexts/GlobalDataContext";
 
@@ -30,10 +31,28 @@ export default function Home() {
 		}
 	}, [globalToast]);
 
+	// for min and max filter params
+	const [searchParams] = useSearchParams();
+
+	const minProdParam = searchParams.get("min");
+	const maxProdParam = searchParams.get("max");
+
 	const fetchProductsHot = async () => {
 		setProducts([]);
+
+		const params = new URLSearchParams();
+		if (minProdParam) {
+			params.set("min", minProdParam);
+		}
+		if (maxProdParam) {
+			params.set("max", maxProdParam);
+		}
+		const queryString = params.toString();
+
 		try {
-			const res = await fetch("http://localhost:8080/api/v1/products/hot");
+			const res = await fetch(
+				"http://localhost:8080/api/v1/products/hot?" + queryString
+			);
 			const json = await res.json();
 			if (json.code === 200 && json.status === "ok") {
 				setProducts(json.data);
@@ -51,8 +70,20 @@ export default function Home() {
 	};
 	const fetchProductsDiscount = async () => {
 		setProducts([]);
+
+		const params = new URLSearchParams();
+		if (minProdParam) {
+			params.set("min", minProdParam);
+		}
+		if (maxProdParam) {
+			params.set("max", maxProdParam);
+		}
+		const queryString = params.toString();
+
 		try {
-			const res = await fetch("http://localhost:8080/api/v1/products/discount");
+			const res = await fetch(
+				"http://localhost:8080/api/v1/products/discount?" + queryString
+			);
 			const json = await res.json();
 			if (json.code === 200 && json.status === "ok") {
 				setProducts(json.data);
@@ -75,11 +106,11 @@ export default function Home() {
 		if (activeTab == "discount") {
 			fetchProductsDiscount();
 		}
-	}, [activeTab]);
+	}, [activeTab, minProdParam, maxProdParam]);
 
 	if (loading) return <p>Loading...</p>;
 	if (error) {
-		return <p>{error}</p>;
+		toast.error(error);
 	}
 	return (
 		<>
@@ -122,10 +153,18 @@ export default function Home() {
 							</TabsTrigger>
 						</TabsList>
 						<TabsContent value="hot">
-							<Items data={products} />
+							{products.length === 0 ? (
+								<section className="ms-11">No products found.</section>
+							) : (
+								<Items data={products} />
+							)}
 						</TabsContent>
 						<TabsContent value="diskon">
-							<Items data={products} />
+							{products.length === 0 ? (
+								<section className="ms-11">No products found.</section>
+							) : (
+								<Items data={products} />
+							)}
 						</TabsContent>
 					</Tabs>
 				</section>

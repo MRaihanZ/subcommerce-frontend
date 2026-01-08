@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams, useLocation } from "react-router";
+import { useSearchParams } from "react-router";
 
 import Items from "@/components/my_components/items";
 import FilterSideBar from "@/components/my_components/filterSideBar";
@@ -12,12 +12,27 @@ export default function Search() {
 	const [searchParams] = useSearchParams();
 
 	const nameProdParam = searchParams.get("s");
+	const minProdParam = searchParams.get("min");
+	const maxProdParam = searchParams.get("max");
 
 	const fetchProducts = async () => {
 		setProducts([]);
+
+		const params = new URLSearchParams();
+		if (nameProdParam) {
+			params.set("search", nameProdParam);
+		}
+		if (minProdParam) {
+			params.set("min", minProdParam);
+		}
+		if (maxProdParam) {
+			params.set("max", maxProdParam);
+		}
+		const queryString = params.toString();
+
 		try {
 			const res = await fetch(
-				"http://localhost:8080/api/v1/products/?search=" + nameProdParam
+				"http://localhost:8080/api/v1/products/?" + queryString
 			);
 			const json = await res.json();
 			if (json.code === 200 && json.status === "ok") {
@@ -37,7 +52,7 @@ export default function Search() {
 
 	useEffect(() => {
 		fetchProducts();
-	}, [nameProdParam]);
+	}, [nameProdParam, minProdParam, maxProdParam]);
 	return (
 		<>
 			<section className="grid grid-cols-12 mt-5">
