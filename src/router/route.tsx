@@ -7,10 +7,14 @@ import MainLayout from "@/layouts/mainLayout";
 // Components
 import Navbar from "@/components/my_components/navbar";
 import NavbarSeller from "@/components/my_components/navbarSeller";
+import NavbarAdmin from "@/components/my_components/navbarAdmin";
 import Footer from "@/components/my_components/footer";
 // import Loading from "@/components/loading";
 
 // Pages
+import Admin from "@/pages/admin";
+import AdminUsers from "@/pages/adminUsers";
+import AdminSellers from "@/pages/adminSellers";
 import NotFound from "@/pages/notFound";
 import Home from "@/pages/home";
 import Chat from "@/pages/chat";
@@ -29,6 +33,7 @@ import SellerItem from "@/pages/sellerItem";
 import SellerOrder from "@/pages/sellerOrder";
 import SellerProfile from "@/pages/sellerProfile";
 import SellerRegistration from "@/pages/sellerRegistration";
+import SellerSubscription from "@/pages/sellerSubscription";
 // import SignUp from "@/components/signUp";
 
 interface HandleFallbackProps {
@@ -37,6 +42,22 @@ interface HandleFallbackProps {
 	showNavbar: boolean;
 	showFooter: boolean;
 }
+
+const handleFallbackAdmin = ({
+	title,
+	component,
+	showNavbar,
+	showFooter,
+}: HandleFallbackProps) => {
+	return (
+		<Suspense fallback={"Loading......"}>
+			<title>{title}</title>
+			{showNavbar && <NavbarAdmin />}
+			<MainLayout page={component} />
+			{showFooter && <Footer />}
+		</Suspense>
+	);
+};
 
 const handleFallbackUser = ({
 	title,
@@ -71,6 +92,33 @@ const handleFallbackSeller = ({
 };
 
 const routes = createBrowserRouter([
+	{
+		path: "/admin",
+		element: handleFallbackAdmin({
+			title: "Admin Page",
+			component: Admin,
+			showNavbar: true,
+			showFooter: true,
+		}),
+	},
+	{
+		path: "/admin/users",
+		element: handleFallbackAdmin({
+			title: "Admin Users Page",
+			component: AdminUsers,
+			showNavbar: true,
+			showFooter: true,
+		}),
+	},
+	{
+		path: "/admin/sellers",
+		element: handleFallbackAdmin({
+			title: "Admin Sellers Page",
+			component: AdminSellers,
+			showNavbar: true,
+			showFooter: true,
+		}),
+	},
 	{
 		path: "/",
 		element: handleFallbackUser({
@@ -220,6 +268,15 @@ const routes = createBrowserRouter([
 		element: handleFallbackUser({
 			title: "Seller Registration Page",
 			component: SellerRegistration,
+			showNavbar: true,
+			showFooter: true,
+		}),
+	},
+	{
+		path: "/seller/subscription",
+		element: handleFallbackUser({
+			title: "Seller Registration Page",
+			component: SellerSubscription,
 			showNavbar: true,
 			showFooter: true,
 		}),
