@@ -44,11 +44,8 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
 import AddProduct from "@/components/my_components/addProduct";
-import EditProduct from "@/components/my_components/editProduct";
+import EditUser from "@/components/my_components/editUser";
 import DeleteProduct from "@/components/my_components/deleteProduct";
-import AddVariants from "@/components/my_components/addVariants";
-import EditVariants from "@/components/my_components/editVariants";
-import DeleteVariant from "@/components/my_components/deleteVariant";
 
 interface ProductImages {
 	img: string;
@@ -201,14 +198,14 @@ export default function AdminUsers() {
 						<AddProduct />
 					</>
 				);
-			case "editProduct":
+			case "editUser":
 				return (
 					<>
 						<DialogHeader>
-							<DialogTitle>Ubah Produk</DialogTitle>
+							<DialogTitle>Ubah User</DialogTitle>
 							<DialogDescription></DialogDescription>
 						</DialogHeader>
-						<EditProduct data={productSelected} />
+						<EditUser data={productSelected} />
 					</>
 				);
 			case "deleteProduct":
@@ -323,7 +320,7 @@ export default function AdminUsers() {
 													intervalId: product.product_variants[0].i_id,
 												});
 												setOpenDialog(true);
-												setOpenDialogAction("editProduct");
+												setOpenDialogAction("editUser");
 											}}
 										>
 											Edit User
@@ -368,9 +365,8 @@ export default function AdminUsers() {
 			<Dialog open={openDialog} onOpenChange={setOpenDialog}>
 				<DialogContent
 					className={
-						openDialogAction !== "deleteProduct" &&
-						openDialogAction !== "deleteVariant"
-							? "sm:max-w-7xl max-h-250 overflow-y-auto"
+						openDialogAction !== "deleteProduct"
+							? "max-h-250 overflow-y-auto"
 							: ""
 					}
 				>
