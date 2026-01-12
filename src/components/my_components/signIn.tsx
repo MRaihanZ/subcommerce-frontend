@@ -57,6 +57,7 @@ export default function SignIn({
 					data: {
 						is_login: true,
 						is_seller: false,
+						is_admin: false,
 					},
 					error: null,
 				});
