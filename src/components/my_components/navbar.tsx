@@ -30,6 +30,7 @@ export default function Navbar() {
 	const [openDialogSignUpIn, setOpenDialogSignUpIn] = useState(false);
 	const [isSignUpIn, setIsSignUpIn] = useState(false);
 	const [isSeller, setIsSeller] = useState<boolean>(false);
+	const [isAdmin, setIsAdmin] = useState<boolean>(false);
 	const [search, setSearch] = useState<string>("");
 	const [notFound, setNotFound] = useState<boolean>();
 	const [error, setError] = useState<string | null>(null);
@@ -49,6 +50,7 @@ export default function Navbar() {
 			if (result.code === 200 && result.status === "ok") {
 				setIsSignUpIn(true);
 				setIsSeller(result.data.is_seller);
+				setIsAdmin(result.data.is_admin);
 				setData(result);
 				setGlobalLoading(false);
 			} else {

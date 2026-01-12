@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState } from "react";
 type Status = {
 	is_login: boolean;
 	is_seller: boolean;
+	is_admin: boolean;
 };
 
 type GlobalData = {
@@ -15,6 +16,8 @@ type GlobalData = {
 type GlobalDataContextType = {
 	data: GlobalData | null;
 	setData: (newData: GlobalData) => void;
+	globalState: string;
+	setGlobalState: (newState: string) => void;
 	globalLoading: boolean;
 	setGlobalLoading: (newData: boolean) => void;
 	globalToast: string | null;
@@ -29,10 +32,14 @@ export const GlobalDataProvider: React.FC<{ children: React.ReactNode }> = ({
 	children,
 }) => {
 	const [data, setData] = useState<GlobalData | null>(null);
+	const [globalState, setGlobalState] = useState<string>("");
 	const [globalLoading, setGlobalLoading] = useState(true);
 	const [globalToast, setGlobalToast] = useState<string | null>(null);
 	const handleSetData = (newData: GlobalData) => {
 		setData(newData);
+	};
+	const handleSetGlobalState = (newState: string) => {
+		setGlobalState(newState);
 	};
 	const handleSetLoading = (newData: boolean) => {
 		setGlobalLoading(newData);
@@ -44,8 +51,10 @@ export const GlobalDataProvider: React.FC<{ children: React.ReactNode }> = ({
 		<GlobalDataContext.Provider
 			value={{
 				data,
+				globalState,
 				globalLoading,
 				globalToast,
+				setGlobalState: handleSetGlobalState,
 				setData: handleSetData,
 				setGlobalLoading: handleSetLoading,
 				setGlobalToast: handleSetToast,
