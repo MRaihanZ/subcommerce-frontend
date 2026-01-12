@@ -28,7 +28,7 @@ export default function NavbarAdmin() {
 									: "w-full mx-3"
 							}
 						>
-							Home
+							Admin
 						</Link>
 						<Link
 							to={"http://" + location.host + "/admin/users"}
@@ -81,14 +81,14 @@ export default function NavbarAdmin() {
 												: "w-full mx-3"
 										}
 									>
-										Home
+										Admin
 									</Link>
 								</DropdownMenuItem>
 								<DropdownMenuItem>
 									<Link
-										to={"http://" + location.host + "/seller/users"}
+										to={"http://" + location.host + "/admin/users"}
 										className={
-											activePage === "/seller/users"
+											activePage === "/admin/users"
 												? "w-full border-b-2 border-black mx-3"
 												: "w-full mx-3"
 										}
@@ -98,9 +98,9 @@ export default function NavbarAdmin() {
 								</DropdownMenuItem>
 								<DropdownMenuItem>
 									<Link
-										to={"http://" + location.host + "/seller/sellers"}
+										to={"http://" + location.host + "/admin/sellers"}
 										className={
-											activePage === "/seller/sellers"
+											activePage === "/admin/sellers"
 												? "w-full border-b-2 border-black mx-3"
 												: "w-full mx-3"
 										}
