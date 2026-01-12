@@ -43,9 +43,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
-import AddProduct from "@/components/my_components/addProduct";
+import AddUser from "@/components/my_components/addUser";
 import EditUser from "@/components/my_components/editUser";
-import DeleteProduct from "@/components/my_components/deleteProduct";
+import DeleteUser from "@/components/my_components/deleteUser";
 
 interface ProductImages {
 	img: string;
@@ -96,8 +96,7 @@ interface EditProductData {
 export default function AdminUsers() {
 	const navigate = useNavigate();
 	const [openDialog, setOpenDialog] = useState(false);
-	const [openDialogAction, setOpenDialogAction] =
-		useState<string>("addProduct");
+	const [openDialogAction, setOpenDialogAction] = useState<string>("addUser");
 	const [productSelected, setProductSelected] = useState<EditProductData>();
 
 	const [products, setProducts] = useState<ProductsDetail[] | null>(null);
@@ -188,14 +187,14 @@ export default function AdminUsers() {
 	if (!products) return <p>No item found</p>;
 	const childComponentsDialog = (key: string) => {
 		switch (key) {
-			case "addProduct":
+			case "addUser":
 				return (
 					<>
 						<DialogHeader>
-							<DialogTitle>Tambah Produk</DialogTitle>
+							<DialogTitle>Tambah User</DialogTitle>
 							<DialogDescription></DialogDescription>
 						</DialogHeader>
-						<AddProduct />
+						<AddUser />
 					</>
 				);
 			case "editUser":
@@ -208,17 +207,14 @@ export default function AdminUsers() {
 						<EditUser data={productSelected} />
 					</>
 				);
-			case "deleteProduct":
+			case "deleteUser":
 				return (
 					<>
 						<DialogHeader>
-							<DialogTitle>Konfirmasi Hapus Produk</DialogTitle>
+							<DialogTitle>Konfirmasi Hapus User</DialogTitle>
 							<DialogDescription></DialogDescription>
 						</DialogHeader>
-						<DeleteProduct
-							setStateDialog={setOpenDialog}
-							data={productSelected}
-						/>
+						<DeleteUser setStateDialog={setOpenDialog} data={productSelected} />
 					</>
 				);
 		}
@@ -226,8 +222,8 @@ export default function AdminUsers() {
 	return (
 		<>
 			<section className="my-7">
-				<section className="flex justify-end">
-					{/* <section className="w-full flex-1 flex max-w-3xs sm:max-w-2xs md:max-w-xs lg:max-w-sm items-center justify-center">
+				<section className="flex justify-between mb-3">
+					<section className="w-full flex-1 flex max-w-3xs sm:max-w-2xs md:max-w-xs lg:max-w-sm items-center justify-center">
 						<Input
 							id="search"
 							type="text"
@@ -242,20 +238,20 @@ export default function AdminUsers() {
 						>
 							Cari
 						</Button>
-					</section> */}
+					</section>
 					<Button
 						variant="outline"
 						className="cursor-pointer flex-1 w-fitt sm:w-full max-w-3xs sm:max-w-2xs md:max-w-xs lg:max-w-sm"
 						onClick={() => {
 							setOpenDialog(true);
-							setOpenDialogAction("addProduct");
+							setOpenDialogAction("addUser");
 						}}
 					>
 						Tambah User
 					</Button>
 				</section>
 				<Table>
-					<TableCaption>Pengguna</TableCaption>
+					<TableCaption>Users</TableCaption>
 					<TableHeader>
 						<TableRow>
 							<TableHead>Image</TableHead>
@@ -334,7 +330,7 @@ export default function AdminUsers() {
 													pvId: product.product_variants[0].pv_id,
 												});
 												setOpenDialog(true);
-												setOpenDialogAction("deleteProduct");
+												setOpenDialogAction("deleteUser");
 											}}
 										>
 											<svg
@@ -365,9 +361,7 @@ export default function AdminUsers() {
 			<Dialog open={openDialog} onOpenChange={setOpenDialog}>
 				<DialogContent
 					className={
-						openDialogAction !== "deleteProduct"
-							? "max-h-250 overflow-y-auto"
-							: ""
+						openDialogAction !== "deleteUser" ? "max-h-250 overflow-y-auto" : ""
 					}
 				>
 					{childComponentsDialog(openDialogAction)}
