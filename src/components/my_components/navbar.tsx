@@ -70,6 +70,9 @@ export default function Navbar() {
 		if (!isSignUpIn) {
 			isLogin();
 		}
+		if (isAdmin) {
+			navigate("/admin");
+		}
 	}, [isSignUpIn]);
 
 	const logout = async () => {
