@@ -93,6 +93,15 @@ interface EditProductData {
 	intervalId?: number;
 }
 
+interface User {
+	id: string;
+	name: string;
+	img: string;
+	email: string;
+	dob: string;
+	created_at: string;
+}
+
 export default function AdminUsers() {
 	const navigate = useNavigate();
 	const [openDialog, setOpenDialog] = useState(false);
@@ -100,17 +109,19 @@ export default function AdminUsers() {
 	const [productSelected, setProductSelected] = useState<EditProductData>();
 
 	const [products, setProducts] = useState<ProductsDetail[] | null>(null);
+	const [users, setUsers] = useState<User[] | null>(null);
+	const [search, setSearch] = useState<string>("");
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string>();
 
-	const fetchProduct = async () => {
+	const fetchUsers = async () => {
 		try {
-			const res = await fetch("http://localhost:8080/api/v1/products/seller", {
+			const res = await fetch("http://localhost:8080/api/v1/admins/users", {
 				credentials: "include",
 			});
 			const json = await res.json();
 			if (json.code === 200 && json.status === "ok") {
-				setProducts(json.data);
+				setUsers(json.data);
 				setLoading(false);
 			} else {
 				toast.error(json.error);
@@ -125,66 +136,53 @@ export default function AdminUsers() {
 		}
 	};
 	useEffect(() => {
-		fetchProduct();
+		fetchUsers();
 	}, []);
 
-	// const handleDeleteState = (deleteProd: number) => {
-	// 	if (!products) return;
+	const fetchUser = async () => {
+		try {
+			const res = await fetch(
+				"http://localhost:8080/api/v1/admins/users/" + search,
+				{
+					credentials: "include",
+				}
+			);
+			const json = await res.json();
+			if (json.code === 200 && json.status === "ok") {
+				setUsers(json.data);
+				setLoading(false);
+			} else {
+				toast.error(json.error);
+				setError(json.error);
+				setLoading(false);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			toast.error(errFetch);
+			setError(errFetch);
+			setLoading(false);
+		}
+	};
 
-	// 	const filtered = products.find((p) => p.p_id === deleteProd);
-
-	// 	if (!filtered) return;
-	// 	toast.success("produk " + filtered.p_name + " dihapus dari produk");
-
-	// 	const updated = products.filter((p) => !(p.p_id === filtered.p_id));
-
-	// 	setProducts(updated);
-	// };
-
-	// const handleDeleteVariantState = (
-	// 	deleteProd: number,
-	// 	deleteProdVar: number
-	// ) => {
-	// 	if (!products) return;
-
-	// 	setProducts((prev) => {
-	// 		if (!prev) return prev;
-
-	// 		return prev.map((p) => {
-	// 			if (p.p_id !== deleteProd) return p;
-
-	// 			const variantToDelete = p.product_variants.find(
-	// 				(v) => v.pv_id === deleteProdVar
-	// 			);
-	// 			if (!variantToDelete) return p;
-
-	// 			toast.success(
-	// 				"produk " +
-	// 					p.p_name +
-	// 					" - " +
-	// 					variantToDelete.pv_name +
-	// 					" dihapus dari cart"
-	// 			);
-
-	// 			return {
-	// 				...p,
-	// 				product_variants: p.product_variants.filter(
-	// 					(v) => v.pv_id !== deleteProdVar
-	// 				),
-	// 			};
-	// 		});
-	// 	});
-	// };
+	const handleSearch = () => {
+		if (search !== "") {
+			fetchUser();
+		} else {
+			fetchUsers();
+		}
+	};
 
 	useEffect(() => {
-		console.log(products);
-	}, [products]);
+		if (search === "") {
+			fetchUsers();
+		}
+	}, [search]);
 
 	if (loading) return <p>Loading...</p>;
 	if (error) {
-		return <p>{error}</p>;
+		toast.error(error);
 	}
-	if (!products) return <p>No item found</p>;
+	if (!users) toast.error("No item found");
 	const childComponentsDialog = (key: string) => {
 		switch (key) {
 			case "addUser":
@@ -228,12 +226,13 @@ export default function AdminUsers() {
 							id="search"
 							type="text"
 							placeholder="..."
+							onChange={(e) => setSearch(e.target.value)}
 							className="rounded-r-none border-l-1 border-t-1 border-r-0 border-b-1"
 						/>
 						<Button
 							type="submit"
 							variant="outline"
-							onClick={() => navigate("/search")}
+							onClick={() => handleSearch()}
 							className="rounded-l-none border-l-1 border-t-1 border-r-1 border-b-1 cursor-pointer"
 						>
 							Cari
@@ -255,6 +254,7 @@ export default function AdminUsers() {
 					<TableHeader>
 						<TableRow>
 							<TableHead>Image</TableHead>
+							<TableHead>Id</TableHead>
 							<TableHead>Nama</TableHead>
 							<TableHead>Email</TableHead>
 							<TableHead>Tanggal Lahir</TableHead>
@@ -263,75 +263,58 @@ export default function AdminUsers() {
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{products.map((product, index) => (
-							<TableRow key={product.p_id}>
+						{users.map((user, index) => (
+							<TableRow key={user.id}>
 								<TableCell className="w-40">
-									<Carousel>
-										<CarouselContent>
-											{product.images.map((image, index) => (
-												<CarouselItem
-													key={index}
-													className="flex justify-center"
-												>
-													<img
-														src={image.img}
-														alt={product.p_name + " product image"}
-													/>
-												</CarouselItem>
-											))}
-										</CarouselContent>
-									</Carousel>
+									<img src={user.img} alt={user.name + " user image"} />
 								</TableCell>
+								<TableCell>{user.id}</TableCell>
+								<TableCell className="max-w-50 truncate">{user.name}</TableCell>
 								<TableCell className="max-w-50 truncate">
-									{product.p_name}
+									{user.email}
 								</TableCell>
-								<TableCell className="max-w-50 truncate">
-									{product.description}
-								</TableCell>
-								<TableCell>
-									{Math.floor(product.average_rating * 10) / 10}
-								</TableCell>
-								<TableCell className="text-center">2025-12-30</TableCell>
+								<TableCell>{user.dob}</TableCell>
+								<TableCell className="text-center">{user.created_at}</TableCell>
 								<TableCell>
 									<section className="flex flex-col justify-center items-center gap-3 py-5">
 										<Button
 											variant="outline"
 											className="cursor-pointer w-full"
-											onClick={() => {
-												setProductSelected({
-													pId: product.p_id,
-													pvId: product.product_variants[0].pv_id,
-													name: product.p_name,
-													description: product.description,
-													stock: product.product_variants[0].stock,
-													price: product.product_variants[0].price,
-													discount: product.product_variants[0].discount,
-													minPurchase: product.product_variants[0].min_order,
-													hasVariant:
-														product.product_variants[0].is_default == false
-															? true
-															: false,
-													isActive: product.active,
-													interval: product.product_variants[0].interval,
-													intervalId: product.product_variants[0].i_id,
-												});
-												setOpenDialog(true);
-												setOpenDialogAction("editUser");
-											}}
+											// onClick={() => {
+											// 	setProductSelected({
+											// 		pId: product.p_id,
+											// 		pvId: product.product_variants[0].pv_id,
+											// 		name: product.p_name,
+											// 		description: product.description,
+											// 		stock: product.product_variants[0].stock,
+											// 		price: product.product_variants[0].price,
+											// 		discount: product.product_variants[0].discount,
+											// 		minPurchase: product.product_variants[0].min_order,
+											// 		hasVariant:
+											// 			product.product_variants[0].is_default == false
+											// 				? true
+											// 				: false,
+											// 		isActive: product.active,
+											// 		interval: product.product_variants[0].interval,
+											// 		intervalId: product.product_variants[0].i_id,
+											// 	});
+											// 	setOpenDialog(true);
+											// 	setOpenDialogAction("editUser");
+											// }}
 										>
 											Edit User
 										</Button>
 										<Button
 											className="cursor-pointer w-full"
 											variant="destructive"
-											onClick={() => {
-												setProductSelected({
-													pId: product.p_id,
-													pvId: product.product_variants[0].pv_id,
-												});
-												setOpenDialog(true);
-												setOpenDialogAction("deleteUser");
-											}}
+											// onClick={() => {
+											// 	setProductSelected({
+											// 		pId: product.p_id,
+											// 		pvId: product.product_variants[0].pv_id,
+											// 	});
+											// 	setOpenDialog(true);
+											// 	setOpenDialogAction("deleteUser");
+											// }}
 										>
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
