@@ -110,6 +110,7 @@ export default function AdminUsers() {
 
 	const [products, setProducts] = useState<ProductsDetail[] | null>(null);
 	const [users, setUsers] = useState<User[] | null>(null);
+	const [userIdSelected, setUserIdSelected] = useState<string>("");
 	const [search, setSearch] = useState<string>("");
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string>();
@@ -178,6 +179,20 @@ export default function AdminUsers() {
 		}
 	}, [search]);
 
+	const formatDate = (dateStr: string) => {
+		return new Date(dateStr).toLocaleDateString("id-ID", {
+			day: "numeric",
+			month: "long",
+			year: "numeric",
+		});
+	};
+
+	useEffect(() => {
+		if (userIdSelected !== "") {
+			console.log(userIdSelected);
+		}
+	}, [userIdSelected]);
+
 	if (loading) return <p>Loading...</p>;
 	if (error) {
 		toast.error(error);
@@ -212,7 +227,7 @@ export default function AdminUsers() {
 							<DialogTitle>Konfirmasi Hapus User</DialogTitle>
 							<DialogDescription></DialogDescription>
 						</DialogHeader>
-						<DeleteUser setStateDialog={setOpenDialog} data={productSelected} />
+						<DeleteUser setStateDialog={setOpenDialog} data={userIdSelected} />
 					</>
 				);
 		}
@@ -273,8 +288,10 @@ export default function AdminUsers() {
 								<TableCell className="max-w-50 truncate">
 									{user.email}
 								</TableCell>
-								<TableCell>{user.dob}</TableCell>
-								<TableCell className="text-center">{user.created_at}</TableCell>
+								<TableCell>{formatDate(user.dob)}</TableCell>
+								<TableCell className="text-center">
+									{formatDate(user.created_at)}
+								</TableCell>
 								<TableCell>
 									<section className="flex flex-col justify-center items-center gap-3 py-5">
 										<Button
@@ -307,14 +324,11 @@ export default function AdminUsers() {
 										<Button
 											className="cursor-pointer w-full"
 											variant="destructive"
-											// onClick={() => {
-											// 	setProductSelected({
-											// 		pId: product.p_id,
-											// 		pvId: product.product_variants[0].pv_id,
-											// 	});
-											// 	setOpenDialog(true);
-											// 	setOpenDialogAction("deleteUser");
-											// }}
+											onClick={() => {
+												setUserIdSelected(user.id);
+												setOpenDialog(true);
+												setOpenDialogAction("deleteUser");
+											}}
 										>
 											<svg
 												xmlns="http://www.w3.org/2000/svg"

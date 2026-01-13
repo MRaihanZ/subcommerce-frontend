@@ -1,31 +1,24 @@
+import { useState } from "react";
+
 import { GetCsrf } from "@/components/utils/csrf";
 
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-interface EditProductData {
-	pId: number;
-	pvId: number;
-}
-
-interface DeleteProductProps {
+interface DeleteUserProps {
 	setStateDialog: React.Dispatch<React.SetStateAction<boolean>>;
-	data: EditProductData;
+	data: string;
 }
 
-export default function DeleteUser({
-	setStateDialog,
-	data,
-}: DeleteProductProps) {
-	const deleteProduct = async () => {
+export default function DeleteUser({ setStateDialog, data }: DeleteUserProps) {
+	const [error, setError] = useState<string | null>(null);
+
+	const handleDelete = async () => {
 		const csrfToken = await GetCsrf();
+
 		try {
-			const res = await fetch(
-				"http://localhost:8080/api/v1/products/" +
-					data.pId +
-					"/" +
-					data.pvId +
-					"?state=product",
+			const send = await fetch(
+				"http://localhost:8080/api/v1/admins/users/" + data,
 				{
 					method: "DELETE",
 					headers: {
@@ -34,15 +27,21 @@ export default function DeleteUser({
 					credentials: "include",
 				}
 			);
-			const json = await res.json();
+
+			const json = await send.json();
 			if (json.code === 200 && json.status === "ok") {
+				toast("akun berhasil di hapus");
 				window.location.reload();
 			} else {
-				toast.error(json.error);
+				toast.error("Gagal menghapus akun: " + json.error);
+				setError(json.error);
+				// setLoading(false);
 			}
 		} catch (err) {
 			const errFetch = "Network Error: " + err;
-			toast.error("Fail. " + errFetch);
+			toast.error(errFetch);
+			setError(errFetch);
+			// setLoading(false);
 		}
 	};
 	return (
@@ -57,7 +56,7 @@ export default function DeleteUser({
 				<Button
 					className="w-full flex-1 cursor-pointer mt-5"
 					variant="destructive"
-					onClick={deleteProduct}
+					onClick={handleDelete}
 				>
 					Ya
 				</Button>
