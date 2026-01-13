@@ -35,6 +35,13 @@ export default function SignUp({
 
 	const { setData } = useGlobalData();
 
+	function formatDateLocal(date: Date) {
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, "0");
+		const day = String(date.getDate()).padStart(2, "0");
+		return `${year}-${month}-${day}`;
+	}
+
 	const handleSubmit = async () => {
 		if (name === "") {
 			setInputRequired(true);
@@ -54,7 +61,7 @@ export default function SignUp({
 		const payload = {
 			name: name,
 			email: email,
-			dob: date,
+			dob: formatDateLocal(date),
 			password: password,
 		};
 

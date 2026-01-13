@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useGlobalData } from "@/contexts/GlobalDataContext";
 
 import { CreateCsrf } from "../utils/csrf";
 
@@ -15,15 +14,7 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 
-interface SignUpProps {
-	setOpenCloseDialog: React.Dispatch<React.SetStateAction<boolean>>;
-	setOpenCloseDropDownMenu: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-export default function AddUser({
-	setOpenCloseDialog,
-	setOpenCloseDropDownMenu,
-}: SignUpProps) {
+export default function AddUser() {
 	const [date, setDate] = useState<Date | undefined>(undefined);
 	const [open, setOpen] = useState(false);
 	const [name, setName] = useState<string>("");
@@ -33,7 +24,12 @@ export default function AddUser({
 	const [inputRequired, setInputRequired] = useState(false);
 	const [emailExist, setEmailExist] = useState<boolean>();
 
-	const { setData } = useGlobalData();
+	function formatDateLocal(date: Date) {
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, "0");
+		const day = String(date.getDate()).padStart(2, "0");
+		return `${year}-${month}-${day}`;
+	}
 
 	const handleSubmit = async () => {
 		if (name === "") {
@@ -54,12 +50,12 @@ export default function AddUser({
 		const payload = {
 			name: name,
 			email: email,
-			dob: date,
+			dob: formatDateLocal(date),
 			password: password,
 		};
 
 		try {
-			const send = await fetch("http://localhost:8080/api/v1/auth/register", {
+			const send = await fetch("http://localhost:8080/api/v1/admins/users", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -71,18 +67,7 @@ export default function AddUser({
 
 			const result = await send.json();
 			if (result.code === 200 && result.status === "ok") {
-				setData({
-					code: result.code,
-					status: result.status,
-					data: {
-						is_login: true,
-						is_seller: false,
-					},
-					error: null,
-				});
-				toast("Sign up berhasil");
-				setOpenCloseDialog(false);
-				setOpenCloseDropDownMenu(false);
+				toast("Berhasil menambahkan user baru");
 				window.location.reload();
 			} else if (result.code === 409 && result.status === "error") {
 				setEmailExist(true);
