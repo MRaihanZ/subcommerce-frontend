@@ -40,7 +40,7 @@ export default function NavbarAdmin() {
 			});
 			const result = await send.json();
 			if (result.code === 200 && result.status === "ok") {
-				window.location.href = "/";
+				window.location.assign("/");
 			} else {
 				setError(result.error);
 				setNotFound(true);
