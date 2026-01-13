@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
 
-import { Separator } from "@/components/ui/separator";
+import { GetCsrf } from "@/components/utils/csrf";
+
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import InputFormProfile from "@/components/my_components/inputFormProfile";
@@ -16,45 +16,23 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 
-import {
-	Dialog,
-	// DialogClose,
-	DialogContent,
-	DialogDescription,
-	// DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
-
 import { Input } from "@/components/ui/input";
 
 interface EditUserData {
-	pId?: number;
-	pvId?: number;
-	name?: string;
-	description?: string;
-	stock?: number;
-	price?: number;
-	discount?: number;
-	minPurchase?: number;
-	hasVariant?: boolean;
-	isActive?: boolean;
-	interval?: number;
-	intervalId?: number;
+	id: string;
+	name: string;
+	img: string;
+	email: string;
+	dob: Date;
+	created_at: Date;
 }
 
 interface EditUserDataSend {
-	name?: string;
-	description?: string;
-	stock?: number;
-	price?: number;
-	discount?: number;
-	min_purchase?: number;
-	has_variant?: boolean;
-	is_active?: boolean;
-	interval?: number;
-	i_id?: number;
+	name: string;
+	img: string;
+	email: string;
+	dob: Date;
+	password: string;
 }
 
 interface EditUserProps {
@@ -62,30 +40,76 @@ interface EditUserProps {
 }
 
 export default function EditUser({ data }: EditUserProps) {
-	const [defProfileImg, setDefProfileImg] = useState("");
 	const [profileImg, setProfileImg] = useState<File | null>(null);
-	const [name, setName] = useState("");
-	const [email, setEmail] = useState("");
-	const [date, setDate] = useState<Date | undefined>(undefined);
+	const [name, setName] = useState(data.name);
+	const [email, setEmail] = useState(data.email);
+	const [date, setDate] = useState<Date | undefined>(data.dob);
 	const [password, setPassword] = useState("");
 	const [isDisableButton, setIsDisableButton] = useState(true);
 	const [open, setOpen] = useState(false);
 	const [isEdit, setIsEdit] = useState(false);
 	const [isEditPassword, setIsEditPassword] = useState(false);
 
-	const [openDialog, setOpenDialog] = useState(false);
-
-	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string>();
 
-	const navigate = useNavigate();
+	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (e.target.files && e.target.files[0]) {
+			setProfileImg(e.target.files[0]); // store the first selected file
+		}
+	};
 
+	const handleUpdate = async () => {
+		const csrfToken = await GetCsrf();
+
+		const payload = new FormData();
+		payload.append("name", name);
+		payload.append("email", email);
+		payload.append(
+			"dob",
+			date ? date.toLocaleDateString("en-CA").split("T")[0] : ""
+		);
+		payload.append("password", password);
+		if (profileImg) {
+			payload.append("img", profileImg);
+		} else {
+			payload.append("imgPath", data.img);
+		}
+
+		try {
+			const send = await fetch(
+				"http://localhost:8080/api/v1/admins/users/" + data.id,
+				{
+					method: "PATCH",
+					headers: {
+						"X-CSRF-TOKEN": csrfToken,
+					},
+					credentials: "include",
+					body: payload,
+				}
+			);
+
+			const json = await send.json();
+			if (json.code === 200 && json.status === "ok") {
+				toast("Profile berhasil di update");
+				window.location.reload();
+			} else {
+				toast("Gagal mengupdate profil: " + json.error);
+				setError(json.error);
+				// setLoading(false);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			toast(errFetch);
+			setError(errFetch);
+			// setLoading(false);
+		}
+	};
 	return (
 		<>
 			<section className="flex items-center justify-center">
 				<section className="w-full lg:col-span-3 xl:col-span-3 2xl:col-span-3 lg:col-start-2 xl:col-start-3 2xl:col-start-4 border rounded-2xl">
 					<section className="place-self-center mt-5 p-3 border rounded-xl">
-						<img src={defProfileImg} alt="" className="w-60 h-60" />
+						<img src={data.img} alt="" className="w-60 h-60" />
 					</section>
 					<section className="mx-5 mb-5">
 						<section
@@ -104,7 +128,7 @@ export default function EditUser({ data }: EditUserProps) {
 								type="file"
 								name="picture"
 								accept="image/*"
-								// onChange={handleFileChange}
+								onChange={handleFileChange}
 							/>
 						</section>
 						<InputFormProfile
@@ -177,7 +201,7 @@ export default function EditUser({ data }: EditUserProps) {
 										? "hidden cursor-pointer w-full"
 										: "cursor-pointer w-full"
 								}
-								// onClick={handleUpdate}
+								onClick={handleUpdate}
 							>
 								Submit
 							</Button>
