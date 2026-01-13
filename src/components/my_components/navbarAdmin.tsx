@@ -1,3 +1,9 @@
+import { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router";
+
+import { useGlobalData } from "@/contexts/GlobalDataContext";
+import { GetCsrf } from "@/components/utils/csrf";
+
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -7,11 +13,44 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Link, useLocation } from "react-router";
 export default function NavbarAdmin() {
+	const [notFound, setNotFound] = useState<boolean>();
+	const [error, setError] = useState<string | null>(null);
+
 	const path = useLocation();
 	const activePage = path.pathname;
+	const navigate = useNavigate();
 
+	const { setData } = useGlobalData();
+
+	const logout = async () => {
+		const csrfToken = await GetCsrf();
+		if (csrfToken === "error") {
+			setError("Error getting token");
+		}
+		try {
+			const send = await fetch("http://localhost:8080/api/v1/auth/logout", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRF-TOKEN": csrfToken,
+				},
+				body: JSON.stringify({}),
+				credentials: "include",
+			});
+			const result = await send.json();
+			if (result.code === 200 && result.status === "ok") {
+				window.location.href = "/";
+			} else {
+				setError(result.error);
+				setNotFound(true);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			setData({ error: errFetch });
+			// setLoading(false);
+		}
+	};
 	return (
 		<>
 			<nav className="container mx-auto flex justify-between py-3 px-3">
@@ -50,9 +89,13 @@ export default function NavbarAdmin() {
 						>
 							Sellers
 						</Link>
-						<Link to={"http://" + location.host} className="w-full mx-3">
-							Kembali
-						</Link>
+						<Button
+							variant="link"
+							onClick={() => logout()}
+							className="cursor-pointer hover:no-underline"
+						>
+							Logout
+						</Button>
 					</section>
 					<section className="block md:hidden">
 						<DropdownMenu>
@@ -108,10 +151,11 @@ export default function NavbarAdmin() {
 										Sellers
 									</Link>
 								</DropdownMenuItem>
-								<DropdownMenuItem>
-									<Link to={"http://" + location.host} className="w-full mx-3">
-										Kembali
-									</Link>
+								<DropdownMenuItem
+									className="w-full mx-3 cursor-pointer"
+									onSelect={() => logout()}
+								>
+									Logout
 								</DropdownMenuItem>
 							</DropdownMenuContent>
 						</DropdownMenu>
