@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 
-import { GetCsrf } from "@/components/utils/csrf";
-
 import {
 	Table,
 	TableBody,
@@ -14,13 +12,6 @@ import {
 	// TableFooter,
 } from "@/components/ui/table";
 import {
-	Carousel,
-	CarouselContent,
-	CarouselItem,
-	// CarouselNext,
-	// CarouselPrevious,
-} from "@/components/ui/carousel";
-import {
 	Dialog,
 	// DialogClose,
 	DialogContent,
@@ -30,15 +21,6 @@ import {
 	DialogTitle,
 	// DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -47,69 +29,22 @@ import AddUser from "@/components/my_components/addUser";
 import EditUser from "@/components/my_components/editUser";
 import DeleteUser from "@/components/my_components/deleteUser";
 
-interface ProductImages {
-	img: string;
-}
-
-// ProductVariant
-interface ProductVariants {
-	pv_id: number;
-	is_default: boolean;
-	pv_name: string;
-	i_id: number;
-	i_name: string;
-	interval: number;
-	stock: number;
-	pv_sold: number;
-	price: number;
-	discount: number;
-	min_order: number;
-}
-
-// Item
-interface ProductsDetail {
-	p_id: number;
-	p_name: string;
-	images: ProductImages[];
-	description: string;
-	sold: number;
-	average_rating: number;
-	active: boolean;
-	product_variants: ProductVariants[];
-}
-
-interface EditProductData {
-	pId?: number;
-	pvId?: number;
-	name?: string;
-	description?: string;
-	stock?: number;
-	price?: number;
-	discount?: number;
-	minPurchase?: number;
-	hasVariant?: boolean;
-	isActive?: boolean;
-	interval?: number;
-	intervalId?: number;
-}
-
 interface User {
 	id: string;
 	name: string;
 	img: string;
 	email: string;
-	dob: string;
-	created_at: string;
+	dob: Date;
+	created_at: Date;
 }
 
 export default function AdminUsers() {
 	const navigate = useNavigate();
 	const [openDialog, setOpenDialog] = useState(false);
 	const [openDialogAction, setOpenDialogAction] = useState<string>("addUser");
-	const [productSelected, setProductSelected] = useState<EditProductData>();
 
-	const [products, setProducts] = useState<ProductsDetail[] | null>(null);
 	const [users, setUsers] = useState<User[] | null>(null);
+	const [userSelected, setUserSelected] = useState<User>();
 	const [userIdSelected, setUserIdSelected] = useState<string>("");
 	const [search, setSearch] = useState<string>("");
 	const [loading, setLoading] = useState(true);
@@ -179,7 +114,7 @@ export default function AdminUsers() {
 		}
 	}, [search]);
 
-	const formatDate = (dateStr: string) => {
+	const formatDate = (dateStr: Date) => {
 		return new Date(dateStr).toLocaleDateString("id-ID", {
 			day: "numeric",
 			month: "long",
@@ -217,7 +152,7 @@ export default function AdminUsers() {
 							<DialogTitle>Ubah User</DialogTitle>
 							<DialogDescription></DialogDescription>
 						</DialogHeader>
-						<EditUser data={productSelected} />
+						<EditUser data={userSelected} />
 					</>
 				);
 			case "deleteUser":
@@ -297,27 +232,18 @@ export default function AdminUsers() {
 										<Button
 											variant="outline"
 											className="cursor-pointer w-full"
-											// onClick={() => {
-											// 	setProductSelected({
-											// 		pId: product.p_id,
-											// 		pvId: product.product_variants[0].pv_id,
-											// 		name: product.p_name,
-											// 		description: product.description,
-											// 		stock: product.product_variants[0].stock,
-											// 		price: product.product_variants[0].price,
-											// 		discount: product.product_variants[0].discount,
-											// 		minPurchase: product.product_variants[0].min_order,
-											// 		hasVariant:
-											// 			product.product_variants[0].is_default == false
-											// 				? true
-											// 				: false,
-											// 		isActive: product.active,
-											// 		interval: product.product_variants[0].interval,
-											// 		intervalId: product.product_variants[0].i_id,
-											// 	});
-											// 	setOpenDialog(true);
-											// 	setOpenDialogAction("editUser");
-											// }}
+											onClick={() => {
+												setUserSelected({
+													id: user.id,
+													name: user.name,
+													img: user.img,
+													email: user.email,
+													dob: new Date(user.dob),
+													created_at: user.created_at,
+												});
+												setOpenDialog(true);
+												setOpenDialogAction("editUser");
+											}}
 										>
 											Edit User
 										</Button>
