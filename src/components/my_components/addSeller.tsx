@@ -92,7 +92,7 @@ export default function AddSeller() {
 						className="cursor-pointer bg-black rounded-lg hover:bg-primary-dark w-full p-4 text-sm text-white uppercase font-bold tracking-wider"
 						onClick={handleRegisterSellerSubmit}
 					>
-						Daftar
+						Submit
 					</button>
 				</section>
 			</form>

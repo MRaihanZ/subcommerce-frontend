@@ -190,7 +190,7 @@ export default function AddUser() {
 							className="cursor-pointer bg-black rounded-lg hover:bg-primary-dark w-full p-4 text-sm text-white uppercase font-bold tracking-wider"
 							onClick={handleSubmit}
 						>
-							Daftar
+							Submit
 						</button>
 					</section>
 				</form>
