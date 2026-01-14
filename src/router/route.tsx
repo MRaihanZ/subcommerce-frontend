@@ -15,6 +15,7 @@ import Footer from "@/components/my_components/footer";
 import Admin from "@/pages/admin";
 import AdminUsers from "@/pages/adminUsers";
 import AdminSellers from "@/pages/adminSellers";
+import AdminProduct from "@/pages/adminProduct";
 import NotFound from "@/pages/notFound";
 import Home from "@/pages/home";
 import Chat from "@/pages/chat";
@@ -115,6 +116,15 @@ const routes = createBrowserRouter([
 		element: handleFallbackAdmin({
 			title: "Admin Sellers Page",
 			component: AdminSellers,
+			showNavbar: true,
+			showFooter: true,
+		}),
+	},
+	{
+		path: "/admin/products",
+		element: handleFallbackAdmin({
+			title: "Admin Products Page",
+			component: AdminProduct,
 			showNavbar: true,
 			showFooter: true,
 		}),

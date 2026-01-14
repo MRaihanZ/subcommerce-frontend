@@ -89,6 +89,16 @@ export default function NavbarAdmin() {
 						>
 							Sellers
 						</Link>
+						<Link
+							to={"http://" + location.host + "/admin/products"}
+							className={
+								activePage === "/admin/products"
+									? "w-full border-b-2 border-black mx-3"
+									: "w-full mx-3"
+							}
+						>
+							Products
+						</Link>
 						<Button
 							variant="link"
 							onClick={() => logout()}
@@ -149,6 +159,18 @@ export default function NavbarAdmin() {
 										}
 									>
 										Sellers
+									</Link>
+								</DropdownMenuItem>
+								<DropdownMenuItem>
+									<Link
+										to={"http://" + location.host + "/admin/products"}
+										className={
+											activePage === "/admin/products"
+												? "w-full border-b-2 border-black mx-3"
+												: "w-full mx-3"
+										}
+									>
+										Products
 									</Link>
 								</DropdownMenuItem>
 								<DropdownMenuItem
