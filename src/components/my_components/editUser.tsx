@@ -45,10 +45,8 @@ export default function EditUser({ data }: EditUserProps) {
 	const [email, setEmail] = useState(data.email);
 	const [date, setDate] = useState<Date | undefined>(data.dob);
 	const [password, setPassword] = useState("");
-	const [isDisableButton, setIsDisableButton] = useState(true);
+	const isDisableButton = false;
 	const [open, setOpen] = useState(false);
-	const [isEdit, setIsEdit] = useState(false);
-	const [isEditPassword, setIsEditPassword] = useState(false);
 
 	const [error, setError] = useState<string>();
 
@@ -114,11 +112,7 @@ export default function EditUser({ data }: EditUserProps) {
 					<section className="mx-5 mb-5">
 						<section
 							id="profile_picture"
-							className={
-								!isDisableButton
-									? "grid w-full items-center mt-5"
-									: "hidden w-full items-center mt-5"
-							}
+							className="grid w-full items-center mt-5"
 						>
 							<Label htmlFor="picture" className="mb-1">
 								Picture
@@ -182,7 +176,7 @@ export default function EditUser({ data }: EditUserProps) {
 								</PopoverContent>
 							</Popover>
 						</section>
-						<section className={isEditPassword ? "mt-5" : "hidden mt-5"}>
+						<section className="mt-5">
 							<Label htmlFor="password" className="mb-1">
 								password
 							</Label>
@@ -195,35 +189,8 @@ export default function EditUser({ data }: EditUserProps) {
 							/>
 						</section>
 						<section className={isDisableButton ? "hidden mt-5" : "mt-5"}>
-							<Button
-								className={
-									isDisableButton
-										? "hidden cursor-pointer w-full"
-										: "cursor-pointer w-full"
-								}
-								onClick={handleUpdate}
-							>
+							<Button className="cursor-pointer w-full" onClick={handleUpdate}>
 								Submit
-							</Button>
-						</section>
-						<section className="flex justify-around flex-col 2xl:flex-row gap-5 mt-5">
-							<Button
-								className="cursor-pointer grow"
-								onClick={() => {
-									setIsEdit((prev) => !prev);
-									setIsDisableButton((prev) => !prev);
-								}}
-							>
-								{isEdit ? "Batalkan" : "Edit"}
-							</Button>
-							<Button
-								className="cursor-pointer grow"
-								onClick={() => {
-									setIsEditPassword((prev) => !prev);
-									setIsDisableButton((prev) => !prev);
-								}}
-							>
-								{isEditPassword ? "Batalkan" : "Change Password"}
 							</Button>
 						</section>
 					</section>
