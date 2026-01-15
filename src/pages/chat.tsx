@@ -10,45 +10,57 @@ import { Button } from "@/components/ui/button";
 import ProfileMessage from "@/components/my_components/profileMessage";
 import Message from "@/components/my_components/message";
 
+interface ConversationRoom {
+	id: string;
+	name: string;
+	img: string;
+}
+
 export default function Chat() {
 	const [isConversation, setIsConversation] = useState(false);
+	const [conversationRoom, setConversationRoom] =
+		useState<ConversationRoom | null>(null);
+
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string>();
 
 	const [searchParams] = useSearchParams();
 
 	const idSellerParam = searchParams.get("id");
 
-	// const fetchProducts = async () => {
-	// 	setProducts([]);
+	const fetchConversationRoom = async () => {
+		try {
+			const res = await fetch(
+				"http://localhost:8080/api/v1/chats/" + idSellerParam + "?state=user",
+				{
+					credentials: "include",
+				}
+			);
+			const json = await res.json();
+			if (json.code === 200 && json.status === "ok") {
+				setConversationRoom(json.data);
+				setLoading(false);
+			} else {
+				console.error("API Error:", json.error);
+				setError(json.error);
+				setLoading(false);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			setError(errFetch);
+			setLoading(false);
+		}
+	};
 
-	// 	const params = new URLSearchParams();
-	// 	params.set("id", idSellerParam);
-	// 	const queryString = params.toString();
-
-	// 	try {
-	// 		const res = await fetch(
-	// 			"http://localhost:8080/api/v1/products/?" + queryString
-	// 		);
-	// 		const json = await res.json();
-	// 		if (json.code === 200 && json.status === "ok") {
-	// 			setProducts(json.data);
-	// 			setLoading(false);
-	// 		} else {
-	// 			console.error("API Error:", json.error);
-	// 			setError(json.error);
-	// 			setLoading(false);
-	// 		}
-	// 	} catch (err) {
-	// 		const errFetch = "Network Error: " + err;
-	// 		setError(errFetch);
-	// 		setLoading(false);
-	// 	}
-	// };
-
-	// useEffect(() => {
-	// 	if (idSellerParam) {
-	// 	fetchConversations();
-	// }
-	// }, [idSellerParam]);
+	useEffect(() => {
+		if (idSellerParam) {
+			fetchConversationRoom();
+			setIsConversation(true);
+		} else {
+			setConversationRoom(null);
+			setIsConversation(false);
+		}
+	}, [idSellerParam]);
 
 	const bottomRef = useRef<HTMLDivElement | null>(null);
 	// useEffect(() => {
@@ -178,7 +190,7 @@ export default function Chat() {
 					{isConversation ? (
 						<>
 							<section className="flex items-center h-15 gap-2 ps-5 border-b-1">
-								<svg
+								{/* <svg
 									xmlns="http://www.w3.org/2000/svg"
 									height="24px"
 									viewBox="0 -960 960 960"
@@ -186,8 +198,13 @@ export default function Chat() {
 									fill="currentColor"
 								>
 									<path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z" />
-								</svg>
-								<p>User Name</p>
+								</svg> */}
+								<img
+									src={conversationRoom?.img}
+									alt={conversationRoom?.name + " seller profile"}
+									className="w-[24px] h-[24px] rounded-full"
+								/>
+								<p>{conversationRoom?.name}</p>
 							</section>
 							<ScrollArea className="h-196 px-3">
 								<Message
