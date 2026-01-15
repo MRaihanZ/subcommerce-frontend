@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useSearchParams } from "react-router";
+import { useSearchParams, Link } from "react-router";
 
 // import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -10,23 +10,73 @@ import { Button } from "@/components/ui/button";
 import ProfileMessage from "@/components/my_components/profileMessage";
 import Message from "@/components/my_components/message";
 
+interface Conversation {
+	id: string;
+	user_id: string;
+	seller_id: string;
+	name: string;
+	img: string;
+	last_message_at?: string;
+	last_message_content?: string;
+}
+
 interface ConversationRoom {
 	id: string;
 	name: string;
 	img: string;
 }
 
+interface Message {
+	id: string;
+	is_user: boolean;
+	content: string;
+	sent_at: string;
+}
+
 export default function Chat() {
 	const [isConversation, setIsConversation] = useState(false);
+	const [conversation, setConversation] = useState<Conversation[] | null>(null);
 	const [conversationRoom, setConversationRoom] =
 		useState<ConversationRoom | null>(null);
 
-	const [loading, setLoading] = useState(true);
+	const [messages, setMessages] = useState<Message[]>([]);
+	const [cursor, setCursor] = useState<
+		{ sent_at: string; id: string } | undefined
+	>(undefined);
+
+	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string>();
+
+	const containerRef = useRef<HTMLDivElement>(null);
+	const bottomRef = useRef<HTMLDivElement>(null);
 
 	const [searchParams] = useSearchParams();
 
 	const idSellerParam = searchParams.get("id");
+
+	const fetchConversations = async () => {
+		try {
+			const res = await fetch(
+				"http://localhost:8080/api/v1/chats/" + "?state=user",
+				{
+					credentials: "include",
+				}
+			);
+			const json = await res.json();
+			if (json.code === 200 && json.status === "ok") {
+				setConversation(json.data);
+				setLoading(false);
+			} else {
+				console.error("API Error:", json.error);
+				setError(json.error);
+				setLoading(false);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			setError(errFetch);
+			setLoading(false);
+		}
+	};
 
 	const fetchConversationRoom = async () => {
 		try {
@@ -52,25 +102,120 @@ export default function Chat() {
 		}
 	};
 
+	const fetchMessages = async (
+		convId: string,
+		cursor?: { sent_at: string; id: string }
+	) => {
+		const params = new URLSearchParams({ limit: "10", state: "user" });
+
+		if (cursor) {
+			params.append("before", cursor.sent_at);
+			params.append("msg_id", cursor.id);
+		}
+
+		const res = await fetch(
+			`http://localhost:8080/api/v1/chats/messages/${convId}?${params.toString()}`,
+			{
+				credentials: "include",
+			}
+		);
+
+		if (!res.ok) {
+			const text = await res.text();
+			console.error("Non-JSON response:", text);
+			throw new Error("Failed to fetch messages");
+		}
+
+		return res.json();
+	};
+
+	// Initial load
 	useEffect(() => {
-		if (idSellerParam) {
-			fetchConversationRoom();
-			setIsConversation(true);
-		} else {
+		if (!idSellerParam) {
 			setConversationRoom(null);
 			setIsConversation(false);
+			return;
 		}
-	}, [idSellerParam]);
 
-	const bottomRef = useRef<HTMLDivElement | null>(null);
+		setMessages([]);
+		setCursor(undefined);
+		setIsConversation(true);
+
+		fetchConversationRoom();
+		loadMore();
+	}, [idSellerParam]);
+	const simulateConvId = "83ec5a09-8d10-4b31-bee9-9f3193a1e9e5";
+
+	const fetchingRef = useRef(false);
+
+	const prevScrollHeightRef = useRef<number>(0);
+
+	const loadMore = async () => {
+		if (fetchingRef.current) return;
+
+		const container = containerRef.current;
+		prevScrollHeightRef.current = container?.scrollHeight;
+
+		fetchingRef.current = true;
+		setLoading(true);
+
+		const res = await fetchMessages(simulateConvId, cursor);
+		console.log("API response:", res);
+
+		if (!res?.data) return;
+
+		const newMessages = res.data as Message[];
+
+		if (newMessages.length > 0) {
+			setMessages((prev) => [...newMessages, ...prev]);
+
+			const oldest = newMessages[0];
+			setCursor({ sent_at: oldest.sent_at, id: oldest.id });
+		}
+
+		setLoading(false);
+		fetchingRef.current = false;
+	};
+
+	const handleScroll = () => {
+		if (!containerRef.current) return;
+		if (containerRef.current?.scrollTop <= 0) {
+			loadMore();
+		}
+		console.log(
+			"top: " +
+				containerRef.current?.scrollTop +
+				" | MAX Height: " +
+				containerRef.current?.scrollHeight
+		);
+	};
+
+	useEffect(() => {
+		fetchConversations();
+	}, []);
 	// useEffect(() => {
+	// if (!isConversation) return;
 	// 	bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-	// }, [messages]);
+	// }, [idSellerParam, isConversation, messages.length]);
 
 	// temporary, use the useEffect on top when messages state is ready
+
 	useEffect(() => {
+		if (!isConversation) return;
 		bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-	}, []);
+
+		const container = containerRef.current;
+		if (!container) return;
+
+		// Calculate difference
+		const newHeight = container.scrollHeight;
+		const diff = newHeight - prevScrollHeightRef.current;
+
+		// Adjust scrollTop
+		if (diff > 0) {
+			container.scrollTop = diff;
+		}
+	}, [messages]);
 
 	return (
 		<>
@@ -78,115 +223,29 @@ export default function Chat() {
 				<section className="border-1 col-span-10 lg:col-start-2 lg:col-span-2 rounded-s-md">
 					<p className="text-center text-xl font-semibold py-[1rem]">Chat</p>
 					<Separator />
-					<ScrollArea className="h-212">
-						<ProfileMessage
-							img="assets/img/profile2.jpg"
-							name="User Name"
-							message="last message here and some more"
-							isActive={true}
-						/>
-						<ProfileMessage
-							img="assets/img/profile2.jpg"
-							name="User Name"
-							message="last message here and some more"
-							isActive={false}
-						/>
-						<ProfileMessage
-							img="assets/img/profile2.jpg"
-							name="User Name"
-							message="last message here and some more"
-							isActive={false}
-						/>
-						<ProfileMessage
-							img="assets/img/profile2.jpg"
-							name="User Name"
-							message="last message here and some more"
-							isActive={false}
-						/>
-						<ProfileMessage
-							img="assets/img/profile2.jpg"
-							name="User Name"
-							message="last message here and some more"
-							isActive={false}
-						/>
-
-						<ProfileMessage
-							img="assets/img/profile2.jpg"
-							name="User Name"
-							message="last message here and some more"
-							isActive={false}
-						/>
-						<ProfileMessage
-							img="assets/img/profile2.jpg"
-							name="User Name"
-							message="last message here and some more"
-							isActive={false}
-						/>
-						<ProfileMessage
-							img="assets/img/profile2.jpg"
-							name="User Name"
-							message="last message here and some more"
-							isActive={false}
-						/>
-						<ProfileMessage
-							img="assets/img/profile2.jpg"
-							name="User Name"
-							message="last message here and some more"
-							isActive={false}
-						/>
-
-						<ProfileMessage
-							img="assets/img/profile2.jpg"
-							name="User Name"
-							message="last message here and some more"
-							isActive={false}
-						/>
-						<ProfileMessage
-							img="assets/img/profile2.jpg"
-							name="User Name"
-							message="last message here and some more"
-							isActive={false}
-						/>
-						<ProfileMessage
-							img="assets/img/profile2.jpg"
-							name="User Name"
-							message="last message here and some more"
-							isActive={false}
-						/>
-						<ProfileMessage
-							img="assets/img/profile2.jpg"
-							name="User Name"
-							message="last message here and some more"
-							isActive={false}
-						/>
-
-						<ProfileMessage
-							img="assets/img/profile2.jpg"
-							name="User Name"
-							message="last message here and some more"
-							isActive={false}
-						/>
-						<ProfileMessage
-							img="assets/img/profile2.jpg"
-							name="User Name"
-							message="last message here and some more"
-							isActive={false}
-						/>
-						<ProfileMessage
-							img="assets/img/profile2.jpg"
-							name="User Name"
-							message="last message here and some more"
-							isActive={false}
-						/>
-						<ProfileMessage
-							img="assets/img/profile2.jpg"
-							name="User Name"
-							message="last message here and some more"
-							isActive={false}
-						/>
+					<ScrollArea className="h-184">
+						{conversation
+							? conversation.map((conv, idx) => (
+									<>
+										<Link
+											key={conv.id}
+											to={
+												"http://" + location.host + "/chat?id=" + conv.seller_id
+											}
+										>
+											<ProfileMessage
+												img={conv.img}
+												name={conv.name}
+												message={conv.last_message_content}
+												isActive={idSellerParam === conv.seller_id}
+											/>
+										</Link>
+									</>
+							  ))
+							: ""}
 					</ScrollArea>
 				</section>
-				<section className="hidden lg:block lg:col-span-6 h-[57rem] border-1 rounded-e-md">
+				<section className="hidden lg:flex lg:flex-col lg:col-span-6 h-[50rem] border-1 rounded-e-md">
 					{isConversation ? (
 						<>
 							<section className="flex items-center h-15 gap-2 ps-5 border-b-1">
@@ -206,123 +265,24 @@ export default function Chat() {
 								/>
 								<p>{conversationRoom?.name}</p>
 							</section>
-							<ScrollArea className="h-196 px-3">
-								<Message
-									name="Bonnie Green"
-									sent="20:00"
-									message="testing sender"
-									isSender={true}
-								/>
-								<Message
-									name="John Blue"
-									sent="21:00"
-									message="testing receiver"
-									isSender={false}
-								/>
-								<Message
-									name="John Blue"
-									sent="21:00"
-									message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas imperdiet ligula quam, quis vehicula nibh luctus at. Suspendisse tincidunt semper quam, ultricies porttitor orci euismod non. Vestibulum ultricies, dui quis placerat tempor, lacus nisl rhoncus dui, interdum tincidunt augue eros vitae magna. Ut feugiat accumsan elit, quis aliquam leo convallis nec. Maecenas hendrerit vel risus ac porttitor. Sed placerat tempus lectus, in posuere velit. Nullam ultricies nunc sed leo euismod blandit."
-									isSender={false}
-								/>
-								<Message
-									name="Bonnie Green"
-									sent="20:00"
-									message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas imperdiet ligula quam, quis vehicula nibh luctus at. Suspendisse tincidunt semper quam, ultricies porttitor orci euismod non. Vestibulum ultricies, dui quis placerat tempor, lacus nisl rhoncus dui, interdum tincidunt augue eros vitae magna. Ut feugiat accumsan elit, quis aliquam leo convallis nec. Maecenas hendrerit vel risus ac porttitor. Sed placerat tempus lectus, in posuere velit. Nullam ultricies nunc sed leo euismod blandit."
-									isSender={true}
-								/>
-								<Message
-									name="Bonnie Green"
-									sent="20:00"
-									message="testing sender"
-									isSender={true}
-								/>
-								<Message
-									name="Bonnie Green"
-									sent="20:00"
-									message="testing sender"
-									isSender={true}
-								/>
-								<Message
-									name="John Blue"
-									sent="21:00"
-									message="testing receiver"
-									isSender={false}
-								/>
-								<Message
-									name="Bonnie Green"
-									sent="20:00"
-									message="testing sender"
-									isSender={true}
-								/>
-								<Message
-									name="John Blue"
-									sent="21:00"
-									message="testing receiver"
-									isSender={false}
-								/>
-								<Message
-									name="Bonnie Green"
-									sent="20:00"
-									message="testing sender"
-									isSender={true}
-								/>
-								<Message
-									name="John Blue"
-									sent="21:00"
-									message="testing receiver"
-									isSender={false}
-								/>
-								<Message
-									name="Bonnie Green"
-									sent="20:00"
-									message="testing sender"
-									isSender={true}
-								/>
-								<Message
-									name="John Blue"
-									sent="21:00"
-									message="testing receiver"
-									isSender={false}
-								/>
-								<Message
-									name="Bonnie Green"
-									sent="20:00"
-									message="testing sender"
-									isSender={true}
-								/>
-								<Message
-									name="John Blue"
-									sent="21:00"
-									message="testing receiver"
-									isSender={false}
-								/>
-								<Message
-									name="Bonnie Green"
-									sent="20:00"
-									message="testing sender"
-									isSender={true}
-								/>
-								<Message
-									name="John Blue"
-									sent="21:00"
-									message="testing receiver"
-									isSender={false}
-								/>
-								<Message
-									name="Bonnie Green"
-									sent="20:00"
-									message="testing sender"
-									isSender={true}
-								/>
-								<Message
-									name="John Blue"
-									sent="21:00"
-									message="testing receiver"
-									isSender={false}
-								/>
-								<div ref={bottomRef} />
-							</ScrollArea>
+							{/* <ScrollArea className="h-169 px-3"> */}
+							<div
+								className="h-169 px-3 overflow-y-auto"
+								ref={containerRef}
+								onScroll={handleScroll}
+							>
+								{messages.map((msg, index) => (
+									<Message
+										key={msg.id}
+										name=""
+										sent={msg.sent_at}
+										message={msg.content}
+										isSender={msg.is_user}
+									/>
+								))}
+								<div ref={bottomRef}></div>
+							</div>
+							{/* </ScrollArea> */}
 							<section className="h-16 py-2 flex items-center mx-3">
 								<Input
 									type="text"
