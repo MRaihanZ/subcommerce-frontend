@@ -3,7 +3,7 @@ import { Separator } from "@/components/ui/separator";
 interface ProfileMessageProps {
 	img: string;
 	name: string;
-	message: string;
+	message?: string;
 	isActive: boolean;
 }
 
