@@ -1,11 +1,16 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { useSearchParams, Link } from "react-router";
+
+import { GetCsrf } from "@/components/utils/csrf";
+
+import { supabase } from "@/lib/supabase";
 
 // import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 import ProfileMessage from "@/components/my_components/profileMessage";
 import Message from "@/components/my_components/message";
@@ -33,6 +38,11 @@ interface Message {
 	sent_at: string;
 }
 
+interface MessageSent {
+	conv_id: string;
+	content: string;
+}
+
 export default function Chat() {
 	const [isConversation, setIsConversation] = useState(false);
 	const [conversation, setConversation] = useState<Conversation[] | null>(null);
@@ -40,6 +50,7 @@ export default function Chat() {
 		useState<ConversationRoom | null>(null);
 
 	const [messages, setMessages] = useState<Message[]>([]);
+	const [text, setText] = useState<string>("");
 	const [cursor, setCursor] = useState<
 		{ sent_at: string; id: string } | undefined
 	>(undefined);
@@ -49,6 +60,8 @@ export default function Chat() {
 
 	const containerRef = useRef<HTMLDivElement>(null);
 	const bottomRef = useRef<HTMLDivElement>(null);
+	const isInitialLoadRef = useRef(true);
+	const isSecondLoadRef = useRef(true);
 
 	const [searchParams] = useSearchParams();
 
@@ -142,26 +155,30 @@ export default function Chat() {
 		setIsConversation(true);
 
 		fetchConversationRoom();
-		loadMore();
 	}, [idSellerParam]);
-	const simulateConvId = "83ec5a09-8d10-4b31-bee9-9f3193a1e9e5";
+
+	useEffect(() => {
+		if (conversationRoom !== null) {
+			loadMore();
+		}
+	}, [conversationRoom, idSellerParam]);
 
 	const fetchingRef = useRef(false);
 
 	const prevScrollHeightRef = useRef<number>(0);
 
 	const loadMore = async () => {
-		if (fetchingRef.current) return;
+		if (fetchingRef.current || !conversationRoom) return;
 
 		const container = containerRef.current;
-		prevScrollHeightRef.current = container?.scrollHeight;
+		if (container) {
+			prevScrollHeightRef.current = container.scrollHeight;
+		}
 
 		fetchingRef.current = true;
 		setLoading(true);
 
-		const res = await fetchMessages(simulateConvId, cursor);
-		console.log("API response:", res);
-
+		const res = await fetchMessages(conversationRoom?.id, cursor);
 		if (!res?.data) return;
 
 		const newMessages = res.data as Message[];
@@ -177,22 +194,114 @@ export default function Chat() {
 		fetchingRef.current = false;
 	};
 
+	const isAtBottomRef = useRef(true);
+
 	const handleScroll = () => {
-		if (!containerRef.current) return;
-		if (containerRef.current?.scrollTop <= 0) {
+		const container = containerRef.current;
+		if (!container) return;
+
+		const nearBottom =
+			container.scrollHeight - container.scrollTop - container.clientHeight <
+			20;
+
+		isAtBottomRef.current = nearBottom;
+
+		if (container.scrollTop <= 10 && !fetchingRef.current) {
 			loadMore();
 		}
-		console.log(
-			"top: " +
-				containerRef.current?.scrollTop +
-				" | MAX Height: " +
-				containerRef.current?.scrollHeight
-		);
+	};
+
+	const formatDate = (dateStr: string) => {
+		return new Date(dateStr).toLocaleDateString("id-ID", {
+			day: "numeric",
+			month: "long",
+			year: "numeric",
+			hour: "numeric",
+			minute: "numeric",
+			second: "numeric",
+		});
 	};
 
 	useEffect(() => {
 		fetchConversations();
 	}, []);
+
+	function subscribeToConversation(
+		conversationId: string,
+		onMessage: (msg: any) => void
+	) {
+		const channel = supabase
+			.channel(`conversation:${conversationId}`)
+			.on(
+				"postgres_changes",
+				{
+					event: "INSERT",
+					schema: "public",
+					table: "messages",
+					filter: `conversation_id=eq.${conversationId}`,
+				},
+				(payload) => {
+					onMessage(payload.new);
+				}
+			)
+			.subscribe();
+
+		return () => {
+			supabase.removeChannel(channel);
+		};
+	}
+
+	useEffect(() => {
+		if (conversationRoom !== null) {
+			const unsubscribe = subscribeToConversation(
+				conversationRoom?.id,
+				(msg) => {
+					setMessages((prev) => [...prev, msg]);
+				}
+			);
+
+			return () => unsubscribe();
+		}
+	}, [conversationRoom]);
+
+	const sendMessage = async () => {
+		const csrfToken = await GetCsrf();
+		const payload: MessageSent = {
+			conv_id: conversationRoom?.id,
+			content: text,
+		};
+		const params = new URLSearchParams({ state: "user" });
+		if (!text.trim()) return;
+		try {
+			const send = await fetch(
+				"http://localhost:8080/api/v1/chats/messages/" +
+					conversationRoom?.id +
+					"?" +
+					params.toString(),
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						"X-CSRF-TOKEN": csrfToken,
+					},
+					credentials: "include",
+					body: JSON.stringify(payload),
+				}
+			);
+
+			setText("");
+			const result = await send.json();
+			if (result.code !== 200) {
+				toast.error(result.error);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			toast(errFetch);
+			setError(errFetch);
+			// setLoading(false);
+		}
+	};
+
 	// useEffect(() => {
 	// if (!isConversation) return;
 	// 	bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -200,22 +309,34 @@ export default function Chat() {
 
 	// temporary, use the useEffect on top when messages state is ready
 
-	useEffect(() => {
-		if (!isConversation) return;
-		bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-
+	useLayoutEffect(() => {
 		const container = containerRef.current;
 		if (!container) return;
 
-		// Calculate difference
-		const newHeight = container.scrollHeight;
-		const diff = newHeight - prevScrollHeightRef.current;
-
-		// Adjust scrollTop
-		if (diff > 0) {
-			container.scrollTop = diff;
+		// Initial load → jump to bottom once
+		if (isInitialLoadRef.current) {
+			container.scrollTop = container.scrollHeight;
+			isInitialLoadRef.current = false;
+			return;
+		} else if (isSecondLoadRef.current) {
+			container.scrollTop = container.scrollHeight;
+			isSecondLoadRef.current = false;
+			return;
 		}
-	}, [messages]);
+		if (prevScrollHeightRef.current) {
+			// If loading older messages (prepend)
+			const newHeight = container.scrollHeight;
+			const diff = newHeight - prevScrollHeightRef.current;
+			container.scrollTop = diff;
+			prevScrollHeightRef.current = 0;
+			return;
+		}
+
+		// New realtime message → scroll only if user was at bottom
+		if (isAtBottomRef.current) {
+			container.scrollTop = container.scrollHeight;
+		}
+	}, [messages.length]);
 
 	return (
 		<>
@@ -275,7 +396,7 @@ export default function Chat() {
 									<Message
 										key={msg.id}
 										name=""
-										sent={msg.sent_at}
+										sent={formatDate(msg.sent_at)}
 										message={msg.content}
 										isSender={msg.is_user}
 									/>
@@ -287,9 +408,21 @@ export default function Chat() {
 								<Input
 									type="text"
 									placeholder="Message"
+									value={text}
+									onChange={(e) => setText(e.target.value)}
+									onKeyDown={(e) => {
+										if (e.key === "Enter" && !e.shiftKey) {
+											e.preventDefault();
+											sendMessage();
+										}
+									}}
 									className="flex-auto me-3"
 								/>
-								<Button className="flex-none" variant="outline">
+								<Button
+									className="flex-none cursor-pointer"
+									variant="outline"
+									onClick={sendMessage}
+								>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										height="24px"
