@@ -84,6 +84,7 @@ export default function SignUp({
 					data: {
 						is_login: true,
 						is_seller: false,
+						is_admin: false,
 					},
 					error: null,
 				});
