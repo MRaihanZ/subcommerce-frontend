@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export default function NotFound() {
 	return (
-		<div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 to-slate-100 px-4">
+		<div className="min-h-screen flex items-center justify-center bg-gradient-to-b px-4">
 			<Card className="max-w-xl w-full rounded-2xl shadow-lg">
 				<CardContent className="p-10 text-center space-y-6">
 					{/* Icon */}
