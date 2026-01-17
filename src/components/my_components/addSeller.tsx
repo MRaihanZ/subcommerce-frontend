@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { apiUrl } from "@/lib/api";
+
 import { GetCsrf } from "@/components/utils/csrf";
 
 import { toast } from "sonner";
@@ -19,18 +21,15 @@ export default function AddSeller() {
 		};
 
 		try {
-			const send = await fetch(
-				"http://localhost:8080/api/v1/admins/sellers/" + id,
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-						"X-CSRF-TOKEN": csrfToken,
-					},
-					credentials: "include",
-					body: JSON.stringify(payload),
-				}
-			);
+			const send = await fetch(`${apiUrl}/api/v1/admins/sellers/` + id, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRF-TOKEN": csrfToken,
+				},
+				credentials: "include",
+				body: JSON.stringify(payload),
+			});
 
 			const result = await send.json();
 			if (result.code === 200 && result.status === "ok") {

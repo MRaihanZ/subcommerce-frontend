@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useGlobalData } from "@/contexts/GlobalDataContext";
+import { apiUrl } from "@/lib/api";
 
 import { CreateCsrf } from "../utils/csrf";
 
@@ -66,7 +67,7 @@ export default function SignUp({
 		};
 
 		try {
-			const send = await fetch("http://localhost:8080/api/v1/auth/register", {
+			const send = await fetch(`${apiUrl}/api/v1/auth/register`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",

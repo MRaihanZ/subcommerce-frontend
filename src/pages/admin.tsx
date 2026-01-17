@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 
+import { apiUrl } from "@/lib/api";
+
 import {
 	Table,
 	TableBody,
@@ -49,7 +51,7 @@ export default function Admin() {
 
 	const fetchAdmins = async () => {
 		try {
-			const res = await fetch("http://localhost:8080/api/v1/admins/", {
+			const res = await fetch(`${apiUrl}/api/v1/admins/`, {
 				credentials: "include",
 			});
 			const json = await res.json();
@@ -74,7 +76,7 @@ export default function Admin() {
 
 	const fetchAdmin = async () => {
 		try {
-			const res = await fetch("http://localhost:8080/api/v1/admins/" + search, {
+			const res = await fetch(`${apiUrl}/api/v1/admins/` + search, {
 				credentials: "include",
 			});
 			const json = await res.json();

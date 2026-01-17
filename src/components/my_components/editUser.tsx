@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { apiUrl } from "@/lib/api";
 
 import { GetCsrf } from "@/components/utils/csrf";
 
@@ -64,7 +65,7 @@ export default function EditUser({ data }: EditUserProps) {
 		payload.append("email", email);
 		payload.append(
 			"dob",
-			date ? date.toLocaleDateString("en-CA").split("T")[0] : ""
+			date ? date.toLocaleDateString("en-CA").split("T")[0] : "",
 		);
 		payload.append("password", password);
 		if (profileImg) {
@@ -74,17 +75,14 @@ export default function EditUser({ data }: EditUserProps) {
 		}
 
 		try {
-			const send = await fetch(
-				"http://localhost:8080/api/v1/admins/users/" + data.id,
-				{
-					method: "PATCH",
-					headers: {
-						"X-CSRF-TOKEN": csrfToken,
-					},
-					credentials: "include",
-					body: payload,
-				}
-			);
+			const send = await fetch(`${apiUrl}/api/v1/admins/users/` + data.id, {
+				method: "PATCH",
+				headers: {
+					"X-CSRF-TOKEN": csrfToken,
+				},
+				credentials: "include",
+				body: payload,
+			});
 
 			const json = await send.json();
 			if (json.code === 200 && json.status === "ok") {

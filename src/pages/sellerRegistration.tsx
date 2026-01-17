@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { apiUrl } from "@/lib/api";
 
 import { useGlobalData } from "@/contexts/GlobalDataContext";
 import { GetCsrf } from "@/components/utils/csrf";
@@ -24,18 +25,15 @@ export default function SellerRegistration() {
 		};
 
 		try {
-			const send = await fetch(
-				"http://localhost:8080/api/v1/auth/register/seller",
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-						"X-CSRF-TOKEN": csrfToken,
-					},
-					credentials: "include",
-					body: JSON.stringify(payload),
-				}
-			);
+			const send = await fetch(`${apiUrl}/api/v1/auth/register/seller`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRF-TOKEN": csrfToken,
+				},
+				credentials: "include",
+				body: JSON.stringify(payload),
+			});
 
 			const result = await send.json();
 			if (result.code === 200 && result.status === "ok") {

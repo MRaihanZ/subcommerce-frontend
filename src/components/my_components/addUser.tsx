@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { apiUrl } from "@/lib/api";
+
 import { CreateCsrf } from "../utils/csrf";
 
 import { Label } from "@/components/ui/label";
@@ -55,7 +57,7 @@ export default function AddUser() {
 		};
 
 		try {
-			const send = await fetch("http://localhost:8080/api/v1/admins/users", {
+			const send = await fetch(`${apiUrl}/api/v1/admins/users`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",

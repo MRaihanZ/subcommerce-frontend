@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { apiUrl } from "@/lib/api";
 
 import {
 	Table,
@@ -52,7 +53,7 @@ export default function AdminUsers() {
 
 	const fetchUsers = async () => {
 		try {
-			const res = await fetch("http://localhost:8080/api/v1/admins/users", {
+			const res = await fetch(`${apiUrl}/api/v1/admins/users`, {
 				credentials: "include",
 			});
 			const json = await res.json();
@@ -77,12 +78,9 @@ export default function AdminUsers() {
 
 	const fetchUser = async () => {
 		try {
-			const res = await fetch(
-				"http://localhost:8080/api/v1/admins/users/" + search,
-				{
-					credentials: "include",
-				}
-			);
+			const res = await fetch(`${apiUrl}/api/v1/admins/users/` + search, {
+				credentials: "include",
+			});
 			const json = await res.json();
 			if (json.code === 200 && json.status === "ok") {
 				setUsers(json.data);

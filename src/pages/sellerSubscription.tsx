@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 // import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -60,7 +61,7 @@ export default function SellerSubscription() {
 												<p>
 													Harga Total: Rp
 													{new Intl.NumberFormat("id-ID").format(
-														data.total_price
+														data.total_price,
 													)}
 												</p>
 											</section>

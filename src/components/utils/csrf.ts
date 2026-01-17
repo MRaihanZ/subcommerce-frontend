@@ -1,5 +1,7 @@
+import { apiUrl } from "@/lib/api";
+
 export async function CreateCsrf(): Promise<string> {
-	const res = await fetch("http://localhost:8080/api/v1/csrf/", {
+	const res = await fetch(`${apiUrl}/api/v1/csrf/`, {
 		credentials: "include",
 	});
 	const data = await res.json();
@@ -7,7 +9,7 @@ export async function CreateCsrf(): Promise<string> {
 }
 
 export async function GetCsrf(): Promise<string> {
-	const res = await fetch("http://localhost:8080/api/v1/csrf/session", {
+	const res = await fetch(`${apiUrl}/api/v1/csrf/session`, {
 		credentials: "include",
 	});
 	const data = await res.json();

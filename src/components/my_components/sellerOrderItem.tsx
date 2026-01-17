@@ -1,59 +1,161 @@
+import { GetCsrf } from "@/components/utils/csrf";
+import { apiUrl } from "@/lib/api";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { toast } from "sonner";
 
-export default function SellerOrderItem() {
+interface Orders {
+	order_id: number;
+	order_pretty_id: string;
+	u_name: string;
+	u_img: string;
+	product_id: number;
+	product_variant_id: number;
+	p_name: string;
+	pv_name: string;
+	p_img: string;
+	quantity: number;
+	interval: number;
+	i_name: string;
+	pay_name: string;
+	os_name: string;
+	total_price: number;
+	created_at: string;
+}
+
+interface SellerOrderItemProps {
+	data: Orders;
+}
+
+export default function SellerOrderItem({ data }: SellerOrderItemProps) {
+	const handleStatus = async (status: number) => {
+		const csrfToken = await GetCsrf();
+
+		try {
+			const send = await fetch(
+				`${apiUrl}/api/v1/orders/` + data.order_id + "/" + status,
+				{
+					method: "PATCH",
+					headers: {
+						"Content-Type": "application/json",
+						"X-CSRF-TOKEN": csrfToken,
+					},
+					credentials: "include",
+				},
+			);
+
+			const result = await send.json();
+			if (result.code === 200 && result.status === "ok") {
+				window.location.reload();
+			} else {
+				toast.error(result.error);
+				// setLoading(false);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			toast.error(errFetch);
+		}
+	};
 	return (
-		<>
-			<section className="ms-3 py-5 px-5">
+		<section className="ms-3 py-5 px-5">
+			<section className="flex justify-between items-center ms-6 mb-5">
 				<section className="flex items-center">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						height="24px"
-						viewBox="0 -960 960 960"
-						width="24px"
-						fill="currentColor"
-					>
-						<path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z" />
-					</svg>
-					<p className="ms-3 font-semibold">User Name</p>
+					<Avatar>
+						<AvatarImage src={data.u_img} />
+						<AvatarFallback>Image Profile Seller</AvatarFallback>
+					</Avatar>
+					<p className="ms-3 font-semibold">{data.u_name}</p>
 				</section>
-				<section className="flex flex-col sm:flex-row">
-					<section className="flex-none my-auto">
-						<img
-							src="/assets/img/item.jpg"
-							alt=""
-							className="w-40 h-40 mx-auto sm:ms-3"
-						/>
-					</section>
-					<section className="flex-auto ms-5">
-						<p className="my-3 text-lg">
-							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean
-							finibus turpis a venenatis eleifend.
-						</p>
-						<p>
-							variant:
-							<Badge variant="outline" className="mx-1">
-								2 Core 4GB
-							</Badge>
-						</p>
-						<p>
-							Jumlah:
-							<Badge variant="outline" className="ms-1">
-								1
-							</Badge>
-						</p>
-						<p>Harga Total: Rp64.000</p>
-						<section className="mt-5 flex gap-1">
-							<Button variant="outline" className="grow">
-								Proses
-							</Button>
-							<Button variant="destructive" className="grow">
-								Tolak
-							</Button>
+				<section>
+					<p>{data.order_pretty_id}</p>
+				</section>
+			</section>
+			<section className="flex flex-col sm:flex-row">
+				<section className="flex-none my-auto">
+					<img src={data.p_img} alt="" className="w-40 h-40 mx-auto sm:ms-3" />
+				</section>
+				<section className="flex-auto ms-5">
+					<p className="my-3 text-lg">
+						{data.p_name}{" "}
+						{data.pv_name === "default" ? "" : " - " + data.pv_name}
+					</p>
+					<section className="flex justify-between">
+						<section>
+							{data.pv_name === "default" ? (
+								""
+							) : (
+								<p>
+									variant:
+									<Badge variant="outline" className="mx-1">
+										{data.pv_name}
+									</Badge>
+								</p>
+							)}
+							<p>
+								Jumlah:
+								<Badge variant="outline" className="ms-1">
+									{data.quantity}
+								</Badge>
+							</p>
+							<p>
+								Harga Total: Rp
+								{new Intl.NumberFormat("id-ID").format(data.total_price)}
+							</p>
 						</section>
+						<section>
+							<p>
+								status:
+								<Badge variant="default" className="ms-1">
+									{data.os_name}
+								</Badge>
+							</p>
+						</section>
+					</section>
+					<section className="mt-5 flex gap-1">
+						{data.os_name === "menunggu konfirmasi seller" ? (
+							<>
+								<Button
+									variant="outline"
+									className="grow cursor-pointer"
+									onClick={() => {
+										handleStatus(7);
+									}}
+								>
+									Proses
+								</Button>
+								<Button
+									variant="destructive"
+									className="grow cursor-pointer"
+									onClick={() => {
+										handleStatus(6);
+									}}
+								>
+									Tolak
+								</Button>
+							</>
+						) : (
+							""
+						)}
+						{data.os_name === "produk sedang disiapkan" ? (
+							<>
+								<Button
+									variant="outline"
+									className="grow cursor-pointer"
+									onClick={() => {
+										handleStatus(8);
+									}}
+								>
+									Produk Sudah Dikirim
+								</Button>
+							</>
+						) : (
+							""
+						)}
 					</section>
 				</section>
 			</section>
-		</>
+		</section>
 	);
 }

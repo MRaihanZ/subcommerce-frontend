@@ -1,4 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+import { apiUrl } from "@/lib/api";
+
+import { GetCsrf } from "@/components/utils/csrf";
 
 import {
 	Tooltip,
@@ -17,14 +21,36 @@ import {
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { toast } from "sonner";
+
+interface ReqProductVariants {
+	i_id: number;
+	is_default: boolean;
+	name: string;
+	interval: number;
+	stock: number;
+	price: number;
+	discount: number;
+	min_order: number;
+}
+
+interface ReqProductAdd {
+	name: string;
+	description: string;
+	active: boolean;
+	p_variants: ReqProductVariants[];
+}
 
 interface variantProps {
 	index: number;
 	total: number;
 	onAdd: () => void;
 	onDelete: () => void;
-	subscription: string[];
-	setSubscription: React.Dispatch<React.SetStateAction<string[]>>;
+	product: ReqProductAdd;
+	setProduct: React.Dispatch<React.SetStateAction<ReqProductAdd>>;
+	subscriptionName: string[];
+	setSubscriptionName: React.Dispatch<React.SetStateAction<string[]>>;
+	setProductChecker: React.Dispatch<React.SetStateAction<boolean[]>>;
 }
 
 function Variant({
@@ -32,21 +58,106 @@ function Variant({
 	total,
 	onAdd,
 	onDelete,
-	subscription,
-	setSubscription,
+	product,
+	setProduct,
+	subscriptionName,
+	setSubscriptionName,
+	setProductChecker,
 }: variantProps) {
-	const handleChangeSubscription = (index: number, newItem: string) => {
-		setSubscription((prevItems) => {
-			const updated = [...prevItems];
-			updated[index] = newItem;
-			return updated;
-		});
+	const [firstLoad, setFirstLoad] = useState(true);
+
+	const handleVariantChange = (
+		index: number,
+		field: keyof ReqProductVariants,
+		value: string | number | boolean,
+	) => {
+		setProduct((prev) => ({
+			...prev!,
+			p_variants: prev!.p_variants.map((variant, i) =>
+				i === index ? { ...variant, [field]: value } : variant,
+			),
+		}));
 	};
+
+	const handleChangeSubscription = (index: number, val: number) => {
+		switch (Number(val)) {
+			case 1:
+				setSubscriptionName((prev) => {
+					const update = [...prev];
+					update[index] = "Hari";
+					return update;
+				});
+				break;
+			case 2:
+				setSubscriptionName((prev) => {
+					const update = [...prev];
+					update[index] = "Minggu";
+					return update;
+				});
+				break;
+			case 3:
+				setSubscriptionName((prev) => {
+					const update = [...prev];
+					update[index] = "Bulan";
+					return update;
+				});
+				break;
+			case 4:
+				setSubscriptionName((prev) => {
+					const update = [...prev];
+					update[index] = "Tahun";
+					return update;
+				});
+				break;
+			default:
+				setSubscriptionName((prev) => {
+					const update = [...prev];
+					update[index] = "";
+					return update;
+				});
+		}
+	};
+
+	function validateProductVariants(
+		productVariants: ReqProductVariants[],
+		idx: number,
+	): boolean {
+		if (
+			productVariants[idx].name !== "" &&
+			productVariants[idx].i_id !== 0 &&
+			productVariants[idx].stock !== 0 &&
+			productVariants[idx].price !== 0 &&
+			productVariants[idx].min_order !== 0 &&
+			productVariants[idx].interval !== 0
+		) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	useEffect(() => {
+		if (!firstLoad) {
+			if (validateProductVariants(product.p_variants, index)) {
+				setProductChecker((prev) => {
+					const update = [...prev];
+					update[index] = false;
+					return update;
+				});
+				return;
+			}
+			setProductChecker((prev) => {
+				const update = [...prev];
+				update[index] = true;
+				return update;
+			});
+			return;
+		} else {
+			setFirstLoad(false);
+		}
+	}, [firstLoad, product.p_variants]);
 	return (
 		<>
-			{total > 1 && index === 0 && (
-				<p className="font-semibold text-xl mb-1">Varian</p>
-			)}
 			<section className="flex items-center gap-3 mb-3">
 				<section className="mb-3">
 					<label htmlFor={"variantName" + index}>Nama</label>
@@ -55,6 +166,8 @@ function Variant({
 						name={"variantName" + index}
 						type="text"
 						id={"variantName" + index}
+						value={product?.p_variants[index]?.name || ""}
+						onChange={(e) => handleVariantChange(index, "name", e.target.value)}
 						placeholder="Nama..."
 					/>
 				</section>
@@ -65,6 +178,10 @@ function Variant({
 						name={"variantStock" + index}
 						type="number"
 						id={"variantStock" + index}
+						value={product?.p_variants[index]?.stock || ""}
+						onChange={(e) =>
+							handleVariantChange(index, "stock", Number(e.target.value))
+						}
 						placeholder="Stok..."
 					/>
 				</section>
@@ -75,6 +192,10 @@ function Variant({
 						name={"variantPrice" + index}
 						type="number"
 						id={"variantPrice" + index}
+						value={product?.p_variants[index]?.price || ""}
+						onChange={(e) =>
+							handleVariantChange(index, "price", Number(e.target.value))
+						}
 						placeholder="Harga..."
 					/>
 				</section>
@@ -85,6 +206,10 @@ function Variant({
 						name={"variantDiscount" + index}
 						type="number"
 						id={"variantDiscount" + index}
+						value={product?.p_variants[index]?.discount || ""}
+						onChange={(e) =>
+							handleVariantChange(index, "discount", Number(e.target.value))
+						}
 						placeholder="Diskon..."
 					/>
 				</section>
@@ -95,6 +220,10 @@ function Variant({
 						name={"variantMinOrder" + index}
 						type="number"
 						id={"variantMinOrder" + index}
+						value={product?.p_variants[index]?.min_order || ""}
+						onChange={(e) =>
+							handleVariantChange(index, "min_order", Number(e.target.value))
+						}
 						placeholder="Minimum Order..."
 					/>
 				</section>
@@ -108,6 +237,10 @@ function Variant({
 							name="subscriptionInterval"
 							type="number"
 							id="subscriptionInterval"
+							value={product?.p_variants[index]?.interval || ""}
+							onChange={(e) =>
+								handleVariantChange(index, "interval", Number(e.target.value))
+							}
 							placeholder="Jangka Langganan..."
 						/>
 					</section>
@@ -115,24 +248,25 @@ function Variant({
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Button variant="outline" className="cursor-pointer h-12.5 w-15">
-							{subscription[index] === undefined
+							{subscriptionName[index] === ""
 								? "Pilihan"
-								: subscription[index]}
+								: subscriptionName[index]}
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>
 						<DropdownMenuLabel>Pilih Jangka Langganan</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuRadioGroup
-							value={subscription[index]}
-							onValueChange={(val) => handleChangeSubscription(index, val)}
+							value={String(product?.p_variants[index]?.i_id || "")}
+							onValueChange={(val) => {
+								handleChangeSubscription(index, Number(val));
+								handleVariantChange(index, "i_id", Number(val));
+							}}
 						>
-							<DropdownMenuRadioItem value="hari">Hari</DropdownMenuRadioItem>
-							<DropdownMenuRadioItem value="minggu">
-								Minggu
-							</DropdownMenuRadioItem>
-							<DropdownMenuRadioItem value="bulan">Bulan</DropdownMenuRadioItem>
-							<DropdownMenuRadioItem value="tahun">Tahun</DropdownMenuRadioItem>
+							<DropdownMenuRadioItem value="1">Hari</DropdownMenuRadioItem>
+							<DropdownMenuRadioItem value="2">Minggu</DropdownMenuRadioItem>
+							<DropdownMenuRadioItem value="3">Bulan</DropdownMenuRadioItem>
+							<DropdownMenuRadioItem value="4">Tahun</DropdownMenuRadioItem>
 						</DropdownMenuRadioGroup>
 					</DropdownMenuContent>
 				</DropdownMenu>
@@ -154,21 +288,25 @@ function Variant({
 								<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
 							</svg>
 						</Button>
-						<Button
-							type="button"
-							className="cursor-pointer p-4"
-							onClick={onDelete}
-						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								height="24px"
-								viewBox="0 -960 960 960"
-								width="24px"
-								fill="#e3e3e3"
+						{index !== 0 ? (
+							<Button
+								type="button"
+								className="cursor-pointer p-4"
+								onClick={onDelete}
 							>
-								<path d="M200-440v-80h560v80H200Z" />
-							</svg>
-						</Button>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									height="24px"
+									viewBox="0 -960 960 960"
+									width="24px"
+									fill="#e3e3e3"
+								>
+									<path d="M200-440v-80h560v80H200Z" />
+								</svg>
+							</Button>
+						) : (
+							""
+						)}
 					</>
 				)}
 			</section>
@@ -177,29 +315,298 @@ function Variant({
 }
 
 export default function AddProduct() {
-	const [subscriptionStateArr, setSubscriptionStateArr] = useState<string[]>(
-		[]
-	);
-	const [subscriptionState, setSubscriptionState] = useState("");
+	const [subscriptionStateNameArr, setSubscriptionStateNameArr] = useState<
+		string[]
+	>([""]);
+	const [subscriptionStateName, setSubscriptionStateName] =
+		useState<string>("");
+	const [isActive, setIsActive] = useState(false);
 	const [variantOption, setVariantOption] = useState(false);
 	const [variantComponents, setVariantComponents] = useState([0]);
+
+	const [productChecker, setProductChecker] = useState<boolean>(false);
+	const [productVariantChecker, setProductVariantChecker] = useState<boolean[]>(
+		[],
+	);
+	const defaultProduct: ReqProductAdd = {
+		name: "",
+		description: "",
+		active: false,
+		p_images: [],
+		p_variants: [
+			{
+				i_id: 0,
+				is_default: true,
+				name: "default",
+				interval: 0,
+				stock: 0,
+				price: 0,
+				discount: 0,
+				min_order: 0,
+			},
+		],
+	};
+	const [product, setProduct] = useState<ReqProductAdd>(defaultProduct);
+	const [productImages, setProductImages] = useState<File[]>();
+
+	const handleVariantChange = (
+		index: number,
+		field: keyof ReqProductVariants,
+		value: string | number | boolean,
+	) => {
+		setProduct((prev) => ({
+			...prev!,
+			p_variants: prev!.p_variants.map((variant, i) =>
+				i === index ? { ...variant, [field]: value } : variant,
+			),
+		}));
+	};
+
+	useEffect(() => {
+		if (!variantOption) {
+			setProduct((prev) => {
+				if (!prev) return prev;
+				return {
+					...prev,
+					p_variants: [
+						{
+							i_id: 0,
+							is_default: true,
+							name: "",
+							interval: 0,
+							stock: 0,
+							price: 0,
+							discount: 0,
+							min_order: 0,
+						},
+					],
+				};
+			});
+			setSubscriptionStateNameArr([""]);
+			handleVariantChange(0, "is_default", true);
+			handleVariantChange(0, "name", "default");
+			setProductVariantChecker([]);
+		} else {
+			setVariantComponents([0]);
+			setSubscriptionStateName("");
+			setProduct((prev) => {
+				if (!prev) return prev;
+				return {
+					...prev,
+					p_variants: [
+						{
+							i_id: 0,
+							is_default: false,
+							name: "",
+							interval: 0,
+							stock: 0,
+							price: 0,
+							discount: 0,
+							min_order: 0,
+						},
+					],
+				};
+			});
+			setProductVariantChecker((prev) => {
+				const updated = [...prev];
+				updated.push(false);
+				return updated;
+			});
+		}
+	}, [variantOption]);
+
+	useEffect(() => {
+		setProduct((prev) => ({ ...prev, active: isActive }));
+	}, [isActive]);
+
 	const addComponent = () => {
 		setVariantComponents((prev) => [...prev, prev.length]);
+		setSubscriptionStateNameArr((prev) => {
+			const updated = [...prev];
+			updated.push("");
+			return updated;
+		});
+		setProduct((prev) => {
+			if (!prev) return prev;
+			return {
+				...prev,
+				p_variants: [
+					...prev.p_variants,
+					{
+						i_id: 0,
+						is_default: false,
+						name: "",
+						interval: 0,
+						stock: 0,
+						price: 0,
+						discount: 0,
+						min_order: 0,
+					},
+				],
+			};
+		});
+		setProductVariantChecker((prev) => {
+			const updated = [...prev];
+			updated.push(false);
+			return updated;
+		});
 	};
 
 	const deleteFirstComponent = () => {
-		setVariantComponents((prev) => prev.slice(1));
-		setSubscriptionStateArr((prev) => {
+		setVariantComponents((prev) => {
+			const updated = [...prev];
+			updated.pop();
+			return updated;
+		});
+		setSubscriptionStateNameArr((prev) => {
+			const updated = [...prev];
+			updated.pop();
+			return updated;
+		});
+		setProduct((prev) => {
+			if (!prev) return prev;
+			if (prev.p_variants.length === 0) return prev;
+
+			const newVariants = [...prev.p_variants];
+			newVariants.pop();
+
+			return {
+				...prev,
+				p_variants: newVariants,
+			};
+		});
+		setProductVariantChecker((prev) => {
 			const updated = [...prev];
 			updated.pop();
 			return updated;
 		});
 	};
+
+	const changeSubsState = (val: string) => {
+		switch (Number(val)) {
+			case 1:
+				setSubscriptionStateName("Hari");
+				break;
+			case 2:
+				setSubscriptionStateName("Minggu");
+				break;
+			case 3:
+				setSubscriptionStateName("Bulan");
+				break;
+			case 4:
+				setSubscriptionStateName("Tahun");
+				break;
+			default:
+				setSubscriptionStateName("");
+		}
+	};
+
+	function validateProduct(product: ReqProductAdd): boolean {
+		if (product.name !== "" && product.description !== "") {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	function validateProductVariantsDefault(
+		productVariants: ReqProductVariants[],
+	): boolean {
+		if (
+			productVariants[0].name !== "" &&
+			productVariants[0].i_id !== 0 &&
+			productVariants[0].stock !== 0 &&
+			productVariants[0].price !== 0 &&
+			productVariants[0].min_order !== 0 &&
+			productVariants[0].interval !== 0
+		) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	useEffect(() => {
+		if (validateProduct(product)) {
+			setProductChecker(false);
+			return;
+		}
+		if (!variantOption) {
+			if (validateProductVariantsDefault(product.p_variants)) {
+				setProductChecker(false);
+				return;
+			}
+		}
+		setProductChecker(true);
+		return;
+	}, [product, variantOption]);
+
+	useEffect(() => {
+		console.log(product);
+		console.log(variantOption);
+	}, [product, variantOption]);
+	// useEffect(() => {
+	// 	console.log(productChecker);
+	// 	console.log(productVariantChecker);
+	// }, [productChecker, productVariantChecker]);
+
+	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (e.target.files) {
+			const files = Array.from(e.target.files);
+			setProductImages(files);
+		}
+	};
+
+	const handleAddSubmit = async () => {
+		if (!productChecker) {
+			toast.warning("Semua form harus diisi dan tidak boleh 0 kecuali diskon");
+			return;
+		}
+		if (!productImages || productImages.length === 0) {
+			toast.warning("gambar product harus dipilih");
+			return;
+		}
+		for (let i = 0; i < productVariantChecker.length; i++) {
+			if (!productVariantChecker[i]) {
+				toast.warning(
+					"Semua form harus diisi dan tidak boleh 0 kecuali diskon",
+				);
+				return;
+			}
+		}
+		const csrfToken = await GetCsrf();
+
+		const payload = new FormData();
+		payload.append("product", JSON.stringify(product));
+		productImages?.forEach((file, idx) => {
+			payload.append("images", file);
+		});
+		try {
+			const send = await fetch(`${apiUrl}/api/v1/products/`, {
+				method: "POST",
+				headers: {
+					"X-CSRF-TOKEN": csrfToken,
+				},
+				credentials: "include",
+				body: payload,
+			});
+
+			const result = await send.json();
+			if (result.code === 200 && result.status === "ok") {
+				window.location.reload();
+			} else {
+				toast.error(result.error);
+				// setLoading(false);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			toast.error(errFetch);
+		}
+	};
 	return (
 		<>
 			<section className="w-full">
 				<section>
-					<form className="py-3">
+					<section className="py-3">
 						{/* {{ csrf_field() }} */}
 						<section className="flex gap-5">
 							<section className="flex-1">
@@ -210,23 +617,30 @@ export default function AddProduct() {
 										name="name"
 										type="text"
 										id="name"
+										value={product.name}
+										onChange={(e) =>
+											setProduct((prev) => ({
+												...prev,
+												name: e.target.value,
+											}))
+										}
 										placeholder="Nama Produk..."
 									/>
 								</section>
 								<section className="mb-3">
 									<label htmlFor="deskripsi">Deskripsi</label>
-									{/* <input
-									className="border w-full p-3 rounded-lg"
-									name="deskripsi"
-									type="text"
-									id="deskripsi"
-									placeholder="Deskripsi..."
-								/> */}
 									<textarea
 										className="border w-full p-3 rounded-lg"
 										id="deskripsi"
 										name="deskripsi"
 										placeholder="Deskripsi"
+										value={product.description}
+										onChange={(e) =>
+											setProduct((prev) => ({
+												...prev,
+												description: e.target.value,
+											}))
+										}
 										rows={8}
 									></textarea>
 								</section>
@@ -260,6 +674,8 @@ export default function AddProduct() {
 										type="file"
 										name="picture"
 										multiple
+										accept="image/*"
+										onChange={handleFileChange}
 									/>
 								</section>
 								<section className="flex gap-3">
@@ -275,6 +691,14 @@ export default function AddProduct() {
 														name="stok"
 														type="number"
 														id="stok"
+														value={product?.p_variants[0]?.stock || ""}
+														onChange={(e) =>
+															handleVariantChange(
+																0,
+																"stock",
+																Number(e.target.value),
+															)
+														}
 														placeholder="Stok..."
 													/>
 												</section>
@@ -285,6 +709,14 @@ export default function AddProduct() {
 														name="harga"
 														type="number"
 														id="harga"
+														value={product?.p_variants[0]?.price || ""}
+														onChange={(e) =>
+															handleVariantChange(
+																0,
+																"price",
+																Number(e.target.value),
+															)
+														}
 														placeholder="Harga..."
 													/>
 												</section>
@@ -301,6 +733,14 @@ export default function AddProduct() {
 															name="subscriptionInterval"
 															type="number"
 															id="subscriptionInterval"
+															value={product?.p_variants[0]?.interval || ""}
+															onChange={(e) =>
+																handleVariantChange(
+																	0,
+																	"interval",
+																	Number(e.target.value),
+																)
+															}
 															placeholder="Jangka Langganan..."
 														/>
 													</section>
@@ -310,9 +750,9 @@ export default function AddProduct() {
 																variant="outline"
 																className="cursor-pointer h-12.5"
 															>
-																{subscriptionState === ""
+																{subscriptionStateName === ""
 																	? "Pilihan"
-																	: subscriptionState}
+																	: subscriptionStateName}
 															</Button>
 														</DropdownMenuTrigger>
 														<DropdownMenuContent>
@@ -321,19 +761,24 @@ export default function AddProduct() {
 															</DropdownMenuLabel>
 															<DropdownMenuSeparator />
 															<DropdownMenuRadioGroup
-																value={subscriptionState}
-																onValueChange={setSubscriptionState}
+																value={
+																	String(product?.p_variants[0]?.i_id) || ""
+																}
+																onValueChange={(value) => {
+																	changeSubsState(value);
+																	handleVariantChange(0, "i_id", Number(value));
+																}}
 															>
-																<DropdownMenuRadioItem value="hari">
+																<DropdownMenuRadioItem value="1">
 																	Hari
 																</DropdownMenuRadioItem>
-																<DropdownMenuRadioItem value="minggu">
+																<DropdownMenuRadioItem value="2">
 																	Minggu
 																</DropdownMenuRadioItem>
-																<DropdownMenuRadioItem value="bulan">
+																<DropdownMenuRadioItem value="3">
 																	Bulan
 																</DropdownMenuRadioItem>
-																<DropdownMenuRadioItem value="tahun">
+																<DropdownMenuRadioItem value="4">
 																	Tahun
 																</DropdownMenuRadioItem>
 															</DropdownMenuRadioGroup>
@@ -349,6 +794,14 @@ export default function AddProduct() {
 														name="diskon"
 														type="number"
 														id="diskon"
+														value={product?.p_variants[0]?.discount || ""}
+														onChange={(e) =>
+															handleVariantChange(
+																0,
+																"discount",
+																Number(e.target.value),
+															)
+														}
 														placeholder="Diskon..."
 													/>
 												</section>
@@ -359,6 +812,14 @@ export default function AddProduct() {
 														name="minOrder"
 														type="number"
 														id="minOrder"
+														value={product?.p_variants[0]?.min_order || ""}
+														onChange={(e) =>
+															handleVariantChange(
+																0,
+																"min_order",
+																Number(e.target.value),
+															)
+														}
 														placeholder="Minimum Pembelian..."
 													/>
 												</section>
@@ -371,7 +832,11 @@ export default function AddProduct() {
 												<p>Opsi</p>
 												<section className="flex gap-3 mt-5">
 													<Label htmlFor="active">Aktifkan Produk</Label>
-													<Switch id="active" />
+													<Switch
+														id="active"
+														checked={isActive}
+														onCheckedChange={setIsActive}
+													/>
 												</section>
 												<section className="flex gap-3 mt-5">
 													<Label htmlFor="variant_option">
@@ -398,7 +863,11 @@ export default function AddProduct() {
 								<p>Opsi</p>
 								<section className="flex gap-3 mt-5">
 									<Label htmlFor="active">Aktifkan Produk</Label>
-									<Switch id="active" />
+									<Switch
+										id="active"
+										checked={isActive}
+										onCheckedChange={setIsActive}
+									/>
 								</section>
 								<section className="flex gap-3 mt-5">
 									<Label htmlFor="variant_option">
@@ -412,6 +881,11 @@ export default function AddProduct() {
 								</section>
 							</section>
 						)}
+						{variantOption ? (
+							<p className="font-semibold text-xl mb-1">Varian</p>
+						) : (
+							""
+						)}
 						{variantOption
 							? variantComponents.map((_, index) => (
 									<Variant
@@ -420,22 +894,22 @@ export default function AddProduct() {
 										total={variantComponents.length}
 										onAdd={addComponent}
 										onDelete={deleteFirstComponent}
-										subscription={subscriptionStateArr}
-										setSubscription={setSubscriptionStateArr}
+										product={product}
+										setProduct={setProduct}
+										subscriptionName={subscriptionStateNameArr}
+										setSubscriptionName={setSubscriptionStateNameArr}
+										setProductChecker={setProductVariantChecker}
 									/>
-							  ))
+								))
 							: ""}
 						<Button
 							type="button"
 							className="w-full cursor-pointer p-4 uppercase font-bold tracking-wider"
-							// onClick={() => {
-							// 	isSignUp(1);
-							// 	setOpenCloseDialog(false);
-							// }}
+							onClick={handleAddSubmit}
 						>
 							Tambah
 						</Button>
-					</form>
+					</section>
 
 					{/* <section className="border-t px-24 py-6 flex justify-center">
 						<a

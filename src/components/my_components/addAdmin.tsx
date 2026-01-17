@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { apiUrl } from "@/lib/api";
+
 import { CreateCsrf } from "../utils/csrf";
 
 import { toast } from "sonner";
@@ -32,7 +34,7 @@ export default function AddAdmin() {
 		};
 
 		try {
-			const send = await fetch("http://localhost:8080/api/v1/admins/", {
+			const send = await fetch(`${apiUrl}/api/v1/admins/`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",

@@ -47,7 +47,7 @@ export default function Items({ data }: ItemsProps) {
 					>
 						<Card className="border-0 rounded-sm h-full relative">
 							<CardHeader>
-								<CardTitle>
+								<CardTitle className="flex justify-center">
 									<img src={prod.img} alt="" />
 								</CardTitle>
 								<CardDescription className="flex">
@@ -75,10 +75,17 @@ export default function Items({ data }: ItemsProps) {
 									<p className="text-xl font-bold">{prod.price}</p>
 								) : (
 									<>
-										<p className="text-xl font-bold">{prod.price}</p>
+										<p className="text-xl font-bold">
+											Rp
+											{new Intl.NumberFormat("id-ID").format(
+												Math.floor(
+													prod.price - (prod.price * prod.discount) / 100
+												)
+											)}
+										</p>
 										<section className="flex items-center">
 											<p className="text-sm font-normal line-through">
-												{prod.price}
+												Rp{prod.price}
 											</p>
 											<p className="text-sm font-bold text-red-500 ms-3">
 												{prod.discount}%

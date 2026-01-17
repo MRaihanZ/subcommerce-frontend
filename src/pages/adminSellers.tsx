@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { apiUrl } from "@/lib/api";
 
 import {
 	Table,
@@ -51,7 +52,7 @@ export default function AdminSellers() {
 
 	const fetchSellers = async () => {
 		try {
-			const res = await fetch("http://localhost:8080/api/v1/admins/sellers", {
+			const res = await fetch(`${apiUrl}/api/v1/admins/sellers`, {
 				credentials: "include",
 			});
 			const json = await res.json();
@@ -76,12 +77,9 @@ export default function AdminSellers() {
 
 	const fetchSeller = async () => {
 		try {
-			const res = await fetch(
-				"http://localhost:8080/api/v1/admins/sellers/" + search,
-				{
-					credentials: "include",
-				}
-			);
+			const res = await fetch(`${apiUrl}/api/v1/admins/sellers/` + search, {
+				credentials: "include",
+			});
 			const json = await res.json();
 			if (json.code === 200 && json.status === "ok") {
 				setSellers(json.data);

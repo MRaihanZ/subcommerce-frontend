@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { apiUrl } from "@/lib/api";
 
 import { GetCsrf } from "@/components/utils/csrf";
 
@@ -20,7 +21,7 @@ export default function DeleteAdmin({
 		const csrfToken = await GetCsrf();
 
 		try {
-			const send = await fetch("http://localhost:8080/api/v1/admins/" + data, {
+			const send = await fetch(`${apiUrl}/api/v1/admins/` + data, {
 				method: "DELETE",
 				headers: {
 					"X-CSRF-TOKEN": csrfToken,

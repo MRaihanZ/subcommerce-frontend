@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { apiUrl } from "@/lib/api";
 
 import { CreateCsrf } from "../utils/csrf";
 
@@ -38,17 +39,14 @@ export default function EditAdmin({ data }: EditAdminProps) {
 		payload.append("password", password);
 
 		try {
-			const send = await fetch(
-				"http://localhost:8080/api/v1/admins/" + data.id,
-				{
-					method: "PATCH",
-					headers: {
-						"X-CSRF-TOKEN": csrfToken,
-					},
-					credentials: "include",
-					body: payload,
-				}
-			);
+			const send = await fetch(`${apiUrl}/api/v1/admins/` + data.id, {
+				method: "PATCH",
+				headers: {
+					"X-CSRF-TOKEN": csrfToken,
+				},
+				credentials: "include",
+				body: payload,
+			});
 
 			const result = await send.json();
 			if (result.code === 200 && result.status === "ok") {

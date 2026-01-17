@@ -11,4 +11,14 @@ export default defineConfig({
 			"@": path.resolve(__dirname, "./src"),
 		},
 	},
+	server: {
+		allowedHosts: [
+			"binaryneedle.my.id",
+			"giu.binaryneedle.my.id",
+			"0.0.0.0",
+			"localhost",
+			"127.0.0.1",
+			"192.168.1.2",
+		],
+	},
 });

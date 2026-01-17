@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
+import { apiUrl } from "@/lib/api";
 
 import { useGlobalData } from "@/contexts/GlobalDataContext";
 
@@ -50,9 +51,7 @@ export default function Home() {
 		const queryString = params.toString();
 
 		try {
-			const res = await fetch(
-				"http://localhost:8080/api/v1/products/hot?" + queryString
-			);
+			const res = await fetch(`${apiUrl}/api/v1/products/hot?` + queryString);
 			const json = await res.json();
 			if (json.code === 200 && json.status === "ok") {
 				setProducts(json.data);
@@ -82,7 +81,7 @@ export default function Home() {
 
 		try {
 			const res = await fetch(
-				"http://localhost:8080/api/v1/products/discount?" + queryString
+				`${apiUrl}/api/v1/products/discount?` + queryString,
 			);
 			const json = await res.json();
 			if (json.code === 200 && json.status === "ok") {

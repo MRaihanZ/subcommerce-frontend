@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { apiUrl } from "@/lib/api";
 
 import { GetCsrf } from "@/components/utils/csrf";
 
@@ -50,17 +51,14 @@ export default function EditSeller({ data }: EditSellerProps) {
 		}
 
 		try {
-			const send = await fetch(
-				"http://localhost:8080/api/v1/admins/sellers/" + data.id,
-				{
-					method: "PATCH",
-					headers: {
-						"X-CSRF-TOKEN": csrfToken,
-					},
-					credentials: "include",
-					body: payload,
-				}
-			);
+			const send = await fetch(`${apiUrl}/api/v1/admins/sellers/` + data.id, {
+				method: "PATCH",
+				headers: {
+					"X-CSRF-TOKEN": csrfToken,
+				},
+				credentials: "include",
+				body: payload,
+			});
 			const json = await send.json();
 			if (json.code === 200 && json.status === "ok") {
 				toast.success("Data berhasil di update");

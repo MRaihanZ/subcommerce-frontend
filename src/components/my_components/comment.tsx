@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 
+import { apiUrl } from "@/lib/api";
+
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 
@@ -19,7 +21,7 @@ interface RatingComments {
 
 export default function Comment({ prodId }: CommentProps) {
 	const [ratingComments, setRatingComments] = useState<RatingComments[] | null>(
-		null
+		null,
 	);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string>();
@@ -28,7 +30,7 @@ export default function Comment({ prodId }: CommentProps) {
 		const fetchComments = async () => {
 			try {
 				const res = await fetch(
-					"http://localhost:8080/api/v1/ratings/comments/" + prodNumParam
+					`${apiUrl}/api/v1/ratings/comments/` + prodNumParam,
 				);
 				const json = await res.json();
 				if (json.code === 200 && json.status === "ok") {

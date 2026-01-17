@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 
+import { apiUrl } from "@/lib/api";
+
 import { GetCsrf } from "@/components/utils/csrf";
 
 import {
@@ -67,12 +69,12 @@ function Variant({
 	const handleVariantChange = (
 		index: number,
 		field: keyof ReqProductVariants,
-		value: string | number | boolean
+		value: string | number | boolean,
 	) => {
 		setProduct((prev) => ({
 			...prev!,
 			p_variants: prev!.p_variants.map((variant, i) =>
-				i === index ? { ...variant, [field]: value } : variant
+				i === index ? { ...variant, [field]: value } : variant,
 			),
 		}));
 	};
@@ -118,7 +120,7 @@ function Variant({
 
 	function validateProductVariants(
 		productVariants: ReqProductVariants[],
-		idx: number
+		idx: number,
 	): boolean {
 		if (
 			productVariants[idx].name !== "" &&
@@ -324,7 +326,7 @@ export default function AddProductAdmin() {
 
 	const [productChecker, setProductChecker] = useState<boolean>(false);
 	const [productVariantChecker, setProductVariantChecker] = useState<boolean[]>(
-		[]
+		[],
 	);
 	const defaultProduct: ReqProductAdd = {
 		name: "",
@@ -350,12 +352,12 @@ export default function AddProductAdmin() {
 	const handleVariantChange = (
 		index: number,
 		field: keyof ReqProductVariants,
-		value: string | number | boolean
+		value: string | number | boolean,
 	) => {
 		setProduct((prev) => ({
 			...prev!,
 			p_variants: prev!.p_variants.map((variant, i) =>
-				i === index ? { ...variant, [field]: value } : variant
+				i === index ? { ...variant, [field]: value } : variant,
 			),
 		}));
 	};
@@ -508,7 +510,7 @@ export default function AddProductAdmin() {
 	}
 
 	function validateProductVariantsDefault(
-		productVariants: ReqProductVariants[]
+		productVariants: ReqProductVariants[],
 	): boolean {
 		if (
 			productVariants[0].name !== "" &&
@@ -566,7 +568,7 @@ export default function AddProductAdmin() {
 		for (let i = 0; i < productVariantChecker.length; i++) {
 			if (!productVariantChecker[i]) {
 				toast.warning(
-					"Semua form harus diisi dan tidak boleh 0 kecuali diskon"
+					"Semua form harus diisi dan tidak boleh 0 kecuali diskon",
 				);
 				return;
 			}
@@ -579,7 +581,7 @@ export default function AddProductAdmin() {
 			payload.append("images", file);
 		});
 		try {
-			const send = await fetch("http://localhost:8080/api/v1/products/", {
+			const send = await fetch(`${apiUrl}/api/v1/products/`, {
 				method: "POST",
 				headers: {
 					"X-CSRF-TOKEN": csrfToken,
@@ -694,7 +696,7 @@ export default function AddProductAdmin() {
 															handleVariantChange(
 																0,
 																"stock",
-																Number(e.target.value)
+																Number(e.target.value),
 															)
 														}
 														placeholder="Stok..."
@@ -712,7 +714,7 @@ export default function AddProductAdmin() {
 															handleVariantChange(
 																0,
 																"price",
-																Number(e.target.value)
+																Number(e.target.value),
 															)
 														}
 														placeholder="Harga..."
@@ -736,7 +738,7 @@ export default function AddProductAdmin() {
 																handleVariantChange(
 																	0,
 																	"interval",
-																	Number(e.target.value)
+																	Number(e.target.value),
 																)
 															}
 															placeholder="Jangka Langganan..."
@@ -797,7 +799,7 @@ export default function AddProductAdmin() {
 															handleVariantChange(
 																0,
 																"discount",
-																Number(e.target.value)
+																Number(e.target.value),
 															)
 														}
 														placeholder="Diskon..."
@@ -815,7 +817,7 @@ export default function AddProductAdmin() {
 															handleVariantChange(
 																0,
 																"min_order",
-																Number(e.target.value)
+																Number(e.target.value),
 															)
 														}
 														placeholder="Minimum Pembelian..."
@@ -898,7 +900,7 @@ export default function AddProductAdmin() {
 										setSubscriptionName={setSubscriptionStateNameArr}
 										setProductChecker={setProductVariantChecker}
 									/>
-							  ))
+								))
 							: ""}
 						<Button
 							type="button"

@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/api";
 import { GetCsrf } from "@/components/utils/csrf";
 
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,7 @@ export default function DeleteProduct({
 		const csrfToken = await GetCsrf();
 		try {
 			const res = await fetch(
-				"http://localhost:8080/api/v1/admins/products/" +
+				`${apiUrl}/api/v1/admins/products/` +
 					data.pId +
 					"/" +
 					data.pvId +
@@ -32,7 +33,7 @@ export default function DeleteProduct({
 						"X-CSRF-TOKEN": csrfToken,
 					},
 					credentials: "include",
-				}
+				},
 			);
 			const json = await res.json();
 			if (json.code === 200 && json.status === "ok") {

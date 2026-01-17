@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { apiUrl } from "@/lib/api";
 
 import { GetCsrf } from "@/components/utils/csrf";
 
@@ -52,7 +53,7 @@ export default function OrderListProduct({ data }: OrderListProductProps) {
 
 		try {
 			const send = await fetch(
-				"http://localhost:8080/api/v1/ratings/" +
+				`${apiUrl}/api/v1/ratings/` +
 					data.p_id +
 					"/" +
 					data.pv_id +
@@ -66,13 +67,43 @@ export default function OrderListProduct({ data }: OrderListProductProps) {
 					},
 					credentials: "include",
 					body: JSON.stringify(payload),
-				}
+				},
 			);
 
 			const result = await send.json();
 			if (result.code === 200 && result.status === "ok") {
 				setPenilaian((prev) => !prev);
 				toast.success("Berhasil memberikan penilaian");
+			} else {
+				toast.error(result.error);
+				setError(result.error);
+				// setLoading(false);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			setError(errFetch);
+		}
+	};
+
+	const handleStatus = async (status: number) => {
+		const csrfToken = await GetCsrf();
+
+		try {
+			const send = await fetch(
+				`${apiUrl}/api/v1/orders/` + data.o_id + "/" + status,
+				{
+					method: "PATCH",
+					headers: {
+						"Content-Type": "application/json",
+						"X-CSRF-TOKEN": csrfToken,
+					},
+					credentials: "include",
+				},
+			);
+
+			const result = await send.json();
+			if (result.code === 200 && result.status === "ok") {
+				window.location.reload();
 			} else {
 				toast.error(result.error);
 				setError(result.error);
@@ -104,7 +135,7 @@ export default function OrderListProduct({ data }: OrderListProductProps) {
 				</section>
 				<section className="flex">
 					<section className="flex-none my-auto">
-						<img src="/assets/img/item.jpg" alt="" className="w-40 h-40 ms-3" />
+						<img src={data.p_img} alt="" className="w-40 h-40 ms-3" />
 					</section>
 					<section className="flex-auto ms-5">
 						<p className="my-3 text-lg">
@@ -163,13 +194,17 @@ export default function OrderListProduct({ data }: OrderListProductProps) {
 							<Button
 								className="cursor-pointer mt-5"
 								variant="destructive"
-								onClick={() => setPenilaian((prev) => !prev)}
+								onClick={() => {
+									handleStatus(2);
+								}}
 							>
 								Batalkan pembayaran
 							</Button>
 							<Button
 								className="cursor-pointer mt-5 ms-3"
-								onClick={() => setPenilaian((prev) => !prev)}
+								onClick={() => {
+									handleStatus(4);
+								}}
 							>
 								(UNTUK SEMENTARA) Pembayaran selesai
 							</Button>
@@ -181,7 +216,9 @@ export default function OrderListProduct({ data }: OrderListProductProps) {
 						<Button
 							className="cursor-pointer mt-5"
 							variant="destructive"
-							onClick={() => setPenilaian((prev) => !prev)}
+							onClick={() => {
+								handleStatus(6);
+							}}
 						>
 							Batalkan pesanan
 						</Button>
@@ -192,14 +229,18 @@ export default function OrderListProduct({ data }: OrderListProductProps) {
 						<section className="mt-5">
 							<Button
 								className="cursor-pointer"
-								onClick={() => setPenilaian((prev) => !prev)}
+								onClick={() => {
+									handleStatus(10);
+								}}
 							>
 								Produk diterima
 							</Button>
 							<Button
 								className="cursor-pointer ms-3"
 								variant="destructive"
-								onClick={() => setPenilaian((prev) => !prev)}
+								onClick={() => {
+									handleStatus(9);
+								}}
 							>
 								Produk tidak diterima
 							</Button>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
+import { apiUrl } from "@/lib/api";
 
 import Items from "@/components/my_components/items";
 import FilterSideBar from "@/components/my_components/filterSideBar";
@@ -31,9 +32,7 @@ export default function Search() {
 		const queryString = params.toString();
 
 		try {
-			const res = await fetch(
-				"http://localhost:8080/api/v1/products/?" + queryString
-			);
+			const res = await fetch(`${apiUrl}/api/v1/products/?` + queryString);
 			const json = await res.json();
 			if (json.code === 200 && json.status === "ok") {
 				setProducts(json.data);

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { apiUrl } from "@/lib/api";
 
 import { GetCsrf } from "@/components/utils/csrf";
 
@@ -19,6 +20,7 @@ interface CartProduct {
 	pv_name: string;
 	interval: number;
 	price: number;
+	discount: number;
 	min_order: number;
 	stock: number;
 	i_name: string;
@@ -43,7 +45,7 @@ export default function Cart() {
 	useEffect(() => {
 		const fetchProducts = async () => {
 			try {
-				const res = await fetch("http://localhost:8080/api/v1/carts/", {
+				const res = await fetch(`${apiUrl}/api/v1/carts/`, {
 					credentials: "include",
 				});
 				const json = await res.json();
@@ -88,7 +90,7 @@ export default function Cart() {
 	const deleteCarts = async () => {
 		const csrfToken = await GetCsrf();
 		try {
-			const res = await fetch("http://localhost:8080/api/v1/carts/", {
+			const res = await fetch(`${apiUrl}/api/v1/carts/`, {
 				method: "DELETE",
 				headers: {
 					"X-CSRF-TOKEN": csrfToken,
@@ -120,19 +122,19 @@ export default function Cart() {
 				secondFiltered.p_name +
 				" - " +
 				secondFiltered.pv_name +
-				" dihapus dari cart"
+				" dihapus dari cart",
 		);
 
 		const updated = products.filter(
 			(p) =>
-				!(p.p_id === secondFiltered.p_id && p.pv_id === secondFiltered.pv_id)
+				!(p.p_id === secondFiltered.p_id && p.pv_id === secondFiltered.pv_id),
 		);
 
 		setProducts(updated);
 	};
 
 	const [checkoutProducts, setCheckoutProducts] = useState<CheckoutProduct[]>(
-		[]
+		[],
 	);
 
 	const handleCheckoutSubmit = async () => {
@@ -143,18 +145,15 @@ export default function Cart() {
 		const csrfToken = await GetCsrf();
 
 		try {
-			const send = await fetch(
-				"http://localhost:8080/api/v1/orders/checkouts?state=cart",
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-						"X-CSRF-TOKEN": csrfToken,
-					},
-					credentials: "include",
-					body: JSON.stringify(checkoutProducts),
-				}
-			);
+			const send = await fetch(`${apiUrl}/api/v1/orders/checkouts?state=cart`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRF-TOKEN": csrfToken,
+				},
+				credentials: "include",
+				body: JSON.stringify(checkoutProducts),
+			});
 
 			const result = await send.json();
 			if (result.code === 200 && result.status === "ok") {

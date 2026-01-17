@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { apiUrl } from "@/lib/api";
 
 import { GetCsrf } from "@/components/utils/csrf";
 
@@ -125,20 +126,20 @@ export default function AdminProduct() {
 
 	const updateActiveProduct = (index: number) => {
 		setActiveProduct((prev) =>
-			prev.map((val, i) => (i === index ? !val : val))
+			prev.map((val, i) => (i === index ? !val : val)),
 		);
 	};
 
 	const fetchProducts = async () => {
 		try {
-			const res = await fetch("http://localhost:8080/api/v1/admins/products", {
+			const res = await fetch(`${apiUrl}/api/v1/admins/products`, {
 				credentials: "include",
 			});
 			const json = await res.json();
 			if (json.code === 200 && json.status === "ok") {
 				setProducts(json.data);
 				setActiveProduct(
-					json.data.map((activate: { active: boolean }) => activate.active)
+					json.data.map((activate: { active: boolean }) => activate.active),
 				);
 				setLoading(false);
 			} else {
@@ -160,17 +161,14 @@ export default function AdminProduct() {
 
 	const fetchProduct = async () => {
 		try {
-			const res = await fetch(
-				"http://localhost:8080/api/v1/admins/products/" + search,
-				{
-					credentials: "include",
-				}
-			);
+			const res = await fetch(`${apiUrl}/api/v1/admins/products/` + search, {
+				credentials: "include",
+			});
 			const json = await res.json();
 			if (json.code === 200 && json.status === "ok") {
 				setProducts(json.data);
 				setActiveProduct(
-					json.data.map((activate: { active: boolean }) => activate.active)
+					json.data.map((activate: { active: boolean }) => activate.active),
 				);
 				setLoading(false);
 			} else {
@@ -204,14 +202,14 @@ export default function AdminProduct() {
 		const csrfToken = await GetCsrf();
 		try {
 			const res = await fetch(
-				"http://localhost:8080/api/v1/admins/products/" + pId + "/" + active,
+				`${apiUrl}/api/v1/admins/products/` + pId + "/" + active,
 				{
 					method: "PATCH",
 					headers: {
 						"X-CSRF-TOKEN": csrfToken,
 					},
 					credentials: "include",
-				}
+				},
 			);
 			const json = await res.json();
 			if (json.code === 200 && json.status === "ok") {
@@ -407,7 +405,7 @@ export default function AdminProduct() {
 												updateActiveProduct(index);
 												handleUpdateActiveProduct(
 													product.p_id,
-													!activeProduct[index]
+													!activeProduct[index],
 												);
 											}}
 										/>

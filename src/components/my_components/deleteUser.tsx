@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { apiUrl } from "@/lib/api";
 
 import { GetCsrf } from "@/components/utils/csrf";
 
@@ -17,16 +18,13 @@ export default function DeleteUser({ setStateDialog, data }: DeleteUserProps) {
 		const csrfToken = await GetCsrf();
 
 		try {
-			const send = await fetch(
-				"http://localhost:8080/api/v1/admins/users/" + data,
-				{
-					method: "DELETE",
-					headers: {
-						"X-CSRF-TOKEN": csrfToken,
-					},
-					credentials: "include",
-				}
-			);
+			const send = await fetch(`${apiUrl}/api/v1/admins/users/` + data, {
+				method: "DELETE",
+				headers: {
+					"X-CSRF-TOKEN": csrfToken,
+				},
+				credentials: "include",
+			});
 
 			const json = await send.json();
 			if (json.code === 200 && json.status === "ok") {

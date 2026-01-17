@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
+import { apiUrl } from "@/lib/api";
+
 import { GetCsrf } from "@/components/utils/csrf";
 
 import { Checkbox } from "@/components/ui/checkbox";
@@ -19,6 +21,7 @@ interface CartProducts {
 	pv_name: string;
 	interval: number;
 	price: number;
+	discount: number;
 	min_order: number;
 	stock: number;
 	i_name: string;
@@ -62,6 +65,7 @@ export default function CartItem({
 	const [quantity, setQuantity] = useState<number>(data.quantity);
 	const [price, setPrice] = useState(data.price);
 	const [formatedPrice, setFormatedPrice] = useState<string>();
+	const [formatedDiscontPrice, setFormatedDiscontPrice] = useState<string>("");
 	const deleteProd = data.p_id;
 	const deleteProdVar = data.pv_id;
 
@@ -82,6 +86,12 @@ export default function CartItem({
 				setQuantity(data.stock);
 			}
 			setPrice(quantity * data.price);
+			if (data.discount > 0) {
+				const formattedDiscount = new Intl.NumberFormat("id-ID").format(
+					Math.floor(price - (price * data.discount) / 100),
+				);
+				setFormatedDiscontPrice(formattedDiscount);
+			}
 			const formatted = new Intl.NumberFormat("id-ID").format(price);
 			setFormatedPrice(formatted);
 		}
@@ -89,23 +99,43 @@ export default function CartItem({
 
 	useEffect(() => {
 		if (localCheck === true) {
-			totalFunc((prev) => {
-				const newArray = [...prev];
-				newArray[index] = price;
-				return newArray;
-			});
-			checkoutDataFunc((prev) => {
-				return [
-					...prev,
-					{
-						p_id: data.p_id,
-						pv_id: data.pv_id,
-						quantity,
-						unit_price: data.price,
-						total_price: price,
-					},
-				];
-			});
+			if (data.discount > 0) {
+				totalFunc((prev) => {
+					const newArray = [...prev];
+					newArray[index] = Math.floor(price - (price * data.discount) / 100);
+					return newArray;
+				});
+				checkoutDataFunc((prev) => {
+					return [
+						...prev,
+						{
+							p_id: data.p_id,
+							pv_id: data.pv_id,
+							quantity,
+							unit_price: data.price,
+							total_price: Math.floor(price - (price * data.discount) / 100),
+						},
+					];
+				});
+			} else {
+				totalFunc((prev) => {
+					const newArray = [...prev];
+					newArray[index] = price;
+					return newArray;
+				});
+				checkoutDataFunc((prev) => {
+					return [
+						...prev,
+						{
+							p_id: data.p_id,
+							pv_id: data.pv_id,
+							quantity,
+							unit_price: data.price,
+							total_price: price,
+						},
+					];
+				});
+			}
 		} else {
 			totalFunc((prev) => {
 				const newArray = [...prev];
@@ -115,8 +145,8 @@ export default function CartItem({
 			// change this function from adding item to the array to delete the item in array
 			checkoutDataFunc((prev) =>
 				prev.filter(
-					(data) => data.p_id !== deleteProd && data.pv_id !== deleteProdVar
-				)
+					(data) => data.p_id !== deleteProd && data.pv_id !== deleteProdVar,
+				),
 			);
 		}
 	}, [price, localCheck]);
@@ -125,17 +155,14 @@ export default function CartItem({
 		const csrfToken = await GetCsrf();
 		try {
 			const res = await fetch(
-				"http://localhost:8080/api/v1/carts/product/" +
-					deleteProd +
-					"/" +
-					deleteProdVar,
+				`${apiUrl}/api/v1/carts/product/` + deleteProd + "/" + deleteProdVar,
 				{
 					method: "DELETE",
 					headers: {
 						"X-CSRF-TOKEN": csrfToken,
 					},
 					credentials: "include",
-				}
+				},
 			);
 			const json = await res.json();
 			if (json.code === 200 && json.status === "ok") {
@@ -181,7 +208,7 @@ export default function CartItem({
 
 		const csrfToken = await GetCsrf();
 		try {
-			const res = await fetch("http://localhost:8080/api/v1/carts/", {
+			const res = await fetch(`${apiUrl}/api/v1/carts/`, {
 				method: "PATCH",
 				headers: {
 					"Content-Type": "application/json",
@@ -197,7 +224,7 @@ export default function CartItem({
 						data.p_name +
 						" - " +
 						data.pv_name +
-						" berhasil diubah "
+						" berhasil diubah ",
 				);
 			} else {
 				toast("Kuantitas gagal diubah. Error: ", json.error);
@@ -311,7 +338,29 @@ export default function CartItem({
 							)}
 						</section>
 						<section className="flex justify-between">
-							<p>Harga: Rp{formatedPrice}</p>
+							<section className="flex justify-start">
+								<span>Harga: </span>
+								{data.discount === 0 ? (
+									<p className="text-xl font-bold">Harga: Rp{formatedPrice}</p>
+								) : (
+									<>
+										<section className="ms-2">
+											<p className="text-xl font-bold">
+												Rp
+												{formatedDiscontPrice}
+											</p>
+											<section className="flex items-center">
+												<p className="text-sm font-normal line-through">
+													Rp{formatedPrice}
+												</p>
+												<p className="text-sm font-bold text-red-500 ms-3">
+													{data.discount}%
+												</p>
+											</section>
+										</section>
+									</>
+								)}
+							</section>
 							<Button
 								variant="outline"
 								size="icon"

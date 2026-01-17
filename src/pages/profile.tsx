@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { apiUrl } from "@/lib/api";
 
 import { useGlobalData } from "@/contexts/GlobalDataContext";
 
@@ -44,7 +45,6 @@ export default function Profile() {
 	const [open, setOpen] = useState(false);
 	const [isEdit, setIsEdit] = useState(false);
 	const [isEditPassword, setIsEditPassword] = useState(false);
-	const [isEditProfile, setIsEditProfile] = useState(false);
 
 	const [openDialog, setOpenDialog] = useState(false);
 
@@ -58,7 +58,7 @@ export default function Profile() {
 	useEffect(() => {
 		const fetchProfile = async () => {
 			try {
-				const res = await fetch("http://localhost:8080/api/v1/users/", {
+				const res = await fetch(`${apiUrl}/api/v1/users/`, {
 					credentials: "include",
 				});
 				const json = await res.json();
@@ -93,7 +93,10 @@ export default function Profile() {
 		const payload = new FormData();
 		payload.append("name", name);
 		payload.append("email", email);
-		payload.append("dob", date ? date.toISOString().split("T")[0] : "");
+		payload.append(
+			"dob",
+			date ? date.toLocaleDateString("en-CA").split("T")[0] : "",
+		);
 		payload.append("password", password);
 		if (profileImg) {
 			payload.append("img", profileImg);
@@ -102,7 +105,7 @@ export default function Profile() {
 		}
 
 		try {
-			const send = await fetch("http://localhost:8080/api/v1/users/", {
+			const send = await fetch(`${apiUrl}/api/v1/users/`, {
 				method: "PATCH",
 				headers: {
 					"X-CSRF-TOKEN": csrfToken,
@@ -120,7 +123,6 @@ export default function Profile() {
 				setIsDisableButton(true);
 				setIsEdit(false);
 				setIsEditPassword(false);
-				setIsEditProfile(false);
 				toast("Profile berhasil di update");
 			} else {
 				toast("Gagal mengupdate profil: " + json.error);
@@ -139,7 +141,7 @@ export default function Profile() {
 		const csrfToken = await GetCsrf();
 
 		try {
-			const send = await fetch("http://localhost:8080/api/v1/users/", {
+			const send = await fetch(`${apiUrl}/api/v1/users/`, {
 				method: "DELETE",
 				headers: {
 					"X-CSRF-TOKEN": csrfToken,
@@ -149,16 +151,17 @@ export default function Profile() {
 
 			const json = await send.json();
 			if (json.code === 200 && json.status === "ok") {
-				navigate("/");
 				setGlobalToast("akun berhasil di hapus");
+				window.location.assign("/");
+				// navigate("/");
 			} else {
-				toast("Gagal menghapus akun: " + json.error);
+				toast.error("Gagal menghapus akun: " + json.error);
 				setError(json.error);
 				// setLoading(false);
 			}
 		} catch (err) {
 			const errFetch = "Network Error: " + err;
-			toast(errFetch);
+			toast.error(errFetch);
 			setError(errFetch);
 			// setLoading(false);
 		}
@@ -181,7 +184,7 @@ export default function Profile() {
 						<section
 							id="profile_picture"
 							className={
-								isEditProfile
+								!isDisableButton
 									? "grid w-full items-center mt-5"
 									: "hidden w-full items-center mt-5"
 							}
@@ -274,7 +277,7 @@ export default function Profile() {
 						</section>
 						<section className="flex justify-around flex-col 2xl:flex-row gap-5 mt-5">
 							<Button
-								className="cursor-pointer"
+								className="cursor-pointer grow"
 								onClick={() => {
 									setIsEdit((prev) => !prev);
 									setIsDisableButton((prev) => !prev);
@@ -283,7 +286,7 @@ export default function Profile() {
 								{isEdit ? "Batalkan" : "Edit"}
 							</Button>
 							<Button
-								className="cursor-pointer"
+								className="cursor-pointer grow"
 								onClick={() => {
 									setIsEditPassword((prev) => !prev);
 									setIsDisableButton((prev) => !prev);
@@ -291,47 +294,35 @@ export default function Profile() {
 							>
 								{isEditPassword ? "Batalkan" : "Change Password"}
 							</Button>
-							<Button
-								className="cursor-pointer"
-								onClick={() => {
-									setIsEditProfile((prev) => !prev);
-									setIsDisableButton((prev) => !prev);
-								}}
-							>
-								{isEditProfile ? "Batalkan" : "Change Profile Picture"}
-							</Button>
+							<Dialog open={openDialog} onOpenChange={setOpenDialog}>
+								<DialogTrigger asChild>
+									<Button variant="destructive" className="cursor-pointer grow">
+										Hapus Akun
+									</Button>
+								</DialogTrigger>
+								<DialogContent>
+									<DialogHeader>
+										<DialogTitle>Konfirmasi Hapus Akun</DialogTitle>
+										<DialogDescription></DialogDescription>
+									</DialogHeader>
+									<section className="flex gap-5">
+										<Button
+											className="w-full flex-1 cursor-pointer mt-5"
+											onClick={() => setOpenDialog(false)}
+										>
+											Tidak
+										</Button>
+										<Button
+											className="w-full flex-1 cursor-pointer mt-5"
+											variant="destructive"
+											onClick={handleDelete}
+										>
+											Ya
+										</Button>
+									</section>
+								</DialogContent>
+							</Dialog>
 						</section>
-						<Dialog open={openDialog} onOpenChange={setOpenDialog}>
-							<DialogTrigger asChild>
-								<Button
-									variant="destructive"
-									className="cursor-pointer w-full mt-5"
-								>
-									Hapus Akun
-								</Button>
-							</DialogTrigger>
-							<DialogContent>
-								<DialogHeader>
-									<DialogTitle>Konfirmasi Hapus Akun</DialogTitle>
-									<DialogDescription></DialogDescription>
-								</DialogHeader>
-								<section className="flex gap-5">
-									<Button
-										className="w-full flex-1 cursor-pointer mt-5"
-										onClick={() => setOpenDialog(false)}
-									>
-										Tidak
-									</Button>
-									<Button
-										className="w-full flex-1 cursor-pointer mt-5"
-										variant="destructive"
-										onClick={handleDelete}
-									>
-										Ya
-									</Button>
-								</section>
-							</DialogContent>
-						</Dialog>
 					</section>
 				</section>
 			</section>

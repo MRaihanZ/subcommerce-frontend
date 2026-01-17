@@ -31,6 +31,16 @@ export default function NavbarSeller() {
 							Home
 						</Link>
 						<Link
+							to={"http://" + location.host + "/seller/subscription"}
+							className={
+								activePage === "/seller/subscription"
+									? "w-full border-b-2 border-black mx-3"
+									: "w-full mx-3"
+							}
+						>
+							Langganan
+						</Link>
+						<Link
 							to={"http://" + location.host + "/seller/order"}
 							className={
 								activePage === "/seller/order"
@@ -58,7 +68,7 @@ export default function NavbarSeller() {
 									: "w-full mx-3"
 							}
 						>
-							Chat
+							Pesan
 						</Link>
 						<Link
 							to={"http://" + location.host + "/seller/profile"}
@@ -102,6 +112,18 @@ export default function NavbarSeller() {
 										}
 									>
 										Home
+									</Link>
+								</DropdownMenuItem>
+								<DropdownMenuItem>
+									<Link
+										to={"http://" + location.host + "/seller/subscription"}
+										className={
+											activePage === "/seller/subscription"
+												? "w-full border-b-2 border-black mx-3"
+												: "w-full mx-3"
+										}
+									>
+										Langganan
 									</Link>
 								</DropdownMenuItem>
 								<DropdownMenuItem>

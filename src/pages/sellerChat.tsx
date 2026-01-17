@@ -1,5 +1,6 @@
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { useSearchParams, Link } from "react-router";
+import { apiUrl } from "@/lib/api";
 
 import { GetCsrf } from "@/components/utils/csrf";
 
@@ -69,12 +70,9 @@ export default function SellerChat() {
 
 	const fetchConversations = async () => {
 		try {
-			const res = await fetch(
-				"http://localhost:8080/api/v1/chats/" + "?state=seller",
-				{
-					credentials: "include",
-				}
-			);
+			const res = await fetch(`${apiUrl}/api/v1/chats/` + "?state=seller", {
+				credentials: "include",
+			});
 			const json = await res.json();
 			if (json.code === 200 && json.status === "ok") {
 				setConversation(json.data);
@@ -94,10 +92,10 @@ export default function SellerChat() {
 	const fetchConversationRoom = async () => {
 		try {
 			const res = await fetch(
-				"http://localhost:8080/api/v1/chats/" + idSellerParam + "?state=seller",
+				`${apiUrl}/api/v1/chats/` + idSellerParam + "?state=seller",
 				{
 					credentials: "include",
-				}
+				},
 			);
 			const json = await res.json();
 			if (json.code === 200 && json.status === "ok") {
@@ -117,7 +115,7 @@ export default function SellerChat() {
 
 	const fetchMessages = async (
 		convId: string,
-		cursor?: { sent_at: string; id: string }
+		cursor?: { sent_at: string; id: string },
 	) => {
 		const params = new URLSearchParams({ limit: "10", state: "seller" });
 
@@ -127,10 +125,10 @@ export default function SellerChat() {
 		}
 
 		const res = await fetch(
-			`http://localhost:8080/api/v1/chats/messages/${convId}?${params.toString()}`,
+			`${apiUrl}/api/v1/chats/messages/${convId}?${params.toString()}`,
 			{
 				credentials: "include",
-			}
+			},
 		);
 
 		if (!res.ok) {
@@ -228,7 +226,7 @@ export default function SellerChat() {
 
 	function subscribeToConversation(
 		conversationId: string,
-		onMessage: (msg: any) => void
+		onMessage: (msg: any) => void,
 	) {
 		const channel = supabase
 			.channel(`conversation:${conversationId}`)
@@ -242,7 +240,7 @@ export default function SellerChat() {
 				},
 				(payload) => {
 					onMessage(payload.new);
-				}
+				},
 			)
 			.subscribe();
 
@@ -257,7 +255,7 @@ export default function SellerChat() {
 				conversationRoom?.id,
 				(msg) => {
 					setMessages((prev) => [...prev, msg]);
-				}
+				},
 			);
 
 			return () => unsubscribe();
@@ -274,7 +272,7 @@ export default function SellerChat() {
 		if (!text.trim()) return;
 		try {
 			const send = await fetch(
-				"http://localhost:8080/api/v1/chats/messages/" +
+				`${apiUrl}/api/v1/chats/messages/` +
 					conversationRoom?.id +
 					"?" +
 					params.toString(),
@@ -286,7 +284,7 @@ export default function SellerChat() {
 					},
 					credentials: "include",
 					body: JSON.stringify(payload),
-				}
+				},
 			);
 
 			setText("");
@@ -365,7 +363,7 @@ export default function SellerChat() {
 											/>
 										</Link>
 									</>
-							  ))
+								))
 							: ""}
 					</ScrollArea>
 				</section>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation, useSearchParams } from "react-router";
+import { apiUrl } from "@/lib/api";
 
 import { Button } from "@/components/ui/button";
 import {

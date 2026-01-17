@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, useLocation } from "react-router";
+import { apiUrl } from "@/lib/api";
 
 import { useGlobalData } from "@/contexts/GlobalDataContext";
 
@@ -74,6 +75,7 @@ export default function DetailItem() {
 	const [basePrice, setBasePrice] = useState<number>(0);
 	const [price, setPrice] = useState<number>(0);
 	const [formatedPrice, setFormatedPrice] = useState<string>("");
+	const [formatedDiscontPrice, setFormatedDiscontPrice] = useState<string>("");
 	const [productVariantId, setProductVariantId] = useState<number | null>(null);
 	const [productVariantIdx, setProductVariantIdx] = useState<number>(0);
 
@@ -103,9 +105,7 @@ export default function DetailItem() {
 		}
 		const fetchProduct = async () => {
 			try {
-				const res = await fetch(
-					"http://localhost:8080/api/v1/products/" + prodParam
-				);
+				const res = await fetch(`${apiUrl}/api/v1/products/` + prodParam);
 				const json = await res.json();
 				if (json.code === 200 && json.status === "ok") {
 					setProduct(json.data);
@@ -133,7 +133,7 @@ export default function DetailItem() {
 		const fetchSeller = async () => {
 			try {
 				const res = await fetch(
-					"http://localhost:8080/api/v1/sellers/summarize/" + prodParam
+					`${apiUrl}/api/v1/sellers/summarize/` + prodParam,
 				);
 				const json = await res.json();
 				if (json.code === 200 && json.status === "ok") {
@@ -156,9 +156,7 @@ export default function DetailItem() {
 		// rating
 		const fetchRating = async () => {
 			try {
-				const res = await fetch(
-					"http://localhost:8080/api/v1/ratings/" + prodParam
-				);
+				const res = await fetch(`${apiUrl}/api/v1/ratings/` + prodParam);
 				const json = await res.json();
 				if (json.code === 200 && json.status === "ok") {
 					setRating(json.data);
@@ -186,7 +184,7 @@ export default function DetailItem() {
 					"/detail?product=" +
 						product.p_id +
 						"&variant=" +
-						product.product_variants[0].pv_id
+						product.product_variants[0].pv_id,
 				);
 			}
 			for (let i = 0; i < product.product_variants.length; i++) {
@@ -201,7 +199,7 @@ export default function DetailItem() {
 						"/detail?product=" +
 							product.p_id +
 							"&variant=" +
-							product.product_variants[0].pv_id
+							product.product_variants[0].pv_id,
 					);
 				}
 			}
@@ -215,6 +213,16 @@ export default function DetailItem() {
 			}
 			if (quantity > product.product_variants[productVariantIdx].stock) {
 				setQuantity(product.product_variants[productVariantIdx].stock);
+			}
+			if (product.product_variants[productVariantIdx].discount > 0) {
+				const formattedDiscount = new Intl.NumberFormat("id-ID").format(
+					Math.floor(
+						price -
+							(price * product.product_variants[productVariantIdx].discount) /
+								100,
+					),
+				);
+				setFormatedDiscontPrice(formattedDiscount);
 			}
 			const formatted = new Intl.NumberFormat("id-ID").format(price);
 			setFormatedPrice(formatted);
@@ -237,7 +245,7 @@ export default function DetailItem() {
 
 		try {
 			const send = await fetch(
-				"http://localhost:8080/api/v1/orders/checkouts?state=direct",
+				`${apiUrl}/api/v1/orders/checkouts?state=direct`,
 				{
 					method: "POST",
 					headers: {
@@ -246,7 +254,7 @@ export default function DetailItem() {
 					},
 					credentials: "include",
 					body: JSON.stringify([payload]),
-				}
+				},
 			);
 
 			const result = await send.json();
@@ -274,7 +282,7 @@ export default function DetailItem() {
 		};
 
 		try {
-			const send = await fetch("http://localhost:8080/api/v1/carts/", {
+			const send = await fetch(`${apiUrl}/api/v1/carts/`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -439,7 +447,7 @@ export default function DetailItem() {
 															"?product=" +
 															product.p_id +
 															"&variant=" +
-															pv.pv_id
+															pv.pv_id,
 													);
 												}}
 												className="cursor-pointer"
@@ -545,7 +553,28 @@ export default function DetailItem() {
 							</section>
 							<section className="flex justify-between mb-5">
 								<p className="font-bold text-xl">Total</p>
-								<p className="font-bold text-xl">Rp{formatedPrice}</p>
+								<section>
+									{product.product_variants[productVariantIdx].discount ===
+									0 ? (
+										<p className="text-xl font-bold">{formatedPrice}</p>
+									) : (
+										<>
+											<p className="text-xl font-bold">
+												Rp
+												{formatedDiscontPrice}
+											</p>
+											<section className="flex items-center">
+												<p className="text-sm font-normal line-through">
+													Rp{formatedPrice}
+												</p>
+												<p className="text-sm font-bold text-red-500 ms-3">
+													{product.product_variants[productVariantIdx].discount}
+													%
+												</p>
+											</section>
+										</>
+									)}
+								</section>
 							</section>
 							<section className="flex gap-5">
 								<Button

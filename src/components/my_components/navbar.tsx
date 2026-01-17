@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router";
 import { useGlobalData } from "@/contexts/GlobalDataContext";
+import { apiUrl } from "@/lib/api";
 
 import { GetCsrf } from "@/components/utils/csrf";
 
@@ -42,7 +43,7 @@ export default function Navbar() {
 
 	const isLogin = async () => {
 		try {
-			const send = await fetch("http://localhost:8080/api/v1/auth/status", {
+			const send = await fetch(`${apiUrl}/api/v1/auth/status`, {
 				credentials: "include",
 			}).then();
 
@@ -81,7 +82,7 @@ export default function Navbar() {
 			setError("Error getting token");
 		}
 		try {
-			const send = await fetch("http://localhost:8080/api/v1/auth/logout", {
+			const send = await fetch(`${apiUrl}/api/v1/auth/logout`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",

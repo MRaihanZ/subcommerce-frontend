@@ -1,5 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { apiUrl } from "@/lib/api";
+
+import { GetCsrf } from "@/components/utils/csrf";
 
 import {
 	Table,
@@ -39,29 +42,186 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 import AddProduct from "@/components/my_components/addProduct";
 import EditProduct from "@/components/my_components/editProduct";
 import DeleteProduct from "@/components/my_components/deleteProduct";
 import AddVariants from "@/components/my_components/addVariants";
 import EditVariants from "@/components/my_components/editVariants";
+import DeleteVariant from "@/components/my_components/deleteVariant";
+
+interface ProductImages {
+	img: string;
+}
+
+// ProductVariant
+interface ProductVariants {
+	pv_id: number;
+	is_default: boolean;
+	pv_name: string;
+	i_id: number;
+	i_name: string;
+	interval: number;
+	stock: number;
+	pv_sold: number;
+	price: number;
+	discount: number;
+	min_order: number;
+}
+
+// Item
+interface ProductsDetail {
+	p_id: number;
+	p_name: string;
+	images: ProductImages[];
+	description: string;
+	sold: number;
+	average_rating: number;
+	active: boolean;
+	product_variants: ProductVariants[];
+}
+
+interface ProductVariantsEdit {
+	p_id: number;
+	pv_id: number;
+	i_id: number;
+	is_default: boolean;
+	name: string;
+	interval: number;
+	stock: number;
+	price: number;
+	discount: number;
+	min_order: number;
+}
+
+interface EditProductData {
+	pId?: number;
+	pvId?: number;
+	name?: string;
+	description?: string;
+	stock?: number;
+	price?: number;
+	discount?: number;
+	minPurchase?: number;
+	hasVariant?: boolean;
+	isActive?: boolean;
+	interval?: number;
+	intervalId?: number;
+}
 
 export default function SellerItem() {
 	const navigate = useNavigate();
 	const [openDialog, setOpenDialog] = useState(false);
 	const [openDialogAction, setOpenDialogAction] =
 		useState<string>("addProduct");
-	const [productSelected, setProductSelected] = useState<number>(0);
+	const [productSelected, setProductSelected] = useState<EditProductData>();
 	const [variantSelected, setVariantSelected] = useState<number>(0);
-	const [testSwitch, setTestSwitch] = useState(true);
 
+	const [products, setProducts] = useState<ProductsDetail[] | null>(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string>();
+	const [activeProduct, setActiveProduct] = useState<boolean[]>([]);
+
+	const updateActiveProduct = (index: number) => {
+		setActiveProduct((prev) =>
+			prev.map((val, i) => (i === index ? !val : val)),
+		);
+	};
+
+	const fetchProduct = async () => {
+		try {
+			const res = await fetch(`${apiUrl}/api/v1/products/seller`, {
+				credentials: "include",
+			});
+			const json = await res.json();
+			if (json.code === 200 && json.status === "ok") {
+				setProducts(json.data);
+				setActiveProduct(
+					json.data.map((activate: { active: boolean }) => activate.active),
+				);
+				setLoading(false);
+			} else {
+				toast.error(json.error);
+				setError(json.error);
+				setLoading(false);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			toast.error(errFetch);
+			setError(errFetch);
+			setLoading(false);
+		}
+	};
+	useEffect(() => {
+		fetchProduct();
+	}, []);
+
+	// const handleDeleteState = (deleteProd: number) => {
+	// 	if (!products) return;
+
+	// 	const filtered = products.find((p) => p.p_id === deleteProd);
+
+	// 	if (!filtered) return;
+	// 	toast.success("produk " + filtered.p_name + " dihapus dari produk");
+
+	// 	const updated = products.filter((p) => !(p.p_id === filtered.p_id));
+
+	// 	setProducts(updated);
+	// };
+
+	// const handleDeleteVariantState = (
+	// 	deleteProd: number,
+	// 	deleteProdVar: number
+	// ) => {
+	// 	if (!products) return;
+
+	// 	setProducts((prev) => {
+	// 		if (!prev) return prev;
+
+	// 		return prev.map((p) => {
+	// 			if (p.p_id !== deleteProd) return p;
+
+	// 			const variantToDelete = p.product_variants.find(
+	// 				(v) => v.pv_id === deleteProdVar
+	// 			);
+	// 			if (!variantToDelete) return p;
+
+	// 			toast.success(
+	// 				"produk " +
+	// 					p.p_name +
+	// 					" - " +
+	// 					variantToDelete.pv_name +
+	// 					" dihapus dari cart"
+	// 			);
+
+	// 			return {
+	// 				...p,
+	// 				product_variants: p.product_variants.filter(
+	// 					(v) => v.pv_id !== deleteProdVar
+	// 				),
+	// 			};
+	// 		});
+	// 	});
+	// };
+
+	useEffect(() => {
+		console.log(activeProduct);
+		console.log(products);
+	}, [activeProduct, products]);
+
+	if (loading) return <p>Loading...</p>;
+	if (error) {
+		return <p>{error}</p>;
+	}
+	if (!products) return <p>No item found</p>;
 	const childComponentsDialog = (key: string) => {
 		switch (key) {
 			case "addProduct":
 				return (
 					<>
 						<DialogHeader>
-							<DialogTitle></DialogTitle>
+							<DialogTitle>Tambah Produk</DialogTitle>
 							<DialogDescription></DialogDescription>
 						</DialogHeader>
 						<AddProduct />
@@ -71,30 +231,10 @@ export default function SellerItem() {
 				return (
 					<>
 						<DialogHeader>
-							<DialogTitle></DialogTitle>
+							<DialogTitle>Ubah Produk</DialogTitle>
 							<DialogDescription></DialogDescription>
 						</DialogHeader>
-						<EditProduct
-							name="test edit"
-							description="Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-									Curabitur lobortis tempor lacus, et hendrerit orci viverra ut.
-									Nullam convallis neque dignissim leo venenatis, a semper elit
-									sollicitudin. Donec aliquet, magna ac efficitur commodo, risus
-									orci hendrerit massa, ac ultricies massa lacus in arcu. Nunc
-									id gravida est. Donec ac blandit nibh. Cras leo ex, imperdiet
-									a nisl in, tincidunt tincidunt ante. Morbi semper viverra
-									tincidunt. Quisque erat lectus, accumsan nec imperdiet
-									sollicitudin, cursus at arcu. Nullam aliquet consectetur orci
-									et condimentum. Vestibulum sit amet purus porttitor, volutpat
-									dui feugiat, accumsan lorem. Vivamus congue ac nulla porta
-									faucibus. Maecenas efficitur mauris eu sodales dictum."
-							stock={53}
-							price={120000}
-							discount={0}
-							minPurchase={1}
-							hasVariant={false}
-							isActive={true}
-						/>
+						<EditProduct data={productSelected} />
 					</>
 				);
 			case "deleteProduct":
@@ -104,27 +244,46 @@ export default function SellerItem() {
 							<DialogTitle>Konfirmasi Hapus Produk</DialogTitle>
 							<DialogDescription></DialogDescription>
 						</DialogHeader>
-						<DeleteProduct setStateDialog={setOpenDialog} />
+						<DeleteProduct
+							setStateDialog={setOpenDialog}
+							data={productSelected}
+						/>
 					</>
 				);
 			case "addVariant":
 				return (
 					<>
 						<DialogHeader>
-							<DialogTitle>Add Variant</DialogTitle>
+							<DialogTitle>Tambah Varian</DialogTitle>
 							<DialogDescription></DialogDescription>
 						</DialogHeader>
-						<AddVariants setStateDialog={setOpenDialog} />
+						<AddVariants data={productSelected} />
 					</>
 				);
 			case "editVariant":
 				return (
 					<>
 						<DialogHeader>
-							<DialogTitle>Edit Variant</DialogTitle>
+							<DialogTitle>Ubah Varian</DialogTitle>
 							<DialogDescription></DialogDescription>
 						</DialogHeader>
-						<EditVariants setStateDialog={setOpenDialog} />
+						<EditVariants
+							setStateDialog={setOpenDialog}
+							data={productSelected}
+						/>
+					</>
+				);
+			case "deleteVariant":
+				return (
+					<>
+						<DialogHeader>
+							<DialogTitle>Konfirmasi Hapus Varian Produk</DialogTitle>
+							<DialogDescription></DialogDescription>
+						</DialogHeader>
+						<DeleteVariant
+							setStateDialog={setOpenDialog}
+							data={productSelected}
+						/>
 					</>
 				);
 		}
@@ -132,8 +291,8 @@ export default function SellerItem() {
 	return (
 		<>
 			<section className="my-7">
-				<section className="flex justify-between">
-					<section className="w-full flex-1 flex max-w-3xs sm:max-w-2xs md:max-w-xs lg:max-w-sm items-center justify-center">
+				<section className="flex justify-end">
+					{/* <section className="w-full flex-1 flex max-w-3xs sm:max-w-2xs md:max-w-xs lg:max-w-sm items-center justify-center">
 						<Input
 							id="search"
 							type="text"
@@ -148,7 +307,7 @@ export default function SellerItem() {
 						>
 							Cari
 						</Button>
-					</section>
+					</section> */}
 					<Button
 						variant="outline"
 						className="cursor-pointer flex-1 w-fitt sm:w-full max-w-3xs sm:max-w-2xs md:max-w-xs lg:max-w-sm"
@@ -157,7 +316,7 @@ export default function SellerItem() {
 							setOpenDialogAction("addProduct");
 						}}
 					>
-						Add
+						Tambah Produk
 					</Button>
 				</section>
 				<Table>
@@ -168,161 +327,220 @@ export default function SellerItem() {
 							<TableHead>Nama</TableHead>
 							<TableHead>Deskripsi</TableHead>
 							<TableHead>Rata-Rata Rating</TableHead>
-							<TableHead>Total Rating</TableHead>
+							<TableHead>Terjual</TableHead>
 							<TableHead className="text-center">Aktif</TableHead>
 							<TableHead className="text-center">Aksi</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						<TableRow>
-							<TableCell className="w-40">
-								<Carousel>
-									<CarouselContent>
-										<CarouselItem className="flex justify-center">
-											<img src="/assets/img/item.jpg" alt="Testing" />
-										</CarouselItem>
-										<CarouselItem className="flex justify-center">
-											<img src="/assets/img/item.jpg" alt="Testing" />
-										</CarouselItem>
-										<CarouselItem className="flex justify-center">
-											<img src="/assets/img/item.jpg" alt="Testing" />
-										</CarouselItem>
-									</CarouselContent>
-								</Carousel>
-							</TableCell>
-							<TableCell>VPS Linux Indonesia</TableCell>
-							<TableCell>
-								<p className="max-w-30 truncate">
-									Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-									Curabitur lobortis tempor lacus, et hendrerit orci viverra ut.
-									Nullam convallis neque dignissim leo venenatis, a semper elit
-									sollicitudin. Donec aliquet, magna ac efficitur commodo, risus
-									orci hendrerit massa, ac ultricies massa lacus in arcu. Nunc
-									id gravida est. Donec ac blandit nibh. Cras leo ex, imperdiet
-									a nisl in, tincidunt tincidunt ante. Morbi semper viverra
-									tincidunt. Quisque erat lectus, accumsan nec imperdiet
-									sollicitudin, cursus at arcu. Nullam aliquet consectetur orci
-									et condimentum. Vestibulum sit amet purus porttitor, volutpat
-									dui feugiat, accumsan lorem. Vivamus congue ac nulla porta
-									faucibus. Maecenas efficitur mauris eu sodales dictum.
-								</p>
-							</TableCell>
-							<TableCell>4.5</TableCell>
-							<TableCell>40</TableCell>
-							<TableCell className="text-center">
-								<Switch checked={testSwitch} onCheckedChange={setTestSwitch} />
-							</TableCell>
-							<TableCell className="flex flex-col justify-center flex-wrap items-center gap-3 py-5">
-								<Button
-									variant="outline"
-									className="cursor-pointer w-full"
-									onClick={() => {
-										setOpenDialog(true);
-										setOpenDialogAction("editProduct");
-										setProductSelected(1);
-									}}
-								>
-									Edit
-								</Button>
-								<Button
-									className="cursor-pointer w-full"
-									variant="destructive"
-									onClick={() => {
-										setOpenDialog(true);
-										setOpenDialogAction("deleteProduct");
-										setProductSelected(1);
-									}}
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										height="24px"
-										viewBox="0 -960 960 960"
-										width="24px"
-										fill="currentColor"
+						{products.map((product, index) => (
+							<TableRow key={product.p_id}>
+								<TableCell className="w-40">
+									<Carousel>
+										<CarouselContent>
+											{product.images.map((image, index) => (
+												<CarouselItem
+													key={index}
+													className="flex justify-center"
+												>
+													<img
+														src={image.img}
+														alt={product.p_name + " product image"}
+													/>
+												</CarouselItem>
+											))}
+										</CarouselContent>
+									</Carousel>
+								</TableCell>
+								<TableCell>{product.p_name}</TableCell>
+								<TableCell>
+									<p className="max-w-30 truncate">{product.description}</p>
+								</TableCell>
+								<TableCell>
+									{Math.floor(product.average_rating * 10) / 10}
+								</TableCell>
+								<TableCell>{product.sold}</TableCell>
+								<TableCell className="text-center">
+									<section className="flex justify-center">
+										<p className="mx-2">❌</p>
+										<Switch
+											disabled
+											checked={activeProduct[index]}
+											onCheckedChange={() => {
+												updateActiveProduct(index);
+											}}
+										/>
+										<p className="mx-2">✅</p>
+									</section>
+								</TableCell>
+								<TableCell className="flex flex-col justify-center flex-wrap items-center gap-3 py-5">
+									<Button
+										variant="outline"
+										className="cursor-pointer w-full"
+										onClick={() => {
+											setProductSelected({
+												pId: product.p_id,
+												pvId: product.product_variants[0].pv_id,
+												name: product.p_name,
+												description: product.description,
+												stock: product.product_variants[0].stock,
+												price: product.product_variants[0].price,
+												discount: product.product_variants[0].discount,
+												minPurchase: product.product_variants[0].min_order,
+												hasVariant:
+													product.product_variants[0].is_default == false
+														? true
+														: false,
+												isActive: product.active,
+												interval: product.product_variants[0].interval,
+												intervalId: product.product_variants[0].i_id,
+											});
+											setOpenDialog(true);
+											setOpenDialogAction("editProduct");
+										}}
 									>
-										<path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-									</svg>
-									Hapus Produk
-								</Button>
-								<Button
-									variant="outline"
-									className="cursor-pointer w-full"
-									onClick={() => {
-										setOpenDialog(true);
-										setOpenDialogAction("addVariant");
-									}}
-								>
-									Add Variant
-								</Button>
-								<DropdownMenu>
-									<DropdownMenuTrigger asChild>
-										<Button variant="outline" className="cursor-pointer w-full">
-											Edit Variant
-										</Button>
-									</DropdownMenuTrigger>
-									<DropdownMenuContent>
-										<DropdownMenuLabel>Pilih Variant</DropdownMenuLabel>
-										<DropdownMenuSeparator />
-										<DropdownMenuItem className="p-0">
-											<Button
-												variant="outline"
-												className="cursor-pointer w-full border-0 shadow-none"
-												onClick={() => {
-													setOpenDialog(true);
-													setOpenDialogAction("editVariant");
-													setProductSelected(1);
-													setVariantSelected(1);
-												}}
-											>
-												1 Core 512MB
-											</Button>
-										</DropdownMenuItem>
-										<DropdownMenuItem className="p-0">
-											<Button
-												variant="outline"
-												className="cursor-pointer w-full border-0 shadow-none"
-												onClick={() => {
-													setOpenDialog(true);
-													setOpenDialogAction("editVariant");
-													setProductSelected(1);
-													setVariantSelected(2);
-												}}
-											>
-												1 Core 1GB
-											</Button>
-										</DropdownMenuItem>
-										<DropdownMenuItem className="p-0">
-											<Button
-												variant="outline"
-												className="cursor-pointer w-full border-0 shadow-none"
-												onClick={() => {
-													setOpenDialog(true);
-													setOpenDialogAction("editVariant");
-													setProductSelected(1);
-													setVariantSelected(3);
-												}}
-											>
-												2 core 1GB
-											</Button>
-										</DropdownMenuItem>
-										<DropdownMenuItem className="p-0">
-											<Button
-												variant="outline"
-												className="cursor-pointer w-full border-0 shadow-none"
-												onClick={() => {
-													setOpenDialog(true);
-													setOpenDialogAction("editVariant");
-													setProductSelected(1);
-													setVariantSelected(4);
-												}}
-											>
-												2 core 2GB
-											</Button>
-										</DropdownMenuItem>
-									</DropdownMenuContent>
-								</DropdownMenu>
-							</TableCell>
-						</TableRow>
+										Ubah Produk
+									</Button>
+									<Button
+										className="cursor-pointer w-full"
+										variant="destructive"
+										onClick={() => {
+											setProductSelected({
+												pId: product.p_id,
+												pvId: product.product_variants[0].pv_id,
+											});
+											setOpenDialog(true);
+											setOpenDialogAction("deleteProduct");
+										}}
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											height="24px"
+											viewBox="0 -960 960 960"
+											width="24px"
+											fill="currentColor"
+										>
+											<path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+										</svg>
+										Hapus Produk
+									</Button>
+									<Button
+										variant="outline"
+										className="cursor-pointer w-full"
+										onClick={() => {
+											setProductSelected({
+												pId: product.p_id,
+												pvId: product.product_variants[0].pv_id,
+												hasVariant:
+													product.product_variants[0].is_default == false
+														? true
+														: false,
+											});
+											setOpenDialog(true);
+											setOpenDialogAction("addVariant");
+										}}
+									>
+										Tambah Varian
+									</Button>
+									{product.product_variants[0].is_default == false ? (
+										<DropdownMenu>
+											<DropdownMenuTrigger asChild>
+												<Button
+													variant="outline"
+													className="cursor-pointer w-full"
+												>
+													Ubah Varian
+												</Button>
+											</DropdownMenuTrigger>
+											<DropdownMenuContent>
+												<DropdownMenuLabel>Pilih Variant</DropdownMenuLabel>
+												<DropdownMenuSeparator />
+												{product.product_variants.map((pv) => (
+													<DropdownMenuItem className="p-0" key={pv.pv_id}>
+														<Button
+															variant="outline"
+															className="cursor-pointer w-full border-0 shadow-none"
+															onClick={() => {
+																setProductSelected({
+																	pId: product.p_id,
+																	pvId: pv.pv_id,
+																	name: pv.pv_name,
+																	stock: pv.stock,
+																	price: pv.price,
+																	discount: pv.discount,
+																	minPurchase: pv.min_order,
+																	hasVariant:
+																		product.product_variants[0].is_default ==
+																		false
+																			? true
+																			: false,
+																	isActive: product.active,
+																	interval: pv.interval,
+																	intervalId: pv.i_id,
+																});
+																setVariantSelected(pv.pv_id);
+																setOpenDialog(true);
+																setOpenDialogAction("editVariant");
+															}}
+														>
+															{pv.pv_name}
+														</Button>
+													</DropdownMenuItem>
+												))}
+											</DropdownMenuContent>
+										</DropdownMenu>
+									) : (
+										""
+									)}
+									{product.product_variants[0].is_default == false ? (
+										<DropdownMenu>
+											<DropdownMenuTrigger asChild>
+												<Button
+													variant="destructive"
+													className="cursor-pointer w-full"
+												>
+													<svg
+														xmlns="http://www.w3.org/2000/svg"
+														height="24px"
+														viewBox="0 -960 960 960"
+														width="24px"
+														fill="currentColor"
+													>
+														<path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+													</svg>
+													Hapus Varian
+												</Button>
+											</DropdownMenuTrigger>
+											<DropdownMenuContent>
+												<DropdownMenuLabel>Pilih Variant</DropdownMenuLabel>
+												<DropdownMenuSeparator />
+												{product.product_variants.map((pv) => (
+													<DropdownMenuItem className="p-0" key={pv.pv_id}>
+														<Button
+															variant="outline"
+															className="cursor-pointer w-full border-0 shadow-none"
+															onClick={() => {
+																setProductSelected({
+																	pId: product.p_id,
+																	pvId: pv.pv_id,
+																});
+																setVariantSelected(pv.pv_id);
+																setOpenDialog(true);
+																setOpenDialogAction("deleteVariant");
+															}}
+														>
+															{pv.pv_name}
+														</Button>
+													</DropdownMenuItem>
+												))}
+											</DropdownMenuContent>
+										</DropdownMenu>
+									) : (
+										""
+									)}
+								</TableCell>
+							</TableRow>
+						))}
 					</TableBody>
 					{/* <TableFooter>
 							<TableRow>
@@ -336,8 +554,8 @@ export default function SellerItem() {
 			<Dialog open={openDialog} onOpenChange={setOpenDialog}>
 				<DialogContent
 					className={
-						openDialogAction === "addProduct" ||
-						openDialogAction === "editProduct"
+						openDialogAction !== "deleteProduct" &&
+						openDialogAction !== "deleteVariant"
 							? "sm:max-w-7xl max-h-250 overflow-y-auto"
 							: ""
 					}

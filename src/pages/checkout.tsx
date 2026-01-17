@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { apiUrl } from "@/lib/api";
 
 import { GetCsrf } from "@/components/utils/csrf";
 
@@ -70,11 +71,11 @@ export default function Checkout() {
 	const isDesktop = useMediaQuery("(min-width: 768px)");
 	const [payments, setPayments] = useState<Payment[] | null>(null);
 	const [categoryPayments, setCategoryPayments] = useState<string[] | null>(
-		null
+		null,
 	);
 	const [selectedPaymentId, setSelectedPaymentId] = useState<number>(0);
 	const [selectedPaymentName, setSelectedPaymentName] = useState<string | null>(
-		null
+		null,
 	);
 
 	const [checkout, setCheckout] = useState<CheckoutProduct[] | null>(null);
@@ -93,12 +94,9 @@ export default function Checkout() {
 		// Checkout
 		const fetchCheckout = async () => {
 			try {
-				const res = await fetch(
-					"http://localhost:8080/api/v1/orders/checkouts",
-					{
-						credentials: "include",
-					}
-				);
+				const res = await fetch(`${apiUrl}/api/v1/orders/checkouts`, {
+					credentials: "include",
+				});
 				const json = await res.json();
 				if (json.code === 200 && json.status === "ok") {
 					toast.success("Berhasil mengambil data checkout");
@@ -121,12 +119,9 @@ export default function Checkout() {
 		// Payments
 		const fetchPayments = async () => {
 			try {
-				const res = await fetch(
-					"http://localhost:8080/api/v1/orders/payments",
-					{
-						credentials: "include",
-					}
-				);
+				const res = await fetch(`${apiUrl}/api/v1/orders/payments`, {
+					credentials: "include",
+				});
 				const json = await res.json();
 				if (json.code === 200 && json.status === "ok") {
 					setPayments(json.data);
@@ -157,7 +152,7 @@ export default function Checkout() {
 		if (checkout) {
 			const total = checkout.reduce(
 				(total, price) => total + price.total_price,
-				0
+				0,
 			);
 			setTotalPriceProduct(total);
 			setTotalPrice(total + servicePrice + paymentPrice);
@@ -172,7 +167,7 @@ export default function Checkout() {
 		const csrfToken = await GetCsrf();
 
 		try {
-			const send = await fetch("http://localhost:8080/api/v1/orders/", {
+			const send = await fetch(`${apiUrl}/api/v1/orders/`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",

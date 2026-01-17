@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { apiUrl } from "@/lib/api";
 
 import { toast } from "sonner";
 // import { Separator } from "@/components/ui/separator";
@@ -33,7 +34,7 @@ export default function OrderList() {
 	useEffect(() => {
 		const fetchCheckout = async () => {
 			try {
-				const res = await fetch("http://localhost:8080/api/v1/orders/", {
+				const res = await fetch(`${apiUrl}/api/v1/orders/`, {
 					credentials: "include",
 				});
 				const json = await res.json();

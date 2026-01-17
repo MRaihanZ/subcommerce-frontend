@@ -22,7 +22,7 @@ export default function DeleteVariant({
 		const csrfToken = await GetCsrf();
 		try {
 			const res = await fetch(
-				`${apiUrl}/api/v1/admins/products/` +
+				`${apiUrl}/api/v1/products/` +
 					data.pId +
 					"/" +
 					data.pvId +

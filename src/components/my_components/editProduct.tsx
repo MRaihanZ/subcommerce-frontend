@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { apiUrl } from "@/lib/api";
+
+import { GetCsrf } from "@/components/utils/csrf";
 
 import {
 	DropdownMenu,
@@ -17,40 +20,182 @@ import {
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { toast } from "sonner";
 
-interface EditProductProps {
-	name: string;
-	description: string;
+interface EditProductData {
+	pId?: number;
+	pvId?: number;
+	name?: string;
+	description?: string;
 	stock?: number;
 	price?: number;
 	discount?: number;
 	minPurchase?: number;
 	hasVariant?: boolean;
 	isActive?: boolean;
+	interval?: number;
+	intervalId?: number;
 }
 
-export default function EditProduct({
-	name,
-	description,
-	stock,
-	price,
-	discount,
-	minPurchase,
-	hasVariant,
-	isActive,
-}: EditProductProps) {
-	const [subscriptionState, setSubscriptionState] = useState("");
-	const [nameValue, setNameValue] = useState(name);
-	const [descriptionValue, setDescriptionValue] = useState(description);
-	const [stockValue, setStockValue] = useState(stock);
-	const [priceValue, setPriceValue] = useState(price);
-	const [discountValue, setDiscountValue] = useState(discount);
-	const [minPurchaseValue, setMinPurchaseValue] = useState(minPurchase);
+interface EditProductDataSend {
+	name?: string;
+	description?: string;
+	stock?: number;
+	price?: number;
+	discount?: number;
+	min_purchase?: number;
+	has_variant?: boolean;
+	is_active?: boolean;
+	interval?: number;
+	i_id?: number;
+}
+
+interface EditProductProps {
+	data: EditProductData;
+}
+
+export default function EditProduct({ data }: EditProductProps) {
+	const [productChecker, setProductChecker] = useState<boolean>(false);
+	const [productImages, setProductImages] = useState<File[]>();
+	const [product, setProduct] = useState<EditProductDataSend>({
+		name: data?.name,
+		description: data?.description,
+		stock: data?.stock,
+		price: data?.price,
+		discount: data?.discount,
+		min_purchase: data?.minPurchase,
+		has_variant: data?.hasVariant,
+		is_active: data?.isActive,
+		interval: data?.interval,
+		i_id: data?.intervalId,
+	});
+	const [subscriptionStateName, setSubscriptionStateName] = useState<
+		string | undefined
+	>("");
+	function validateProduct(product: EditProductDataSend): boolean {
+		if (
+			product.name !== "" &&
+			product.description !== "" &&
+			product.stock !== 0 &&
+			product.price !== 0 &&
+			product.min_purchase !== 0 &&
+			product.interval !== 0 &&
+			product.i_id !== 0
+		) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	useEffect(() => {
+		if (validateProduct(product)) {
+			setProductChecker(false);
+			return;
+		}
+		setProductChecker(true);
+		return;
+	}, [product]);
+
+	useEffect(() => {
+		switch (product.i_id) {
+			case 1:
+				setSubscriptionStateName("Hari");
+				break;
+			case 2:
+				setSubscriptionStateName("Minggu");
+				break;
+			case 3:
+				setSubscriptionStateName("Bulan");
+				break;
+			case 4:
+				setSubscriptionStateName("Tahun");
+				break;
+			default:
+				setSubscriptionStateName("");
+		}
+	}, []);
+
+	const changeSubsState = (val: string) => {
+		switch (Number(val)) {
+			case 1:
+				setSubscriptionStateName("Hari");
+				break;
+			case 2:
+				setSubscriptionStateName("Minggu");
+				break;
+			case 3:
+				setSubscriptionStateName("Bulan");
+				break;
+			case 4:
+				setSubscriptionStateName("Tahun");
+				break;
+			default:
+				setSubscriptionStateName("");
+		}
+	};
+
+	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (e.target.files) {
+			const files = Array.from(e.target.files);
+			setProductImages(files);
+		}
+	};
+
+	useEffect(() => {
+		console.log(product);
+	}, [product]);
+
+	useEffect(() => {
+		console.log(productImages);
+	}, [productImages]);
+
+	const handleEditSubmit = async () => {
+		if (!productChecker) {
+			toast.warning("Semua form harus diisi dan tidak boleh 0 kecuali diskon");
+			return;
+		}
+		const csrfToken = await GetCsrf();
+
+		const payload = new FormData();
+		payload.append("product", JSON.stringify(product));
+		productImages?.forEach((file, idx) => {
+			payload.append("images", file);
+		});
+		try {
+			const send = await fetch(
+				`${apiUrl}/api/v1/products/` +
+					data?.pId +
+					"/" +
+					data.pvId +
+					"?state=product",
+				{
+					method: "PATCH",
+					headers: {
+						"X-CSRF-TOKEN": csrfToken,
+					},
+					credentials: "include",
+					body: payload,
+				},
+			);
+
+			const result = await send.json();
+			if (result.code === 200 && result.status === "ok") {
+				window.location.reload();
+			} else {
+				toast.error(result.error);
+				// setLoading(false);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			toast.error(errFetch);
+		}
+	};
 	return (
 		<>
 			<section className="w-full">
 				<section>
-					<form className="py-3">
+					<section className="py-3">
 						{/* {{ csrf_field() }} */}
 						<section className="flex gap-5">
 							<section className="flex-1">
@@ -61,26 +206,29 @@ export default function EditProduct({
 										name="name"
 										type="text"
 										id="name"
-										value={nameValue}
-										onChange={(e) => setNameValue(e.target.value)}
+										value={product.name}
+										onChange={(e) =>
+											setProduct((prev) => ({
+												...prev,
+												name: e.target.value,
+											}))
+										}
 										placeholder="Nama Produk..."
 									/>
 								</section>
 								<section className="mb-3">
 									<label htmlFor="deskripsi">Deskripsi</label>
-									{/* <input
-									className="border w-full p-3 rounded-lg"
-									name="deskripsi"
-									type="text"
-									id="deskripsi"
-									placeholder="Deskripsi..."
-								/> */}
 									<textarea
 										className="border w-full p-3 rounded-lg"
 										id="deskripsi"
 										name="deskripsi"
-										value={descriptionValue}
-										onChange={(e) => setDescriptionValue(e.target.value)}
+										value={product.description}
+										onChange={(e) =>
+											setProduct((prev) => ({
+												...prev,
+												description: e.target.value,
+											}))
+										}
 										placeholder="Deskripsi"
 										rows={8}
 									></textarea>
@@ -115,11 +263,30 @@ export default function EditProduct({
 										type="file"
 										name="picture"
 										multiple
+										accept="image/*"
+										onChange={handleFileChange}
 									/>
 								</section>
 								<section className="flex gap-3">
-									{hasVariant ? (
-										""
+									{data?.hasVariant ? (
+										<section className="mb-6">
+											<section>
+												<p>Opsi</p>
+												<section className="flex gap-3 mt-5">
+													<Label htmlFor="active">Aktifkan Produk</Label>
+													<Switch
+														id="active"
+														checked={product.is_active}
+														onCheckedChange={(value) =>
+															setProduct((prev) => ({
+																...prev,
+																is_active: value,
+															}))
+														}
+													/>
+												</section>
+											</section>
+										</section>
 									) : (
 										<>
 											<section className="w-full">
@@ -130,9 +297,12 @@ export default function EditProduct({
 														name="stok"
 														type="number"
 														id="stok"
-														value={stockValue}
+														value={product.stock}
 														onChange={(e) =>
-															setStockValue(Number(e.target.value))
+															setProduct((prev) => ({
+																...prev,
+																stock: Number(e.target.value),
+															}))
 														}
 														placeholder="Stok..."
 													/>
@@ -144,9 +314,12 @@ export default function EditProduct({
 														name="harga"
 														type="number"
 														id="harga"
-														value={priceValue}
+														value={product.price}
 														onChange={(e) =>
-															setPriceValue(Number(e.target.value))
+															setProduct((prev) => ({
+																...prev,
+																price: Number(e.target.value),
+															}))
 														}
 														placeholder="Harga..."
 													/>
@@ -164,6 +337,13 @@ export default function EditProduct({
 															name="subscriptionInterval"
 															type="number"
 															id="subscriptionInterval"
+															value={product.interval}
+															onChange={(e) =>
+																setProduct((prev) => ({
+																	...prev,
+																	interval: Number(e.target.value),
+																}))
+															}
 															placeholder="Jangka Langganan..."
 														/>
 													</section>
@@ -173,9 +353,9 @@ export default function EditProduct({
 																variant="outline"
 																className="cursor-pointer h-12.5"
 															>
-																{subscriptionState === ""
+																{subscriptionStateName === ""
 																	? "Pilihan"
-																	: subscriptionState}
+																	: subscriptionStateName}
 															</Button>
 														</DropdownMenuTrigger>
 														<DropdownMenuContent>
@@ -184,19 +364,25 @@ export default function EditProduct({
 															</DropdownMenuLabel>
 															<DropdownMenuSeparator />
 															<DropdownMenuRadioGroup
-																value={subscriptionState}
-																onValueChange={setSubscriptionState}
+																value={String(product.i_id) || ""}
+																onValueChange={(value) => {
+																	changeSubsState(value);
+																	setProduct((prev) => ({
+																		...prev,
+																		i_id: Number(value),
+																	}));
+																}}
 															>
-																<DropdownMenuRadioItem value="hari">
+																<DropdownMenuRadioItem value="1">
 																	Hari
 																</DropdownMenuRadioItem>
-																<DropdownMenuRadioItem value="minggu">
+																<DropdownMenuRadioItem value="2">
 																	Minggu
 																</DropdownMenuRadioItem>
-																<DropdownMenuRadioItem value="bulan">
+																<DropdownMenuRadioItem value="3">
 																	Bulan
 																</DropdownMenuRadioItem>
-																<DropdownMenuRadioItem value="tahun">
+																<DropdownMenuRadioItem value="4">
 																	Tahun
 																</DropdownMenuRadioItem>
 															</DropdownMenuRadioGroup>
@@ -212,9 +398,12 @@ export default function EditProduct({
 														name="diskon"
 														type="number"
 														id="diskon"
-														value={discountValue}
+														value={product.discount}
 														onChange={(e) =>
-															setDiscountValue(Number(e.target.value))
+															setProduct((prev) => ({
+																...prev,
+																discount: Number(e.target.value),
+															}))
 														}
 														placeholder="Diskon..."
 													/>
@@ -226,12 +415,33 @@ export default function EditProduct({
 														name="minOrder"
 														type="number"
 														id="minOrder"
-														value={minPurchaseValue}
+														value={product.min_purchase}
 														onChange={(e) =>
-															setMinPurchaseValue(Number(e.target.value))
+															setProduct((prev) => ({
+																...prev,
+																min_purchase: Number(e.target.value),
+															}))
 														}
 														placeholder="Minimum Pembelian..."
 													/>
+												</section>
+												<section className="mb-6">
+													<section>
+														<p>Opsi</p>
+														<section className="flex gap-3 mt-5">
+															<Label htmlFor="active">Aktifkan Produk</Label>
+															<Switch
+																id="active"
+																checked={product.is_active}
+																onCheckedChange={(value) =>
+																	setProduct((prev) => ({
+																		...prev,
+																		is_active: value,
+																	}))
+																}
+															/>
+														</section>
+													</section>
 												</section>
 											</section>
 										</>
@@ -239,30 +449,14 @@ export default function EditProduct({
 								</section>
 							</section>
 						</section>
-						{hasVariant ? (
-							""
-						) : (
-							<section className="mb-6">
-								<section>
-									<p>Opsi</p>
-									<section className="flex gap-3 mt-5">
-										<Label htmlFor="active">Aktifkan Produk</Label>
-										<Switch id="active" checked={isActive} />
-									</section>
-								</section>
-							</section>
-						)}
 						<Button
 							type="button"
 							className="w-full cursor-pointer p-4 uppercase font-bold tracking-wider"
-							// onClick={() => {
-							// 	isSignUp(1);
-							// 	setOpenCloseDialog(false);
-							// }}
+							onClick={handleEditSubmit}
 						>
-							Tambah
+							Ubah
 						</Button>
-					</form>
+					</section>
 
 					{/* <section className="border-t px-24 py-6 flex justify-center">
 						<a

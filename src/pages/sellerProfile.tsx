@@ -1,9 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
+import { apiUrl } from "@/lib/api";
+
+import { useGlobalData } from "@/contexts/GlobalDataContext";
+
+import { GetCsrf } from "@/components/utils/csrf";
 
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import {
 	Dialog,
 	// DialogClose,
@@ -18,11 +25,126 @@ import {
 import InputFormProfile from "@/components/my_components/inputFormProfile";
 
 export default function SellerProfile() {
-	const [nama, setNama] = useState("Rai");
-	const [alamat, setAlamat] = useState("Kab. Bogor");
+	const [defProfileImg, setDefProfileImg] = useState("");
+	const [profileImg, setProfileImg] = useState<File | null>(null);
+	const [name, setName] = useState<string>("");
+	const [address, setAddress] = useState<string>("");
 	// const [dob, setDob] = useState("13/mm/yyyy");
 	const [isDisableButton, setIsDisableButton] = useState(true);
 	const [openDialog, setOpenDialog] = useState(false);
+
+	const [isEdit, setIsEdit] = useState(false);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string>();
+
+	const navigate = useNavigate();
+
+	const { setGlobalToast } = useGlobalData();
+
+	useEffect(() => {
+		const fetchProfile = async () => {
+			try {
+				const res = await fetch(`${apiUrl}/api/v1/sellers/`, {
+					credentials: "include",
+				});
+				const json = await res.json();
+				if (json.code === 200 && json.status === "ok") {
+					setName(json.data.name);
+					setAddress(json.data.address);
+					setDefProfileImg(json.data.img);
+					setLoading(false);
+				} else {
+					setError(json.error);
+					setLoading(false);
+				}
+			} catch (err) {
+				const errFetch = "Network Error: " + err;
+				setError(errFetch);
+				setLoading(false);
+			}
+		};
+		fetchProfile();
+	}, []);
+
+	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (e.target.files && e.target.files[0]) {
+			setProfileImg(e.target.files[0]); // store the first selected file
+		}
+	};
+
+	const handleUpdate = async () => {
+		const csrfToken = await GetCsrf();
+
+		const payload = new FormData();
+		payload.append("name", name);
+		payload.append("address", address);
+		if (profileImg) {
+			payload.append("img", profileImg);
+		} else {
+			payload.append("imgPath", defProfileImg);
+		}
+
+		try {
+			const send = await fetch(`${apiUrl}/api/v1/sellers/`, {
+				method: "PATCH",
+				headers: {
+					"X-CSRF-TOKEN": csrfToken,
+				},
+				credentials: "include",
+				body: payload,
+			});
+			const json = await send.json();
+			if (json.code === 200 && json.status === "ok") {
+				setName(json.data.name);
+				setAddress(json.data.address);
+				setDefProfileImg(json.data.img);
+				setIsDisableButton(true);
+				setIsEdit(false);
+				toast.success("Profile berhasil di update");
+			} else {
+				toast.error("Gagal mengupdate profil: " + json.error);
+				setError(json.error);
+				// setLoading(false);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			toast.error(errFetch);
+			setError(errFetch);
+			// setLoading(false);
+		}
+	};
+
+	const handleDelete = async () => {
+		const csrfToken = await GetCsrf();
+		try {
+			const send = await fetch(`${apiUrl}/api/v1/sellers/`, {
+				method: "DELETE",
+				headers: {
+					"X-CSRF-TOKEN": csrfToken,
+				},
+				credentials: "include",
+			});
+			const json = await send.json();
+			if (json.code === 200 && json.status === "ok") {
+				setGlobalToast("akun berhasil di hapus");
+				navigate("/");
+			} else {
+				toast.error("Gagal menghapus akun: " + json.error);
+				setError(json.error);
+				// setLoading(false);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			toast.error(errFetch);
+			setError(errFetch);
+			// setLoading(false);
+		}
+	};
+
+	if (loading) return <p>Loading...</p>;
+	if (error) {
+		return <p>{error}</p>;
+	}
 	return (
 		<>
 			<section className="grid lg:grid-cols-5 xl:grid-cols-7 2xl:grid-cols-9 mt-7">
@@ -30,12 +152,16 @@ export default function SellerProfile() {
 					<p className="text-center py-3">Bio Data</p>
 					<Separator />
 					<section className="place-self-center mt-5 p-3 border rounded-xl">
-						<img src="/assets/img/profile1.jpg" alt="" className="w-60 h-60" />
+						<img src={defProfileImg} alt="" className="w-60 h-60" />
 					</section>
 					<section className="mx-5 mb-5">
 						<section
 							id="profile_picture"
-							className="grid w-full items-center mt-5"
+							className={
+								!isDisableButton
+									? "grid w-full items-center mt-5"
+									: "hidden w-full items-center mt-5"
+							}
 						>
 							<Label htmlFor="picture" className="mb-1">
 								Picture
@@ -44,7 +170,8 @@ export default function SellerProfile() {
 								id="picture"
 								type="file"
 								name="picture"
-								disabled={isDisableButton}
+								accept="image/*"
+								onChange={handleFileChange}
 							/>
 						</section>
 						<InputFormProfile
@@ -52,8 +179,8 @@ export default function SellerProfile() {
 							id="nama"
 							name="nama"
 							type="text"
-							value={nama}
-							setValue={setNama}
+							value={name}
+							setValue={setName}
 							isDisabled={isDisableButton}
 						/>
 						<InputFormProfile
@@ -61,90 +188,61 @@ export default function SellerProfile() {
 							id="alamat"
 							name="alamat"
 							type="text"
-							value={alamat}
-							setValue={setAlamat}
+							value={address}
+							setValue={setAddress}
 							isDisabled={isDisableButton}
 						/>
-						<section className="flex gap-5">
+						<section className={isDisableButton ? "hidden mt-5" : "mt-5"}>
 							<Button
 								className={
 									isDisableButton
-										? "hidden cursor-pointer w-full mt-5"
-										: "flex-1 cursor-pointer w-full mt-5"
+										? "hidden cursor-pointer w-full"
+										: "cursor-pointer w-full"
 								}
+								onClick={handleUpdate}
 							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									height="24px"
-									viewBox="0 -960 960 960"
-									width="24px"
-									fill="currentColor"
-								>
-									<path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z" />
-								</svg>
 								Submit
 							</Button>
-							<Button
-								className="flex-1 w-full cursor-pointer mt-5"
-								onClick={() => setIsDisableButton((prev) => !prev)}
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									height="24px"
-									viewBox="0 -960 960 960"
-									width="24px"
-									fill="currentColor"
-								>
-									<path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z" />
-								</svg>
-								{isDisableButton ? "Edit" : "Batalkan"}
-							</Button>
 						</section>
-						{isDisableButton ? (
-							<>
-								<Dialog open={openDialog} onOpenChange={setOpenDialog}>
-									<DialogTrigger asChild>
+						<section className="flex justify-around flex-col 2xl:flex-row gap-5 mt-5">
+							<Button
+								className="cursor-pointer grow"
+								onClick={() => {
+									setIsEdit((prev) => !prev);
+									setIsDisableButton((prev) => !prev);
+								}}
+							>
+								{isEdit ? "Batalkan" : "Edit"}
+							</Button>
+							<Dialog open={openDialog} onOpenChange={setOpenDialog}>
+								<DialogTrigger asChild>
+									<Button variant="destructive" className="cursor-pointer grow">
+										Hapus Akun
+									</Button>
+								</DialogTrigger>
+								<DialogContent>
+									<DialogHeader>
+										<DialogTitle>Konfirmasi Hapus Akun</DialogTitle>
+										<DialogDescription></DialogDescription>
+									</DialogHeader>
+									<section className="flex gap-5">
 										<Button
-											className="w-full cursor-pointer mt-5"
-											variant="destructive"
+											className="w-full flex-1 cursor-pointer mt-5"
+											onClick={() => setOpenDialog(false)}
 										>
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												height="24px"
-												viewBox="0 -960 960 960"
-												width="24px"
-												fill="currentColor"
-											>
-												<path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-											</svg>
-											Hapus Akun
+											Tidak
 										</Button>
-									</DialogTrigger>
-									<DialogContent className="sm:max-w-md">
-										<DialogHeader>
-											<DialogTitle>Konfirmasi Hapus Akun</DialogTitle>
-											<DialogDescription></DialogDescription>
-										</DialogHeader>
-										<section className="flex gap-5">
-											<Button
-												className="w-full flex-1 cursor-pointer mt-5"
-												onClick={() => setOpenDialog(false)}
-											>
-												Tidak
-											</Button>
-											<Button
-												className="w-full flex-1 cursor-pointer mt-5"
-												variant="destructive"
-											>
-												Ya
-											</Button>
-										</section>
-									</DialogContent>
-								</Dialog>
-							</>
-						) : (
-							""
-						)}
+										<Button
+											className="w-full flex-1 cursor-pointer mt-5"
+											variant="destructive"
+											onClick={handleDelete}
+										>
+											Ya
+										</Button>
+									</section>
+								</DialogContent>
+							</Dialog>
+						</section>
 					</section>
 				</section>
 			</section>
