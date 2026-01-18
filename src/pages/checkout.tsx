@@ -155,7 +155,7 @@ export default function Checkout() {
 				0,
 			);
 			setTotalPriceProduct(total);
-			setTotalPrice(total + servicePrice + paymentPrice);
+			setTotalPrice(total + servicePrice);
 		}
 	}, [checkout, paymentPrice]);
 
@@ -179,7 +179,7 @@ export default function Checkout() {
 
 			const result = await send.json();
 			if (result.code === 200 && result.status === "ok") {
-				navigate("/order-list");
+				window.location.href = result.data;
 			} else {
 				toast.error(result.error);
 				setError(result.error);
@@ -190,6 +190,34 @@ export default function Checkout() {
 			setError(errFetch);
 		}
 	};
+
+	const handleCancelOrderSubmit = async () => {
+		const csrfToken = await GetCsrf();
+
+		try {
+			const send = await fetch(`${apiUrl}/api/v1/orders/checkouts`, {
+				method: "DELETE",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRF-TOKEN": csrfToken,
+				},
+				credentials: "include",
+			});
+
+			const result = await send.json();
+			if (result.code === 200 && result.status === "ok") {
+				navigate("/");
+			} else {
+				toast.error(result.error);
+				setError(result.error);
+				// setLoading(false);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			setError(errFetch);
+		}
+	};
+
 	if (loading) return <p>Loading...</p>;
 	if (error) {
 		return <p>{error}</p>;
@@ -210,6 +238,7 @@ export default function Checkout() {
 										index={index}
 										orderFunc={setOrder}
 										selectedPaymentId={selectedPaymentId}
+										globalTotalPrice={totalPrice}
 									/>
 								))}
 							</section>
@@ -222,7 +251,7 @@ export default function Checkout() {
 							<p className="font-semibold text-xl pb-5">Ringkasan Belanja</p>
 							<Separator />
 						</section>
-						<section className="mb-5">
+						{/* <section className="mb-5">
 							{isDesktop ? (
 								<Popover open={open} onOpenChange={setOpen}>
 									<PopoverTrigger asChild>
@@ -276,14 +305,14 @@ export default function Checkout() {
 									</DrawerContent>
 								</Drawer>
 							)}
-						</section>
+						</section> */}
 						<section className="flex justify-between mb-2">
 							<p className="text-md">Total Harga</p>
 							<p className="text-md">
 								Rp{new Intl.NumberFormat("id-ID").format(totalPriceProduct)}
 							</p>
 						</section>
-						{selectedPaymentName ? (
+						{/* {selectedPaymentName ? (
 							<section className="flex justify-between mb-2">
 								<p className="text-md">Biaya Admin</p>
 								<p className="text-md">
@@ -292,7 +321,7 @@ export default function Checkout() {
 							</section>
 						) : (
 							<></>
-						)}
+						)} */}
 
 						<section className="flex justify-between mb-2">
 							<p className="text-md">Biaya Jasa Aplikasi</p>
@@ -311,6 +340,12 @@ export default function Checkout() {
 							onClick={handleOrderSubmit}
 						>
 							Beli
+						</Button>
+						<Button
+							className="bg-red-600 hover:bg-red-800 w-full cursor-pointer mt-5"
+							onClick={handleCancelOrderSubmit}
+						>
+							Batal
 						</Button>
 					</section>
 				</section>

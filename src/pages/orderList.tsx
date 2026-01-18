@@ -8,6 +8,7 @@ import OrderListProduct from "@/components/my_components/orderListProduct";
 
 export interface OrderProducts {
 	o_id: number;
+	order_uq_id: string;
 	o_order_pretty_id: string;
 	pay_name: string;
 	os_name: string;
@@ -22,6 +23,8 @@ export interface OrderProducts {
 	pv_name: string;
 	interval: number;
 	i_name: string;
+	note: string;
+	payment_link: string;
 	quantity: number;
 	total_price: number;
 }

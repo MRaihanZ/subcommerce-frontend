@@ -11,6 +11,7 @@ import { toast } from "sonner";
 
 export interface OrderProducts {
 	o_id: number;
+	order_uq_id: string;
 	o_order_pretty_id: string;
 	pay_name: string;
 	os_name: string;
@@ -25,6 +26,8 @@ export interface OrderProducts {
 	pv_name: string;
 	interval: number;
 	i_name: string;
+	note: string;
+	payment_link: string;
 	quantity: number;
 	total_price: number;
 }
@@ -115,6 +118,10 @@ export default function OrderListProduct({ data }: OrderListProductProps) {
 		}
 	};
 
+	const handlePaymentLink = (payment_url: string) => {
+		window.location.href = payment_url;
+	};
+
 	if (error) {
 		return <p>{error}</p>;
 	}
@@ -130,7 +137,9 @@ export default function OrderListProduct({ data }: OrderListProductProps) {
 						<p className="ms-3 font-semibold">{data.s_name}</p>
 					</section>
 					<section>
-						<p>{data.o_order_pretty_id}</p>
+						<p>
+							{data.o_order_pretty_id} | {data.order_uq_id}
+						</p>
 					</section>
 				</section>
 				<section className="flex">
@@ -184,6 +193,12 @@ export default function OrderListProduct({ data }: OrderListProductProps) {
 										{data.os_name}
 									</Badge>
 								</p>
+								<p>
+									note:
+									<Badge variant="outline" className="ms-1">
+										{data.note ? data.note : "-"}
+									</Badge>
+								</p>
 							</section>
 						</section>
 					</section>
@@ -202,9 +217,7 @@ export default function OrderListProduct({ data }: OrderListProductProps) {
 							</Button>
 							<Button
 								className="cursor-pointer mt-5 ms-3"
-								onClick={() => {
-									handleStatus(4);
-								}}
+								onClick={() => handlePaymentLink(data.payment_link)}
 							>
 								(UNTUK SEMENTARA) Pembayaran selesai
 							</Button>
@@ -212,7 +225,7 @@ export default function OrderListProduct({ data }: OrderListProductProps) {
 					) : (
 						""
 					)}
-					{data.os_name === "menunggu konfirmasi seller" ? (
+					{/* {data.os_name === "menunggu konfirmasi seller" ? (
 						<Button
 							className="cursor-pointer mt-5"
 							variant="destructive"
@@ -224,7 +237,7 @@ export default function OrderListProduct({ data }: OrderListProductProps) {
 						</Button>
 					) : (
 						""
-					)}
+					)} */}
 					{data.os_name === "produk sudah dikirim" ? (
 						<section className="mt-5">
 							<Button

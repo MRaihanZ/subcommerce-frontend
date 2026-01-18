@@ -112,7 +112,9 @@ export default function CartItem({
 							p_id: data.p_id,
 							pv_id: data.pv_id,
 							quantity,
-							unit_price: data.price,
+							unit_price: Math.floor(
+								data.price - (data.price * data.discount) / 100,
+							),
 							total_price: Math.floor(price - (price * data.discount) / 100),
 						},
 					];

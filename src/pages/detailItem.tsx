@@ -239,8 +239,15 @@ export default function DetailItem() {
 			p_id: Number(prodParam),
 			pv_id: productVariantId,
 			quantity: quantity,
-			unit_price: basePrice,
-			total_price: price,
+			unit_price: Math.floor(
+				basePrice -
+					(basePrice * product!.product_variants[productVariantIdx].discount) /
+						100,
+			),
+			total_price: Math.floor(
+				price -
+					(price * product!.product_variants[productVariantIdx].discount) / 100,
+			),
 		};
 
 		try {

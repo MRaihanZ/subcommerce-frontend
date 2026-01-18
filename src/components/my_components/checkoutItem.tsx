@@ -35,6 +35,7 @@ interface CheckoutItemProps {
 	index: number;
 	orderFunc: React.Dispatch<React.SetStateAction<OrderProduct[]>>;
 	selectedPaymentId: number;
+	globalTotalPrice: number;
 }
 
 export default function CheckoutItem({
@@ -42,6 +43,7 @@ export default function CheckoutItem({
 	index,
 	orderFunc,
 	selectedPaymentId,
+	globalTotalPrice,
 }: CheckoutItemProps) {
 	const [note, setNote] = useState<string>("");
 	useEffect(() => {
@@ -54,7 +56,7 @@ export default function CheckoutItem({
 				note: note,
 				quantity: data.quantity,
 				unit_price: data.total_price / data.quantity,
-				total_price: data.total_price,
+				total_price: globalTotalPrice,
 			};
 			return newOrder;
 		});
