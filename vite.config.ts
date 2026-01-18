@@ -13,6 +13,7 @@ export default defineConfig({
 	},
 	server: {
 		allowedHosts: [
+			"subcommerce.mraihanz.my.id",
 			"binaryneedle.my.id",
 			"giu.binaryneedle.my.id",
 			"0.0.0.0",
