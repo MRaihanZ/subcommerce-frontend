@@ -73,7 +73,7 @@ export default function Checkout() {
 	const [categoryPayments, setCategoryPayments] = useState<string[] | null>(
 		null,
 	);
-	const [selectedPaymentId, setSelectedPaymentId] = useState<number>(0);
+	const [selectedPaymentId, setSelectedPaymentId] = useState<number>(1);
 	const [selectedPaymentName, setSelectedPaymentName] = useState<string | null>(
 		null,
 	);
@@ -160,10 +160,10 @@ export default function Checkout() {
 	}, [checkout, paymentPrice]);
 
 	const handleOrderSubmit = async () => {
-		if (!selectedPaymentName) {
-			toast.warning("Pilih jenis pembayaran terlebih dahulu");
-			return;
-		}
+		// if (!selectedPaymentName) {
+		// 	toast.warning("Pilih jenis pembayaran terlebih dahulu");
+		// 	return;
+		// }
 		const csrfToken = await GetCsrf();
 
 		try {
@@ -337,7 +337,9 @@ export default function Checkout() {
 						</section>
 						<Button
 							className="bg-green-600 hover:bg-green-800 w-full cursor-pointer"
-							onClick={handleOrderSubmit}
+							onClick={() => {
+								handleOrderSubmit();
+							}}
 						>
 							Beli
 						</Button>
