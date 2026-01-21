@@ -205,6 +205,12 @@ export default function SignUp({
 									setEmailExist(false);
 									setInputRequired(false);
 								}}
+								onKeyDown={(e) => {
+									if (e.key === "Enter") {
+										e.preventDefault();
+										handleSubmit();
+									}
+								}}
 							/>
 						</section>
 						{inputRequired === true ? (

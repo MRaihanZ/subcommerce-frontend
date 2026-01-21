@@ -136,6 +136,12 @@ export default function SignIn({
 									setNotFound(false);
 									setInputRequired(false);
 								}}
+								onKeyDown={(e) => {
+									if (e.key === "Enter") {
+										e.preventDefault();
+										handleSubmit();
+									}
+								}}
 							/>
 						</section>
 						{inputRequired === true ? (
