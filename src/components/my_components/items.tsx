@@ -1,7 +1,5 @@
 import { Link } from "react-router";
 
-import { webUrl } from "@/lib/importEnv";
-
 import {
 	Card,
 	// CardAction,
@@ -51,7 +49,7 @@ export default function Items({ data }: ItemsProps) {
 						<Card className="border-0 rounded-sm h-full relative">
 							<CardHeader>
 								<CardTitle className="flex justify-center">
-									<img src={webUrl + prod.img} alt="" />
+									<img src={prod.img} alt="" />
 								</CardTitle>
 								<CardDescription className="flex">
 									<svg
