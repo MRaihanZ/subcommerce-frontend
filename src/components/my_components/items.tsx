@@ -1,4 +1,7 @@
 import { Link } from "react-router";
+
+import { webUrl } from "@/lib/api";
+
 import {
 	Card,
 	// CardAction,
@@ -37,18 +40,18 @@ export default function Items({ data }: ItemsProps) {
 							prod.pv_name === "default"
 								? "http://" + location.host + "/detail?product=" + prod.p_id
 								: "http://" +
-								  location.host +
-								  "/detail?product=" +
-								  prod.p_id +
-								  "&variant=" +
-								  prod.pv_id
+									location.host +
+									"/detail?product=" +
+									prod.p_id +
+									"&variant=" +
+									prod.pv_id
 						}
 						className="w-full max-w-35 md:max-w-45 2xl:max-w-55 h-full"
 					>
 						<Card className="border-0 rounded-sm h-full relative">
 							<CardHeader>
 								<CardTitle className="flex justify-center">
-									<img src={prod.img} alt="" />
+									<img src={webUrl + prod.img} alt="" />
 								</CardTitle>
 								<CardDescription className="flex">
 									<svg
@@ -79,8 +82,8 @@ export default function Items({ data }: ItemsProps) {
 											Rp
 											{new Intl.NumberFormat("id-ID").format(
 												Math.floor(
-													prod.price - (prod.price * prod.discount) / 100
-												)
+													prod.price - (prod.price * prod.discount) / 100,
+												),
 											)}
 										</p>
 										<section className="flex items-center">
