@@ -160,7 +160,6 @@ export default function Cart() {
 				navigate("/checkout");
 			} else {
 				toast.error(result.error);
-				setError(result.error);
 				// setLoading(false);
 			}
 		} catch (err) {

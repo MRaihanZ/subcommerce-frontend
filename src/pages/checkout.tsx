@@ -73,7 +73,7 @@ export default function Checkout() {
 	const [categoryPayments, setCategoryPayments] = useState<string[] | null>(
 		null,
 	);
-	const [selectedPaymentId, setSelectedPaymentId] = useState<number>(1);
+	const selectedPaymentId = 1;
 	const [selectedPaymentName, setSelectedPaymentName] = useState<string | null>(
 		null,
 	);
@@ -182,7 +182,6 @@ export default function Checkout() {
 				window.location.href = result.data;
 			} else {
 				toast.error(result.error);
-				setError(result.error);
 				// setLoading(false);
 			}
 		} catch (err) {
@@ -209,7 +208,6 @@ export default function Checkout() {
 				navigate("/");
 			} else {
 				toast.error(result.error);
-				setError(result.error);
 				// setLoading(false);
 			}
 		} catch (err) {
