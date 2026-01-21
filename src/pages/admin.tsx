@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 
-import { apiUrl } from "@/lib/api";
+import { apiUrl } from "@/lib/importEnv";
 
 import {
 	Table,

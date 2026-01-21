@@ -1,4 +1,4 @@
-import { apiUrl } from "@/lib/api";
+import { apiUrl } from "@/lib/importEnv";
 
 export async function CreateCsrf(): Promise<string> {
 	const res = await fetch(`${apiUrl}/api/v1/csrf/`, {

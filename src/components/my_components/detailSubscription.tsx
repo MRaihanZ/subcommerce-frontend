@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { apiUrl } from "@/lib/api";
+import { apiUrl } from "@/lib/importEnv";
 import { GetCsrf } from "@/components/utils/csrf";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";

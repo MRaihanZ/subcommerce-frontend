@@ -1,6 +1,6 @@
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { useSearchParams, Link } from "react-router";
-import { apiUrl } from "@/lib/api";
+import { apiUrl } from "@/lib/importEnv";
 
 import { GetCsrf } from "@/components/utils/csrf";
 

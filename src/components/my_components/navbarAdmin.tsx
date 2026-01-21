@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router";
-import { apiUrl } from "@/lib/api";
+import { apiUrl } from "@/lib/importEnv";
 
 import { useGlobalData } from "@/contexts/GlobalDataContext";
 import { GetCsrf } from "@/components/utils/csrf";

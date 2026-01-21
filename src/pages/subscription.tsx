@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { apiUrl } from "@/lib/api";
+import { apiUrl } from "@/lib/importEnv";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

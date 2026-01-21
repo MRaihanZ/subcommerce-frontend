@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useGlobalData } from "@/contexts/GlobalDataContext";
-import { apiUrl } from "@/lib/api";
+import { apiUrl } from "@/lib/importEnv";
 
 import { CreateCsrf } from "../utils/csrf";
 

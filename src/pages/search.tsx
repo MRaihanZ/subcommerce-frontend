@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
-import { apiUrl } from "@/lib/api";
+import { apiUrl } from "@/lib/importEnv";
 
 import Items from "@/components/my_components/items";
 import FilterSideBar from "@/components/my_components/filterSideBar";

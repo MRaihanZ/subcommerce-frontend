@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 
-import { webUrl } from "@/lib/api";
+import { webUrl } from "@/lib/importEnv";
 
 import {
 	Card,

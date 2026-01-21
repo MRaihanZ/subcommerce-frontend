@@ -1,4 +1,4 @@
-import { apiUrl } from "@/lib/api";
+import { apiUrl } from "@/lib/importEnv";
 import { GetCsrf } from "@/components/utils/csrf";
 
 import { Button } from "@/components/ui/button";

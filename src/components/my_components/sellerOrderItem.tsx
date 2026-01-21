@@ -1,5 +1,5 @@
 import { GetCsrf } from "@/components/utils/csrf";
-import { apiUrl } from "@/lib/api";
+import { apiUrl } from "@/lib/importEnv";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

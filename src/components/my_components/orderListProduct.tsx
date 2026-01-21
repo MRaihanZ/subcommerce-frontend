@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { apiUrl } from "@/lib/api";
+import { apiUrl } from "@/lib/importEnv";
 
 import { GetCsrf } from "@/components/utils/csrf";
 
