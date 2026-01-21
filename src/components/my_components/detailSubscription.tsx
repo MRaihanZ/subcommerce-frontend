@@ -1,7 +1,13 @@
+import { useState, useEffect } from "react";
+
+import { apiUrl } from "@/lib/api";
+import { GetCsrf } from "@/components/utils/csrf";
+
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "../ui/button";
+import { toast } from "sonner";
 
 // Mock data shape based on backend struct
 export interface UserSubscription {
@@ -29,6 +35,16 @@ export interface UserSubscription {
 	is_over: boolean;
 }
 
+interface OrderProduct {
+	pay_id: number;
+	p_id: number;
+	pv_id: number;
+	note: string;
+	quantity: number;
+	unit_price: number;
+	total_price: number;
+}
+
 interface DetailSubscriptionProps {
 	data: UserSubscription;
 }
@@ -42,6 +58,37 @@ function formatCurrency(value: number) {
 }
 
 export default function DetailSubscription({ data }: DetailSubscriptionProps) {
+	const [order, setOrder] = useState<OrderProduct[]>([]);
+
+	const discountedPrice = Math.floor(
+		data.price - data.price * (data.discount / 100),
+	);
+
+	const discountedTotalPrice = Math.floor(
+		data.price * data.quantity -
+			data.price * data.quantity * (data.discount / 100),
+	);
+
+	useEffect(() => {
+		setOrder([
+			{
+				pay_id: 1,
+				p_id: data.product_id,
+				pv_id: data.product_variant_id,
+				note: data.note,
+				quantity: data.quantity,
+				unit_price: discountedPrice,
+				total_price: discountedTotalPrice,
+			},
+		]);
+	}, [
+		data.product_id,
+		data.product_variant_id,
+		data.note,
+		data.quantity,
+		discountedPrice,
+		discountedTotalPrice,
+	]);
 	// Replace this with real data from API / loader
 	// const data: UserSubscription = {
 	// 	id: "550e8400-e29b-41d4-a716-446655440000",
@@ -68,10 +115,6 @@ export default function DetailSubscription({ data }: DetailSubscriptionProps) {
 	// 	is_over: false,
 	// };
 
-	const discountedPrice = Math.floor(
-		data.price - data.price * (data.discount / 100),
-	);
-
 	const formatDate = (dateStr: string) => {
 		return new Date(dateStr).toLocaleDateString("id-ID", {
 			day: "numeric",
@@ -83,6 +126,33 @@ export default function DetailSubscription({ data }: DetailSubscriptionProps) {
 		Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
 
 	const todayUTC = toUTCDateNumber(new Date());
+
+	const orderHandler = async () => {
+		const csrfToken = await GetCsrf();
+
+		try {
+			const send = await fetch(`${apiUrl}/api/v1/subscriptions/`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRF-TOKEN": csrfToken,
+				},
+				credentials: "include",
+				body: JSON.stringify(order),
+			});
+
+			const result = await send.json();
+			if (result.code === 200 && result.status === "ok") {
+				window.location.href = result.data;
+			} else {
+				toast.error(result.error);
+				// setLoading(false);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			toast.error(errFetch);
+		}
+	};
 
 	return (
 		<Card className="rounded-2xl shadow-sm">
@@ -156,21 +226,40 @@ export default function DetailSubscription({ data }: DetailSubscriptionProps) {
 
 				{/* Pricing */}
 				<section className="flex justify-between">
-					<section className="space-y-2">
-						<p className="text-sm font-medium">Harga</p>
-						<div className="flex items-end gap-4">
-							<span className="text-2xl font-bold">
-								{formatCurrency(discountedPrice)}
-							</span>
-							<div className="flex items-center gap-2">
-								<span className="text-sm line-through text-red-500">
-									{formatCurrency(data.price)}
+					<section className="space-y-2 flex gap-7">
+						<section>
+							<p className="text-sm font-medium">Harga</p>
+							<div className="flex items-end gap-4">
+								<span className="text-2xl font-bold">
+									{formatCurrency(discountedPrice)}
 								</span>
-								<Badge variant="secondary" className="text-red-600">
-									-{data.discount}%
-								</Badge>
+								<div className="flex items-center gap-2">
+									<span className="text-sm line-through text-red-500">
+										{formatCurrency(data.price)}
+									</span>
+									<Badge variant="secondary" className="text-red-600">
+										-{data.discount}%
+									</Badge>
+								</div>
 							</div>
-						</div>
+						</section>
+						<span className="self-center text-3xl"> | </span>
+						<section>
+							<p className="text-sm font-medium">Harga Total</p>
+							<div className="flex items-end gap-4">
+								<span className="text-2xl font-bold">
+									{formatCurrency(discountedTotalPrice)}
+								</span>
+								<div className="flex items-center gap-2">
+									<span className="text-sm line-through text-red-500">
+										{formatCurrency(data.price * data.quantity)}
+									</span>
+									<Badge variant="secondary" className="text-red-600">
+										-{data.discount}%
+									</Badge>
+								</div>
+							</div>
+						</section>
 					</section>
 					<section className="flex flex-col justify-center items-center">
 						{data.is_over ? "" : <p className="mb-3 font-medium">Aksi</p>}
@@ -181,7 +270,12 @@ export default function DetailSubscription({ data }: DetailSubscriptionProps) {
 								""
 							) : (
 								<>
-									<Button className="cursor-pointer w-25">Bayar</Button>
+									<Button
+										className="cursor-pointer w-25"
+										onClick={orderHandler}
+									>
+										Bayar
+									</Button>
 									<p className="mx-5"> | </p>
 								</>
 							)}
