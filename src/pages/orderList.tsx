@@ -61,10 +61,10 @@ export default function OrderList() {
 	}, []);
 
 	if (loading) return <p>Loading...</p>;
-	if (error) {
-		return <p>{error}</p>;
-	}
-	if (!order) return <p>Produk tidak ditemukan</p>;
+	// if (error) {
+	// 	return <p>{error}</p>;
+	// }
+	// if (!order) return <p>Produk tidak ditemukan</p>;
 	return (
 		<>
 			<section className="grid grid-cols-12">
@@ -72,11 +72,15 @@ export default function OrderList() {
 					<p className="font-semibold text-2xl">Pembelian Produk</p>
 					<section className="mt-5">
 						<section className="mb-3">
-							<section className="">
-								{order.map((item, index) => (
-									<OrderListProduct key={index} data={item} />
-								))}
-							</section>
+							{error !== undefined && order === null ? (
+								<p>Produk tidak ditemukan</p>
+							) : (
+								<section className="">
+									{order?.map((item, index) => (
+										<OrderListProduct key={index} data={item} />
+									))}
+								</section>
+							)}
 						</section>
 					</section>
 				</section>
