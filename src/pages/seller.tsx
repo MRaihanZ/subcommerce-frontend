@@ -2,6 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { apiUrl } from "@/lib/importEnv";
 
+import CreatePayout from "@/components/my_components/createPayout";
+
+import { GetCsrf } from "@/components/utils/csrf";
+
 import {
 	Card,
 	// CardAction,
@@ -26,6 +30,16 @@ import {
 	TableRow,
 	TableFooter,
 } from "@/components/ui/table";
+import {
+	Dialog,
+	// DialogClose,
+	DialogContent,
+	DialogDescription,
+	// DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -314,6 +328,45 @@ export default function Seller() {
 							Rp
 							{new Intl.NumberFormat("id-ID").format(wallet)}
 						</p>
+
+						<Dialog>
+							<DialogTrigger asChild>
+								{wallet === 0 ? (
+									<Button variant="outline" className="cursor-pointer" disabled>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											height="24px"
+											viewBox="0 -960 960 960"
+											width="24px"
+											fill="currentColor"
+										>
+											<path d="M560-440q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35ZM280-320q-33 0-56.5-23.5T200-400v-320q0-33 23.5-56.5T280-800h560q33 0 56.5 23.5T920-720v320q0 33-23.5 56.5T840-320H280Zm80-80h400q0-33 23.5-56.5T840-480v-160q-33 0-56.5-23.5T760-720H360q0 33-23.5 56.5T280-640v160q33 0 56.5 23.5T360-400Zm440 240H120q-33 0-56.5-23.5T40-240v-440h80v440h680v80ZM280-400v-320 320Z" />
+										</svg>
+										Kirim Uang
+									</Button>
+								) : (
+									<Button variant="outline" className="cursor-pointer">
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											height="24px"
+											viewBox="0 -960 960 960"
+											width="24px"
+											fill="currentColor"
+										>
+											<path d="M560-440q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35ZM280-320q-33 0-56.5-23.5T200-400v-320q0-33 23.5-56.5T280-800h560q33 0 56.5 23.5T920-720v320q0 33-23.5 56.5T840-320H280Zm80-80h400q0-33 23.5-56.5T840-480v-160q-33 0-56.5-23.5T760-720H360q0 33-23.5 56.5T280-640v160q33 0 56.5 23.5T360-400Zm440 240H120q-33 0-56.5-23.5T40-240v-440h80v440h680v80ZM280-400v-320 320Z" />
+										</svg>
+										Kirim Uang
+									</Button>
+								)}
+							</DialogTrigger>
+							<DialogContent>
+								<DialogHeader>
+									<DialogTitle>Isi Data</DialogTitle>
+									<DialogDescription></DialogDescription>
+								</DialogHeader>
+								<CreatePayout walletAmount={wallet} />
+							</DialogContent>
+						</Dialog>
 						<section className="h-7 flex justify-center">
 							<Separator orientation="vertical" />
 						</section>
@@ -334,130 +387,6 @@ export default function Seller() {
 							Edit Seller Profile
 						</Button>
 					</section>
-				</section>
-				<section className="xl:grid xl:grid-cols-11 2xl:grid-cols-12 flex flex-col sm:flex-row gap-y-5 sm:gap-x-5 justify-items-center mt-10">
-					<Card className="col-start-2 2xl:col-start-4 col-span-3 2xl:col-span-2 w-full">
-						<CardHeader>
-							<CardTitle>
-								Total Terjual
-								<Tooltip>
-									<TooltipTrigger className="align-top ms-1">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											height="16px"
-											viewBox="0 -960 960 960"
-											width="16px"
-											fill="currentColor"
-										>
-											<path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
-										</svg>
-									</TooltipTrigger>
-									<TooltipContent>
-										<p>Total pesanan yang terjual per bulan</p>
-									</TooltipContent>
-								</Tooltip>
-							</CardTitle>
-							{/* <CardDescription>Barang yang terjual</CardDescription> */}
-							{/* <CardAction>Card Action</CardAction> */}
-						</CardHeader>
-						<CardContent>
-							<p className="font-bold text-2xl">
-								{seller?.current_month_sales}
-							</p>
-						</CardContent>
-						<CardFooter>
-							<p>
-								Bulan Lalu:{" "}
-								<span className="font-bold text-xl">
-									{seller?.previous_month_sales === null
-										? 0
-										: seller?.previous_month_sales}
-								</span>
-							</p>
-						</CardFooter>
-					</Card>
-					<Card className="col-span-3 2xl:col-span-2 w-full">
-						<CardHeader>
-							<CardTitle>
-								Total Dibatalkan
-								<Tooltip>
-									<TooltipTrigger className="align-top ms-1">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											height="16px"
-											viewBox="0 -960 960 960"
-											width="16px"
-											fill="currentColor"
-										>
-											<path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
-										</svg>
-									</TooltipTrigger>
-									<TooltipContent>
-										<p>Total pesanan yang dibatalkan per bulan</p>
-									</TooltipContent>
-								</Tooltip>
-							</CardTitle>
-							{/* <CardDescription>Card Description</CardDescription> */}
-							{/* <CardAction>Card Action</CardAction> */}
-						</CardHeader>
-						<CardContent>
-							<p className="font-bold text-2xl">
-								{seller?.current_month_cancellations}
-							</p>
-						</CardContent>
-						<CardFooter>
-							<p>
-								Bulan Lalu:{" "}
-								<span className="font-bold text-xl">
-									{seller?.previous_month_cancellations === null
-										? 0
-										: seller?.previous_month_cancellations}
-								</span>
-							</p>
-						</CardFooter>
-					</Card>
-					<Card className="col-span-3 2xl:col-span-2 w-full">
-						<CardHeader>
-							<CardTitle>
-								Total Pendapatan
-								<Tooltip>
-									<TooltipTrigger className="align-top ms-1">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											height="16px"
-											viewBox="0 -960 960 960"
-											width="16px"
-											fill="currentColor"
-										>
-											<path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
-										</svg>
-									</TooltipTrigger>
-									<TooltipContent>
-										<p>Total pendapatan per bulan</p>
-									</TooltipContent>
-								</Tooltip>
-							</CardTitle>
-							{/* <CardDescription>Card Description</CardDescription> */}
-							{/* <CardAction>Card Action</CardAction> */}
-						</CardHeader>
-						<CardContent>
-							<p className="font-bold text-2xl">
-								Rp
-								{new Intl.NumberFormat("id-ID").format(currentRevenue)}
-							</p>
-						</CardContent>
-						<CardFooter>
-							<p>
-								Bulan Lalu:{" "}
-								<span className="font-bold text-xl">
-									Rp
-									{seller?.previous_month_revenue === null
-										? 0
-										: new Intl.NumberFormat("id-ID").format(previousRevenue)}
-								</span>
-							</p>
-						</CardFooter>
-					</Card>
 				</section>
 				<section className="my-7 border rounded-md">
 					<Table className="">

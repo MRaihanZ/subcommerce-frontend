@@ -118,6 +118,35 @@ export default function OrderListProduct({ data }: OrderListProductProps) {
 		}
 	};
 
+	const handleCancelPayment = async () => {
+		const csrfToken = await GetCsrf();
+
+		try {
+			const send = await fetch(
+				`${apiUrl}/api/v1/orders/cancel/${data.order_uq_id}`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						"X-CSRF-TOKEN": csrfToken,
+					},
+					credentials: "include",
+				},
+			);
+
+			const result = await send.json();
+			if (result.code === 200 && result.status === "ok") {
+				window.location.reload();
+			} else {
+				toast.error(result.error);
+				// setLoading(false);
+			}
+		} catch (err) {
+			const errFetch = "Network Error: " + err;
+			setError(errFetch);
+		}
+	};
+
 	const handlePaymentLink = (payment_url: string) => {
 		window.location.href = payment_url;
 	};
@@ -210,7 +239,7 @@ export default function OrderListProduct({ data }: OrderListProductProps) {
 								className="cursor-pointer mt-5"
 								variant="destructive"
 								onClick={() => {
-									handleStatus(2);
+									handleCancelPayment();
 								}}
 							>
 								Batalkan pembayaran
@@ -219,7 +248,28 @@ export default function OrderListProduct({ data }: OrderListProductProps) {
 								className="cursor-pointer mt-5 ms-3"
 								onClick={() => handlePaymentLink(data.payment_link)}
 							>
-								(UNTUK SEMENTARA) Pembayaran selesai
+								Bayar
+							</Button>
+						</>
+					) : (
+						""
+					)}
+					{data.os_name === "sedang dalam proses" ? (
+						<>
+							<Button
+								className="cursor-pointer mt-5"
+								variant="destructive"
+								onClick={() => {
+									handleCancelPayment();
+								}}
+							>
+								Batalkan pembayaran
+							</Button>
+							<Button
+								className="cursor-pointer mt-5 ms-3"
+								onClick={() => handlePaymentLink(data.payment_link)}
+							>
+								Bayar
 							</Button>
 						</>
 					) : (

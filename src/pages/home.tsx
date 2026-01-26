@@ -115,14 +115,17 @@ export default function Home() {
 		<>
 			<Carousel>
 				<CarouselContent>
-					<CarouselItem className="flex justify-center">
-						<img src="/assets/img/carousel/carousel1.jpg" alt="Testing" />
+					<CarouselItem className="md:basis-1/2">
+						<img src="/assets/img/carousel/carousel1.png" alt="carousel1" />
 					</CarouselItem>
-					<CarouselItem className="flex justify-center">
-						<img src="/assets/img/carousel/carousel2.jpg" alt="Testing" />
+					<CarouselItem className="md:basis-1/2">
+						<img src="/assets/img/carousel/carousel2.png" alt="carousel2" />
 					</CarouselItem>
-					<CarouselItem className="flex justify-center">
-						<img src="/assets/img/carousel/carousel3.jpg" alt="Testing" />
+					<CarouselItem className="md:basis-1/2">
+						<img src="/assets/img/carousel/carousel3.png" alt="carousel3" />
+					</CarouselItem>
+					<CarouselItem className="md:basis-1/2">
+						<img src="/assets/img/carousel/carousel4.png" alt="carousel4" />
 					</CarouselItem>
 				</CarouselContent>
 				<CarouselPrevious />

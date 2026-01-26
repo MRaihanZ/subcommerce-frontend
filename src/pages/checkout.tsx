@@ -354,47 +354,47 @@ export default function Checkout() {
 	);
 }
 
-function PaymentLists({
-	setOpen,
-	payments,
-	categoryPayments,
-	setSelectedPaymentId,
-	setSelectedPaymentName,
-	setPaymentPrice,
-}: PaymentListsProps) {
-	return (
-		<Command>
-			<CommandInput placeholder="Filter status..." />
-			<CommandList>
-				<CommandEmpty>No results found.</CommandEmpty>
-				<CommandSeparator />
-				{categoryPayments?.map((vcp, i) => (
-					<section key={i}>
-						<CommandSeparator />
-						<CommandGroup heading={vcp}>
-							{payments?.map((vp, i) => (
-								<section key={i}>
-									{vcp === vp.cp_name ? (
-										<CommandItem
-											value={vp.p_name}
-											onSelect={(value) => {
-												setSelectedPaymentId(vp.p_id);
-												setSelectedPaymentName(value);
-												setPaymentPrice(2500);
-												setOpen(false);
-											}}
-										>
-											{vp.p_name}
-										</CommandItem>
-									) : (
-										""
-									)}
-								</section>
-							))}
-						</CommandGroup>
-					</section>
-				))}
-			</CommandList>
-		</Command>
-	);
-}
+// function PaymentLists({
+// 	setOpen,
+// 	payments,
+// 	categoryPayments,
+// 	setSelectedPaymentId,
+// 	setSelectedPaymentName,
+// 	setPaymentPrice,
+// }: PaymentListsProps) {
+// 	return (
+// 		<Command>
+// 			<CommandInput placeholder="Filter status..." />
+// 			<CommandList>
+// 				<CommandEmpty>No results found.</CommandEmpty>
+// 				<CommandSeparator />
+// 				{categoryPayments?.map((vcp, i) => (
+// 					<section key={i}>
+// 						<CommandSeparator />
+// 						<CommandGroup heading={vcp}>
+// 							{payments?.map((vp, i) => (
+// 								<section key={i}>
+// 									{vcp === vp.cp_name ? (
+// 										<CommandItem
+// 											value={vp.p_name}
+// 											onSelect={(value) => {
+// 												setSelectedPaymentId(vp.p_id);
+// 												setSelectedPaymentName(value);
+// 												setPaymentPrice(2500);
+// 												setOpen(false);
+// 											}}
+// 										>
+// 											{vp.p_name}
+// 										</CommandItem>
+// 									) : (
+// 										""
+// 									)}
+// 								</section>
+// 							))}
+// 						</CommandGroup>
+// 					</section>
+// 				))}
+// 			</CommandList>
+// 		</Command>
+// 	);
+// }

@@ -1,13 +1,7 @@
-import { useState, useEffect } from "react";
-
-import { apiUrl } from "@/lib/importEnv";
-import { GetCsrf } from "@/components/utils/csrf";
-
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "../ui/button";
-import { toast } from "sonner";
 
 // Mock data shape based on backend struct
 export interface UserSubscription {
@@ -15,8 +9,8 @@ export interface UserSubscription {
 	order_pretty_id: string;
 	payment_name: string;
 	order_status_name: string;
-	seller_name: string;
-	seller_img: string;
+	user_name: string;
+	user_img: string;
 	product_id: number;
 	product_name: string;
 	product_variant_id: number;
@@ -45,21 +39,6 @@ interface OrderProduct {
 	total_price: number;
 }
 
-interface OrderSubscriptionRequest {
-	p_id: number;
-	p_name: string;
-	quantity: number;
-	unit_price: number;
-	total_price: number;
-	order_request: OrderProduct;
-}
-
-interface OrderSubscriptionCancellation {
-	seller_name: string;
-	product_name: string;
-	product_variant_name: string;
-}
-
 interface DetailSubscriptionProps {
 	data: UserSubscription;
 }
@@ -72,11 +51,9 @@ function formatCurrency(value: number) {
 	}).format(value);
 }
 
-export default function DetailSubscription({ data }: DetailSubscriptionProps) {
-	const [order, setOrder] = useState<OrderSubscriptionRequest[]>();
-	const [cancelOrder, setCancelOrder] =
-		useState<OrderSubscriptionCancellation>();
-
+export default function DetailSubscriptionSeller({
+	data,
+}: DetailSubscriptionProps) {
 	const discountedPrice = Math.floor(
 		data.price - data.price * (data.discount / 100),
 	);
@@ -86,44 +63,14 @@ export default function DetailSubscription({ data }: DetailSubscriptionProps) {
 			data.price * data.quantity * (data.discount / 100),
 	);
 
-	useEffect(() => {
-		setOrder([
-			{
-				p_id: data.product_id,
-				p_name: data.product_name,
-				quantity: data.quantity,
-				unit_price: discountedPrice,
-				total_price: discountedTotalPrice + 3000,
-				order_request: {
-					pay_id: 1,
-					p_id: data.product_id,
-					pv_id: data.product_variant_id,
-					note: data.note,
-					quantity: data.quantity,
-					unit_price: discountedPrice,
-					total_price: discountedTotalPrice + 3000,
-				},
-			},
-		]);
-		setCancelOrder({
-			seller_name: data.seller_name,
-			product_name: data.product_name,
-			product_variant_name: data.product_variant_name,
-		});
-	}, [data, discountedPrice, discountedTotalPrice]);
-
-	// useEffect(() => {
-	// 	console.log("Discount Price: ", discountedPrice * data.quantity);
-	// 	console.log("Discount Total Price: ", discountedTotalPrice);
-	// }, [discountedPrice, discountedTotalPrice]);
 	// Replace this with real data from API / loader
 	// const data: UserSubscription = {
 	// 	id: "550e8400-e29b-41d4-a716-446655440000",
 	// 	order_pretty_id: "ORD-2026-0001",
 	// 	payment_name: "Midtrans",
 	// 	order_status_name: "Active",
-	// 	seller_name: "Awesome Seller",
-	// 	seller_img: "https://placehold.co/64x64",
+	// 	user_name: "Awesome Seller",
+	// 	user_img: "https://placehold.co/64x64",
 	// 	product_id: 1,
 	// 	product_name: "Premium Subscription",
 	// 	product_variant_id: 10,
@@ -148,64 +95,6 @@ export default function DetailSubscription({ data }: DetailSubscriptionProps) {
 			month: "long",
 			year: "numeric",
 		});
-	};
-	const toUTCDateNumber = (date: Date) =>
-		Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
-
-	const todayUTC = toUTCDateNumber(new Date());
-
-	const orderHandler = async () => {
-		const csrfToken = await GetCsrf();
-
-		try {
-			const send = await fetch(`${apiUrl}/api/v1/subscriptions/`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRF-TOKEN": csrfToken,
-				},
-				credentials: "include",
-				body: JSON.stringify(order),
-			});
-
-			const result = await send.json();
-			if (result.code === 200 && result.status === "ok") {
-				window.location.href = result.data;
-			} else {
-				toast.error(result.error);
-				// setLoading(false);
-			}
-		} catch (err) {
-			const errFetch = "Network Error: " + err;
-			toast.error(errFetch);
-		}
-	};
-
-	const cancelSubsHandler = async () => {
-		const csrfToken = await GetCsrf();
-
-		try {
-			const send = await fetch(`${apiUrl}/api/v1/subscriptions/${data.id}`, {
-				method: "DELETE",
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRF-TOKEN": csrfToken,
-				},
-				credentials: "include",
-				body: JSON.stringify(cancelOrder),
-			});
-
-			const result = await send.json();
-			if (result.code === 200 && result.status === "ok") {
-				window.location.reload();
-			} else {
-				toast.error(result.error);
-				// setLoading(false);
-			}
-		} catch (err) {
-			const errFetch = "Network Error: " + err;
-			toast.error(errFetch);
-		}
 	};
 
 	return (
@@ -241,13 +130,13 @@ export default function DetailSubscription({ data }: DetailSubscriptionProps) {
 				<section className="grid gap-6 md:grid-cols-2">
 					<div className="flex gap-4">
 						<img
-							src={data.seller_img}
-							alt={data.seller_name}
+							src={data.user_img}
+							alt={data.user_name}
 							className="h-16 w-16 rounded-xl border object-cover"
 						/>
 						<div>
-							<p className="text-sm text-muted-foreground">Penjual</p>
-							<p className="font-semibold">{data.seller_name}</p>
+							<p className="text-sm text-muted-foreground">Pelanggan</p>
+							<p className="font-semibold">{data.user_name}</p>
 							<p className="text-sm text-muted-foreground">
 								Pembayaran lewat {data.payment_name}
 							</p>
@@ -315,37 +204,18 @@ export default function DetailSubscription({ data }: DetailSubscriptionProps) {
 							</div>
 						</section>
 					</section>
-					<section className="flex flex-col justify-center items-center">
+					{/* <section className="flex flex-col justify-center items-center">
 						{data.is_over ? "" : <p className="mb-3 font-medium">Aksi</p>}
 						<section className="flex">
 							{data.is_over ? (
 								""
-							) : toUTCDateNumber(new Date(data.next_send)) > todayUTC ? (
-								""
 							) : (
-								<>
-									<Button
-										className="cursor-pointer w-25"
-										onClick={orderHandler}
-									>
-										Bayar
-									</Button>
-									<p className="mx-5"> | </p>
-								</>
-							)}
-							{data.is_over ? (
-								""
-							) : (
-								<Button
-									className="cursor-pointer"
-									variant="destructive"
-									onClick={cancelSubsHandler}
-								>
+								<Button className="cursor-pointer" variant="destructive">
 									Batalkan Langganan
 								</Button>
 							)}
 						</section>
-					</section>
+					</section> */}
 				</section>
 
 				<Separator />

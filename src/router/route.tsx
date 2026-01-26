@@ -284,7 +284,7 @@ const routes = createBrowserRouter([
 	},
 	{
 		path: "/seller/subscription",
-		element: handleFallbackUser({
+		element: handleFallbackSeller({
 			title: "Seller Registration Page",
 			component: SellerSubscription,
 			showNavbar: true,

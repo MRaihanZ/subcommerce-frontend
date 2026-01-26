@@ -114,7 +114,7 @@ export default function SellerOrderItem({ data }: SellerOrderItemProps) {
 						</section>
 					</section>
 					<section className="mt-5 flex gap-1">
-						{data.os_name === "menunggu konfirmasi seller" ? (
+						{/* {data.os_name === "menunggu konfirmasi seller" ? (
 							<>
 								<Button
 									variant="outline"
@@ -137,17 +137,17 @@ export default function SellerOrderItem({ data }: SellerOrderItemProps) {
 							</>
 						) : (
 							""
-						)}
+						)} */}
 						{data.os_name === "produk sedang disiapkan" ? (
 							<>
 								<Button
 									variant="outline"
 									className="grow cursor-pointer"
 									onClick={() => {
-										handleStatus(8);
+										handleStatus(10);
 									}}
 								>
-									Produk Sudah Dikirim
+									Pesanan Selesai
 								</Button>
 							</>
 						) : (
