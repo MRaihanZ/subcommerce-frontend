@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 interface PayoutData {
 	name: string;
-	payId: string;
+	pay_id: string;
 	amount: number;
 	description: string;
 }
@@ -49,7 +49,7 @@ export default function CreatePayout({ walletAmount }: CreatePayoutProps) {
 
 		const payload: PayoutData = {
 			name: name,
-			payId: payId,
+			pay_id: payId,
 			amount: amount,
 			description: description,
 		};
@@ -67,7 +67,9 @@ export default function CreatePayout({ walletAmount }: CreatePayoutProps) {
 
 			const result = await send.json();
 			if (result.code === 200 && result.status === "ok") {
-				toast("Berhasil menambahkan user baru");
+				toast(
+					"Berhasil menambahkan permintaan pengiriman uang ke dalam antrian",
+				);
 				window.location.reload();
 			} else {
 				toast.error(result.error);

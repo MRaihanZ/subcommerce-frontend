@@ -16,6 +16,7 @@ import Admin from "@/pages/admin";
 import AdminUsers from "@/pages/adminUsers";
 import AdminSellers from "@/pages/adminSellers";
 import AdminProduct from "@/pages/adminProduct";
+import AdminPayout from "@/pages/adminPayout";
 import NotFound from "@/pages/notFound";
 import Home from "@/pages/home";
 import Chat from "@/pages/chat";
@@ -125,6 +126,15 @@ const routes = createBrowserRouter([
 		element: handleFallbackAdmin({
 			title: "Admin Products Page",
 			component: AdminProduct,
+			showNavbar: true,
+			showFooter: true,
+		}),
+	},
+	{
+		path: "/admin/payout",
+		element: handleFallbackAdmin({
+			title: "Admin Payout Page",
+			component: AdminPayout,
 			showNavbar: true,
 			showFooter: true,
 		}),

@@ -100,6 +100,16 @@ export default function NavbarAdmin() {
 						>
 							Products
 						</Link>
+						<Link
+							to={"http://" + location.host + "/admin/payout"}
+							className={
+								activePage === "/admin/payout"
+									? "w-full border-b-2 border-black mx-3"
+									: "w-full mx-3"
+							}
+						>
+							Tarik Uang
+						</Link>
 						<Button
 							variant="link"
 							onClick={() => logout()}
