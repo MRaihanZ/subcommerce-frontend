@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router";
+
 import { GetCsrf } from "@/components/utils/csrf";
 import { apiUrl } from "@/lib/importEnv";
 
@@ -9,6 +11,7 @@ import { toast } from "sonner";
 interface Orders {
 	order_id: number;
 	order_pretty_id: string;
+	u_id: string;
 	u_name: string;
 	u_img: string;
 	product_id: number;
@@ -30,6 +33,7 @@ interface SellerOrderItemProps {
 }
 
 export default function SellerOrderItem({ data }: SellerOrderItemProps) {
+	const navigate = useNavigate();
 	const handleStatus = async (status: number) => {
 		const csrfToken = await GetCsrf();
 
@@ -140,6 +144,15 @@ export default function SellerOrderItem({ data }: SellerOrderItemProps) {
 						)} */}
 						{data.os_name === "produk sedang disiapkan" ? (
 							<>
+								<Button
+									variant="outline"
+									className="grow cursor-pointer"
+									onClick={() => {
+										navigate("/seller/chat?id=" + data?.u_id);
+									}}
+								>
+									Kirim Pesan
+								</Button>
 								<Button
 									variant="outline"
 									className="grow cursor-pointer"

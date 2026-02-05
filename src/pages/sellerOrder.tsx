@@ -10,6 +10,7 @@ import SellerOrderItem from "@/components/my_components/sellerOrderItem";
 interface Orders {
 	order_id: number;
 	order_pretty_id: string;
+	u_id: string;
 	u_name: string;
 	u_img: string;
 	product_id: number;
@@ -28,6 +29,7 @@ interface Orders {
 
 export default function SellerOrder() {
 	const [orders, setOrders] = useState<Orders[]>([]);
+	const [sellerId, setSellerId] = useState<string[]>([]);
 	const [firstOrderId, setFirstOrderId] = useState<number>(0);
 	const [firstOrderCreatedAt, setFirstOrderCreatedAt] = useState<string>("");
 	const [lastOrderId, setLastOrderId] = useState<number>(0);
