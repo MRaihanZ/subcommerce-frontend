@@ -617,6 +617,7 @@ export default function DetailItem() {
 						</section>
 						<Separator />
 						<section className="mt-3">
+							<p className="mb-3 font-semibold text-xl">Deskripsi: </p>
 							<p className="mb-3">
 								Min. Pemesanan:
 								<Badge variant="outline" className="mx-1">
