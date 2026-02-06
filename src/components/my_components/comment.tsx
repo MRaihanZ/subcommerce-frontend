@@ -37,7 +37,7 @@ export default function Comment({ prodId }: CommentProps) {
 				if (json.code === 200 && json.status === "ok") {
 					setRatingComments(json.data);
 					setLoading(false);
-				} else if (json.code === 400 && json.status === "error") {
+				} else if (json.code === 404 && json.status === "error") {
 					setNotFound(true);
 					setLoading(false);
 				} else {
