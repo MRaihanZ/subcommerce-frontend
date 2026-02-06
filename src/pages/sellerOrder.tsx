@@ -37,6 +37,7 @@ export default function SellerOrder() {
 	const [page, setPage] = useState<number>(0);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string>();
+	const [notFound, setNotFound] = useState<boolean>(false);
 	const totalData = 2;
 
 	// order
@@ -53,6 +54,9 @@ export default function SellerOrder() {
 				setLastOrderId(json.data[json.data.length - 1].order_id);
 				setLastOrderCreatedAt(json.data[json.data.length - 1].created_at);
 				setPage(1);
+				setLoading(false);
+			} else if (json.code === 404 && json.status === "error") {
+				setNotFound(true);
 				setLoading(false);
 			} else {
 				toast.error(json.error);
@@ -89,6 +93,9 @@ export default function SellerOrder() {
 				setLastOrderCreatedAt(json.data[json.data.length - 1].created_at);
 				setPage(page + 1);
 				setLoading(false);
+			} else if (json.code === 404 && json.status === "error") {
+				setNotFound(true);
+				setLoading(false);
 			} else {
 				toast.error(json.error);
 				setError(json.error);
@@ -124,6 +131,9 @@ export default function SellerOrder() {
 				setLastOrderCreatedAt(json.data[json.data.length - 1].created_at);
 				setPage(page - 1);
 				setLoading(false);
+			} else if (json.code === 404 && json.status === "error") {
+				setNotFound(true);
+				setLoading(false);
 			} else {
 				toast.error(json.error);
 				setError(json.error);
@@ -151,14 +161,18 @@ export default function SellerOrder() {
 					<p className="font-semibold text-2xl">Pesanan</p>
 					<section className="mt-5">
 						<section className="mb-3">
-							<section className="border rounded-md">
-								{orders.map((order) => (
-									<section key={order.order_id}>
-										<SellerOrderItem data={order} />
-										<Separator />
-									</section>
-								))}
-							</section>
+							{notFound ? (
+								<p>Tidak Ada Pesanan</p>
+							) : (
+								<section className="border rounded-md">
+									{orders.map((order) => (
+										<section key={order.order_id}>
+											<SellerOrderItem data={order} />
+											<Separator />
+										</section>
+									))}
+								</section>
+							)}
 						</section>
 						{page !== 1 && orders?.length >= totalData ? (
 							<section className="mt-5 mb-10 text-right">

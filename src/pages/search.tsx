@@ -8,6 +8,7 @@ import FilterSideBar from "@/components/my_components/filterSideBar";
 export default function Search() {
 	const [products, setProducts] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const [notFound, setNotFound] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 
 	const [searchParams] = useSearchParams();
@@ -37,6 +38,8 @@ export default function Search() {
 			if (json.code === 200 && json.status === "ok") {
 				setProducts(json.data);
 				setLoading(false);
+			} else if (json.code === 404 && json.status === "error") {
+				setNotFound(true);
 			} else {
 				console.error("API Error:", json.error);
 				setError(json.error);
@@ -59,7 +62,7 @@ export default function Search() {
 					<FilterSideBar />
 				</section>
 				<section className="col-start-3 col-span-10">
-					<Items data={products} />
+					{notFound ? <p>Produk Tidak Ditemukan</p> : <Items data={products} />}
 				</section>
 			</section>
 		</>

@@ -122,6 +122,7 @@ export default function AdminProduct() {
 	const [search, setSearch] = useState<string>("");
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string>();
+	const [notFound, setNotFound] = useState<boolean>(false);
 	const [activeProduct, setActiveProduct] = useState<boolean[]>([]);
 
 	const updateActiveProduct = (index: number) => {
@@ -141,6 +142,9 @@ export default function AdminProduct() {
 				setActiveProduct(
 					json.data.map((activate: { active: boolean }) => activate.active),
 				);
+				setLoading(false);
+			} else if (json.code === 404 && json.status === "error") {
+				setNotFound(true);
 				setLoading(false);
 			} else {
 				toast.error(json.error);
@@ -170,6 +174,9 @@ export default function AdminProduct() {
 				setActiveProduct(
 					json.data.map((activate: { active: boolean }) => activate.active),
 				);
+				setLoading(false);
+			} else if (json.code === 404 && json.status === "error") {
+				setNotFound(true);
 				setLoading(false);
 			} else {
 				toast.error(json.error);
@@ -236,7 +243,6 @@ export default function AdminProduct() {
 	if (error) {
 		return <p>{error}</p>;
 	}
-	if (!products) return <p>No item found</p>;
 	const childComponentsDialog = (key: string) => {
 		switch (key) {
 			case "addProduct":
@@ -356,34 +362,41 @@ export default function AdminProduct() {
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{products.map((product, index) => (
-							<TableRow key={product.p_id}>
-								<TableCell className="w-40">
-									<Carousel>
-										<CarouselContent>
-											{product.images.map((image, index) => (
-												<CarouselItem
-													key={index}
-													className="flex justify-center"
-												>
-													<img
-														src={image.img}
-														alt={product.p_name + " product image"}
-													/>
-												</CarouselItem>
-											))}
-										</CarouselContent>
-									</Carousel>
+						{notFound ? (
+							<TableRow>
+								<TableCell colSpan={7} className="text-center font-medium">
+									Tidak ada produk
 								</TableCell>
-								<TableCell>{product.p_name}</TableCell>
-								<TableCell>
-									<p className="max-w-30 truncate">{product.description}</p>
-								</TableCell>
-								<TableCell>
-									{Math.floor(product.average_rating * 10) / 10}
-								</TableCell>
-								<TableCell>{product.sold}</TableCell>
-								{/* <TableCell className="text-center">
+							</TableRow>
+						) : (
+							products.map((product, index) => (
+								<TableRow key={product.p_id}>
+									<TableCell className="w-40">
+										<Carousel>
+											<CarouselContent>
+												{product.images.map((image, index) => (
+													<CarouselItem
+														key={index}
+														className="flex justify-center"
+													>
+														<img
+															src={image.img}
+															alt={product.p_name + " product image"}
+														/>
+													</CarouselItem>
+												))}
+											</CarouselContent>
+										</Carousel>
+									</TableCell>
+									<TableCell>{product.p_name}</TableCell>
+									<TableCell>
+										<p className="max-w-30 truncate">{product.description}</p>
+									</TableCell>
+									<TableCell>
+										{Math.floor(product.average_rating * 10) / 10}
+									</TableCell>
+									<TableCell>{product.sold}</TableCell>
+									{/* <TableCell className="text-center">
 									<section className="flex justify-center">
 										<p className="mx-2">❌</p>
 										<Switch
@@ -396,24 +409,24 @@ export default function AdminProduct() {
 										<p className="mx-2">✅</p>
 									</section>
 								</TableCell> */}
-								<TableCell className="text-center">
-									<section className="flex justify-center">
-										<p className="mx-2">❌</p>
-										<Switch
-											checked={activeProduct[index]}
-											onCheckedChange={() => {
-												updateActiveProduct(index);
-												handleUpdateActiveProduct(
-													product.p_id,
-													!activeProduct[index],
-												);
-											}}
-										/>
-										<p className="mx-2">✅</p>
-									</section>
-								</TableCell>
-								<TableCell className="flex flex-col justify-center flex-wrap items-center gap-3 py-5">
-									{/* <Button
+									<TableCell className="text-center">
+										<section className="flex justify-center">
+											<p className="mx-2">❌</p>
+											<Switch
+												checked={activeProduct[index]}
+												onCheckedChange={() => {
+													updateActiveProduct(index);
+													handleUpdateActiveProduct(
+														product.p_id,
+														!activeProduct[index],
+													);
+												}}
+											/>
+											<p className="mx-2">✅</p>
+										</section>
+									</TableCell>
+									<TableCell className="flex flex-col justify-center flex-wrap items-center gap-3 py-5">
+										{/* <Button
 										variant="outline"
 										className="cursor-pointer w-full"
 										onClick={() => {
@@ -440,30 +453,30 @@ export default function AdminProduct() {
 									>
 										Ubah Produk
 									</Button> */}
-									<Button
-										className="cursor-pointer w-full"
-										variant="destructive"
-										onClick={() => {
-											setProductSelected({
-												pId: product.p_id,
-												pvId: product.product_variants[0].pv_id,
-											});
-											setOpenDialog(true);
-											setOpenDialogAction("deleteProduct");
-										}}
-									>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											height="24px"
-											viewBox="0 -960 960 960"
-											width="24px"
-											fill="currentColor"
+										<Button
+											className="cursor-pointer w-full"
+											variant="destructive"
+											onClick={() => {
+												setProductSelected({
+													pId: product.p_id,
+													pvId: product.product_variants[0].pv_id,
+												});
+												setOpenDialog(true);
+												setOpenDialogAction("deleteProduct");
+											}}
 										>
-											<path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-										</svg>
-										Hapus Produk
-									</Button>
-									{/* <Button
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												height="24px"
+												viewBox="0 -960 960 960"
+												width="24px"
+												fill="currentColor"
+											>
+												<path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+											</svg>
+											Hapus Produk
+										</Button>
+										{/* <Button
 										variant="outline"
 										className="cursor-pointer w-full"
 										onClick={() => {
@@ -481,7 +494,7 @@ export default function AdminProduct() {
 									>
 										Tambah Varian
 									</Button> */}
-									{/* {product.product_variants[0].is_default == false ? (
+										{/* {product.product_variants[0].is_default == false ? (
 										<DropdownMenu>
 											<DropdownMenuTrigger asChild>
 												<Button
@@ -531,55 +544,56 @@ export default function AdminProduct() {
 									) : (
 										""
 									)} */}
-									{product.product_variants[0].is_default == false ? (
-										<DropdownMenu>
-											<DropdownMenuTrigger asChild>
-												<Button
-													variant="destructive"
-													className="cursor-pointer w-full"
-												>
-													<svg
-														xmlns="http://www.w3.org/2000/svg"
-														height="24px"
-														viewBox="0 -960 960 960"
-														width="24px"
-														fill="currentColor"
+										{product.product_variants[0].is_default == false ? (
+											<DropdownMenu>
+												<DropdownMenuTrigger asChild>
+													<Button
+														variant="destructive"
+														className="cursor-pointer w-full"
 													>
-														<path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-													</svg>
-													Hapus Varian
-												</Button>
-											</DropdownMenuTrigger>
-											<DropdownMenuContent>
-												<DropdownMenuLabel>Pilih Variant</DropdownMenuLabel>
-												<DropdownMenuSeparator />
-												{product.product_variants.map((pv) => (
-													<DropdownMenuItem className="p-0" key={pv.pv_id}>
-														<Button
-															variant="outline"
-															className="cursor-pointer w-full border-0 shadow-none"
-															onClick={() => {
-																setProductSelected({
-																	pId: product.p_id,
-																	pvId: pv.pv_id,
-																});
-																setVariantSelected(pv.pv_id);
-																setOpenDialog(true);
-																setOpenDialogAction("deleteVariant");
-															}}
+														<svg
+															xmlns="http://www.w3.org/2000/svg"
+															height="24px"
+															viewBox="0 -960 960 960"
+															width="24px"
+															fill="currentColor"
 														>
-															{pv.pv_name}
-														</Button>
-													</DropdownMenuItem>
-												))}
-											</DropdownMenuContent>
-										</DropdownMenu>
-									) : (
-										""
-									)}
-								</TableCell>
-							</TableRow>
-						))}
+															<path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+														</svg>
+														Hapus Varian
+													</Button>
+												</DropdownMenuTrigger>
+												<DropdownMenuContent>
+													<DropdownMenuLabel>Pilih Variant</DropdownMenuLabel>
+													<DropdownMenuSeparator />
+													{product.product_variants.map((pv) => (
+														<DropdownMenuItem className="p-0" key={pv.pv_id}>
+															<Button
+																variant="outline"
+																className="cursor-pointer w-full border-0 shadow-none"
+																onClick={() => {
+																	setProductSelected({
+																		pId: product.p_id,
+																		pvId: pv.pv_id,
+																	});
+																	setVariantSelected(pv.pv_id);
+																	setOpenDialog(true);
+																	setOpenDialogAction("deleteVariant");
+																}}
+															>
+																{pv.pv_name}
+															</Button>
+														</DropdownMenuItem>
+													))}
+												</DropdownMenuContent>
+											</DropdownMenu>
+										) : (
+											""
+										)}
+									</TableCell>
+								</TableRow>
+							))
+						)}
 					</TableBody>
 					{/* <TableFooter>
 							<TableRow>

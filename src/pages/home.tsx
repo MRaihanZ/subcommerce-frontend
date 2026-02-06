@@ -156,14 +156,14 @@ export default function Home() {
 						</TabsList>
 						<TabsContent value="hot">
 							{products.length === 0 ? (
-								<section className="ms-11">No products found.</section>
+								<section className="ms-11">Produk Tidak Ditemukan</section>
 							) : (
 								<Items data={products} />
 							)}
 						</TabsContent>
 						<TabsContent value="diskon">
 							{products.length === 0 ? (
-								<section className="ms-11">No products found.</section>
+								<section className="ms-11">Produk Tidak Ditemukan</section>
 							) : (
 								<Items data={products} />
 							)}

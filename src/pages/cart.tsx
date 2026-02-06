@@ -39,6 +39,7 @@ export default function Cart() {
 	const [products, setProducts] = useState<CartProduct[] | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string>();
+	const [notFound, setNotFound] = useState<boolean>(false);
 
 	const navigate = useNavigate();
 
@@ -51,6 +52,9 @@ export default function Cart() {
 				const json = await res.json();
 				if (json.code === 200 && json.status === "ok") {
 					setProducts(json.data);
+					setLoading(false);
+				} else if (json.code === 404 && json.status === "error") {
+					setNotFound(true);
 					setLoading(false);
 				} else {
 					setError(json.error);
@@ -172,83 +176,90 @@ export default function Cart() {
 	if (error) {
 		return <p>{error}</p>;
 	}
-	if (!products) return <p>No item found</p>;
 	return (
 		<>
 			<section className="grid grid-cols-12">
 				<section className="col-span-12 lg:col-span-6 lg:col-start-2 lg:mb-5">
 					<p className="font-semibold text-3xl">Keranjang</p>
-					<section className="mt-5">
-						<section className="flex justify-between items-center  ms-3 mb-3">
-							<section className="flex">
-								<Checkbox
-									className="border-black"
-									id="allItem"
-									checked={allCheck}
-									onCheckedChange={(checked) => {
-										const value = checked === true;
-										setCheckState("parent");
-										setAllCheck(value);
-									}}
-								/>
-								<Label htmlFor="allItem" className="ms-3">
-									Pilih Semua
-								</Label>
+					{notFound ? (
+						<p className="mt-5">Tidak Ada Produk Didalam Keranjang</p>
+					) : (
+						<section className="mt-5">
+							<section className="flex justify-between items-center  ms-3 mb-3">
+								<section className="flex">
+									<Checkbox
+										className="border-black"
+										id="allItem"
+										checked={allCheck}
+										onCheckedChange={(checked) => {
+											const value = checked === true;
+											setCheckState("parent");
+											setAllCheck(value);
+										}}
+									/>
+									<Label htmlFor="allItem" className="ms-3">
+										Pilih Semua
+									</Label>
+								</section>
+								<Button
+									variant="outline"
+									className="w-fit cursor-pointer hover:bg-red-600 px-3"
+									onClick={deleteCarts}
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										height="24px"
+										viewBox="0 -960 960 960"
+										width="24px"
+										fill="currentColor"
+									>
+										<path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+									</svg>
+									Hapus Semua
+								</Button>
+							</section>
+							<section className="">
+								{products.map((prod, index) => (
+									<CartItem
+										key={index}
+										index={index}
+										data={prod}
+										checkoutData={checkoutProducts}
+										checkoutDataFunc={setCheckoutProducts}
+										totalFunc={setTotalPrice}
+										allCheck={allCheck}
+										allCheckFunc={setAllCheck}
+										actionState={checkState}
+										actionStateFunc={setCheckState}
+										deleteStateFunc={handleDeleteState}
+									/>
+								))}
+							</section>
+						</section>
+					)}
+				</section>
+				{notFound ? (
+					""
+				) : (
+					<section className="col-span-12 lg:col-span-4 ms-3 mb-5 lg:ms-5 mt-5 lg:mt-28">
+						<section className="py-7 px-5 bottom-0 bg-white border rounded-md">
+							<section className="mb-5">
+								<p className="font-semibold text-xl pb-5">Ringkasan Belanja</p>
+								<Separator />
+							</section>
+							<section className="flex justify-between mb-5">
+								<p className="font-bold text-xl">Total</p>
+								<p className="font-bold text-xl">Rp{formatedTotalPrice}</p>
 							</section>
 							<Button
-								variant="outline"
-								className="w-fit cursor-pointer hover:bg-red-600 px-3"
-								onClick={deleteCarts}
+								className="bg-green-600 hover:bg-green-800 w-full cursor-pointer"
+								onClick={handleCheckoutSubmit}
 							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									height="24px"
-									viewBox="0 -960 960 960"
-									width="24px"
-									fill="currentColor"
-								>
-									<path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-								</svg>
-								Hapus Semua
+								Beli
 							</Button>
 						</section>
-						<section className="">
-							{products.map((prod, index) => (
-								<CartItem
-									key={index}
-									index={index}
-									data={prod}
-									checkoutData={checkoutProducts}
-									checkoutDataFunc={setCheckoutProducts}
-									totalFunc={setTotalPrice}
-									allCheck={allCheck}
-									allCheckFunc={setAllCheck}
-									actionState={checkState}
-									actionStateFunc={setCheckState}
-									deleteStateFunc={handleDeleteState}
-								/>
-							))}
-						</section>
 					</section>
-				</section>
-				<section className="col-span-12 lg:col-span-4 ms-3 mb-5 lg:ms-5 mt-5 lg:mt-28">
-					<section className="py-7 px-5 bottom-0 bg-white border rounded-md">
-						<section className="mb-5">
-							<p className="font-semibold text-xl pb-5">Ringkasan Belanja</p>
-							<Separator />
-						</section>
-						<section className="flex justify-between mb-5">
-							<p className="font-bold text-xl">Total</p>
-							<p className="font-bold text-xl">Rp{formatedTotalPrice}</p>
-						</section>
-						<Button
-							className="bg-green-600 hover:bg-green-800 w-full cursor-pointer"
-							onClick={handleCheckoutSubmit}
-						>
-							Beli
-						</Button>
-					</section>
-				</section>
+				)}
 			</section>
 		</>
 	);

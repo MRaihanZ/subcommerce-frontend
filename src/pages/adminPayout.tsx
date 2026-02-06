@@ -137,7 +137,7 @@ export default function AdminPayout() {
 	if (error) {
 		toast.error(error);
 	}
-	if (!payouts) toast.error("No item found");
+	if (!payouts) toast.error("Tidak Ada Permintaan Pencairan Dana");
 	return (
 		<>
 			<section className="my-7">
