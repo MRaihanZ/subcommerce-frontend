@@ -25,6 +25,7 @@ export default function Comment({ prodId }: CommentProps) {
 	);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string>();
+	const [notFound, setNotFound] = useState<boolean>(false);
 	useEffect(() => {
 		const prodNumParam = Number(prodId);
 		const fetchComments = async () => {
@@ -35,6 +36,9 @@ export default function Comment({ prodId }: CommentProps) {
 				const json = await res.json();
 				if (json.code === 200 && json.status === "ok") {
 					setRatingComments(json.data);
+					setLoading(false);
+				} else if (json.code === 400 && json.status === "error") {
+					setNotFound(true);
 					setLoading(false);
 				} else {
 					setError(json.error);
@@ -49,6 +53,9 @@ export default function Comment({ prodId }: CommentProps) {
 		fetchComments();
 	}, [prodId]);
 	if (loading) return <p>Loading...</p>;
+	if (notFound) {
+		return <p>Tidak Ada Komen</p>;
+	}
 	if (error) {
 		return <p>{error}</p>;
 	}
