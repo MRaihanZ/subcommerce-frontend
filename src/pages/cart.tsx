@@ -105,6 +105,7 @@ export default function Cart() {
 			if (json.code === 200 && json.status === "ok") {
 				toast(json.data + " produk dihapus");
 				setProducts(null);
+				window.location.reload();
 			} else {
 				toast(json.error);
 			}
