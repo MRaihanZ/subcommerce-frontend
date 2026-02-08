@@ -78,7 +78,7 @@ export default function NavbarAdmin() {
 									: "w-full mx-3"
 							}
 						>
-							Users
+							Pengguna
 						</Link>
 						<Link
 							to={"http://" + location.host + "/admin/sellers"}
@@ -88,7 +88,7 @@ export default function NavbarAdmin() {
 									: "w-full mx-3"
 							}
 						>
-							Sellers
+							Penjual
 						</Link>
 						<Link
 							to={"http://" + location.host + "/admin/products"}
@@ -98,7 +98,7 @@ export default function NavbarAdmin() {
 									: "w-full mx-3"
 							}
 						>
-							Products
+							Produk
 						</Link>
 						<Link
 							to={"http://" + location.host + "/admin/payout"}
