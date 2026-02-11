@@ -363,7 +363,7 @@ export default function DetailItem() {
 								variant="outline"
 								className="cursor-pointer"
 								onClick={() => {
-									navigate("/chat?seller=" + seller?.id);
+									navigate("/chat?id=" + seller?.id);
 								}}
 							>
 								<svg
