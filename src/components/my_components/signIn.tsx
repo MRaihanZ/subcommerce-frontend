@@ -181,13 +181,13 @@ export default function SignIn({
 							>
 								Don't have an account?
 							</a>
-							<p className="px-2">|</p> */}
+							<p className="px-2">|</p>
 							<a
 								href="/forgotpw"
 								className="text-grey-darkest hover:text-black no-underline"
 							>
 								Forgot Password?
-							</a>
+							</a> */}
 						</section>
 					</section>
 				</section>
