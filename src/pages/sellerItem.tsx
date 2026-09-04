@@ -295,22 +295,6 @@ export default function SellerItem() {
 		<>
 			<section className="my-7">
 				<section className="flex justify-end">
-					{/* <section className="w-full flex-1 flex max-w-3xs sm:max-w-2xs md:max-w-xs lg:max-w-sm items-center justify-center">
-						<Input
-							id="search"
-							type="text"
-							placeholder="..."
-							className="rounded-r-none border-l-1 border-t-1 border-r-0 border-b-1"
-						/>
-						<Button
-							type="submit"
-							variant="outline"
-							onClick={() => navigate("/search")}
-							className="rounded-l-none border-l-1 border-t-1 border-r-1 border-b-1 cursor-pointer"
-						>
-							Cari
-						</Button>
-					</section> */}
 					<Button
 						variant="outline"
 						className="cursor-pointer flex-1 w-fitt sm:w-full max-w-3xs sm:max-w-2xs md:max-w-xs lg:max-w-sm"
