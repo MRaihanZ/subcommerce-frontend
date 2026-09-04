@@ -337,16 +337,6 @@ export default function AdminProduct() {
 							Cari
 						</Button>
 					</section>
-					{/* <Button
-						variant="outline"
-						className="cursor-pointer flex-1 w-fitt sm:w-full max-w-3xs sm:max-w-2xs md:max-w-xs lg:max-w-sm"
-						onClick={() => {
-							setOpenDialog(true);
-							setOpenDialogAction("addProduct");
-						}}
-					>
-						Tambah Produk
-					</Button> */}
 				</section>
 				<Table>
 					<TableCaption>Produk</TableCaption>
