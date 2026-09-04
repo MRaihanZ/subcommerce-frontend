@@ -141,25 +141,6 @@ export default function AdminPayout() {
 	return (
 		<>
 			<section className="my-7">
-				<section className="flex justify-between mb-3">
-					{/* <section className="w-full flex-1 flex max-w-3xs sm:max-w-2xs md:max-w-xs lg:max-w-sm items-center justify-center">
-						<Input
-							id="search"
-							type="text"
-							placeholder="..."
-							onChange={(e) => setSearch(e.target.value)}
-							className="rounded-r-none border-l-1 border-t-1 border-r-0 border-b-1"
-						/>
-						<Button
-							type="submit"
-							variant="outline"
-							onClick={() => handleSearch()}
-							className="rounded-l-none border-l-1 border-t-1 border-r-1 border-b-1 cursor-pointer"
-						>
-							Cari
-						</Button>
-					</section> */}
-				</section>
 				<Table>
 					<TableCaption>Tarik Uang</TableCaption>
 					<TableHeader>
